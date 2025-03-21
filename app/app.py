@@ -13,6 +13,7 @@ class App:
 
     def run(self):
         while self.window.running:
+            self.camera.transform.rotate_y(0.02)
             self.camera.render()
             self.window.set_image(self.camera.pixels)
             self.window.show()

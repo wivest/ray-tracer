@@ -28,5 +28,5 @@ class Camera:
 
     @ti.func
     def sky(self, pixel: vec3) -> Vector:  # type: ignore
-        direction = self.transform.basis @ pixel
+        direction = self.transform.basis[None] @ pixel
         return COLOR * direction
