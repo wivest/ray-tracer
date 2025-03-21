@@ -2,21 +2,21 @@ import taichi as ti
 from taichi import f32, Vector
 from taichi.math import vec3
 
+from .transform import Transform
+
 COLOR: Vector = Vector((1.0, 1.0, 1.0), f32)
 
 
 @ti.data_oriented
 class Camera:
+    transform: Transform
     pixels: ti.MatrixField
     focal: float
-    h: float
-    v: float
 
     def __init__(self, size: tuple[int, int]):
+        self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
         self.focal = 100.0
-        self.h = 0.0
-        self.v = 0.0
 
     @ti.kernel
     def render(self):
@@ -28,4 +28,5 @@ class Camera:
 
     @ti.func
     def sky(self, pixel: vec3) -> Vector:  # type: ignore
-        return COLOR * pixel
+        direction = self.transform.basis @ pixel
+        return COLOR * direction
