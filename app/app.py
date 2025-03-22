@@ -3,17 +3,43 @@ import taichi as ti
 from model.camera import Camera
 
 
+ROTATION = 3.14
+
+
 class App:
     window: ti.GUI
     camera: Camera
+
+    __view: bool
+    __cursor: tuple[float, float]
 
     def __init__(self, name: str, size: tuple[int, int]):
         self.window = ti.GUI(name, size, fast_gui=True)
         self.camera = Camera(size)
 
+        self.__view = False
+        self.__cursor = self.window.get_cursor_pos()
+
     def run(self):
         while self.window.running:
-            self.camera.transform.rotate_y(0.02)
+            self.__handle_events()
+            if self.__view:
+                delta = self.__get_cursor_delta()
+                self.camera.transform.rotate_y(delta[0] * ROTATION)
+
             self.camera.render()
             self.window.set_image(self.camera.pixels)
             self.window.show()
+
+    def __handle_events(self):
+        for event in self.window.get_events(ti.GUI.PRESS):
+            if event.key == "c":
+                self.__view = not self.__view
+                self.__get_cursor_delta()
+
+    def __get_cursor_delta(self, update=True) -> tuple[float, float]:
+        actual = self.window.get_cursor_pos()
+        delta = (actual[0] - self.__cursor[0], actual[1] - self.__cursor[1])
+        if update:
+            self.__cursor = actual
+        return delta
