@@ -25,7 +25,8 @@ class App:
             self.__handle_events()
             if self.__view:
                 delta = self.__get_cursor_delta()
-                self.camera.transform.rotate_y(delta[0] * ROTATION)
+                self.camera.transform.rotate_y(delta[0] * ROTATION * 2)
+                self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
 
             self.camera.render()
             self.window.set_image(self.camera.pixels)
