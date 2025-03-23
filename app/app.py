@@ -34,9 +34,14 @@ class App:
             self.window.show()
 
     def __handle_events(self):
-        for event in self.window.get_events(ti.GUI.PRESS):
-            if event.key == "c":
-                self.__view = not self.__view
+        for event in self.window.get_events():
+            if event.key != ti.GUI.LMB:
+                return
+
+            if event.type == ti.GUI.RELEASE:
+                self.__view = False
+            else:
+                self.__view = True
                 self.__get_cursor_delta()
 
     def __get_cursor_delta(self, update=True) -> tuple[float, float]:
