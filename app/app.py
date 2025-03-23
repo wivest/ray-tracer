@@ -14,9 +14,9 @@ class App:
     __view: bool
     __cursor: tuple[float, float]
 
-    def __init__(self, name: str, size: tuple[int, int]):
+    def __init__(self, name: str, size: tuple[int, int], objects):
         self.window = ti.GUI(name, size, fast_gui=True)
-        self.camera = Camera(size, ANGLE)
+        self.camera = Camera(size, ANGLE, objects)
 
         self.__view = False
         self.__cursor = self.window.get_cursor_pos()

@@ -1,9 +1,16 @@
 import taichi as ti
-from app.app import App
+from taichi import Vector
 
-SIZE = (1080, 720)
+from app.app import App
+from model.sphere import Sphere
+
 
 ti.init()
 
-app = App("Ray Tracing", SIZE)
+SIZE = (1080, 720)
+SPHERES = Sphere.field(shape=1)
+SPHERES[0] = Sphere(10, Vector((100, 0, 0)), Vector((1, 1, 0)))
+
+
+app = App("Ray Tracing", SIZE, SPHERES)
 app.run()
