@@ -3,7 +3,8 @@ import taichi as ti
 from model.camera import Camera
 
 
-ROTATION = 3.14
+ROTATION = ti.math.pi
+ANGLE = ti.math.pi * 2 / 3
 
 
 class App:
@@ -15,7 +16,7 @@ class App:
 
     def __init__(self, name: str, size: tuple[int, int]):
         self.window = ti.GUI(name, size, fast_gui=True)
-        self.camera = Camera(size)
+        self.camera = Camera(size, ANGLE)
 
         self.__view = False
         self.__cursor = self.window.get_cursor_pos()

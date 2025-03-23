@@ -4,6 +4,7 @@ from taichi.math import vec3
 
 from .transform import Transform
 
+
 COLOR: Vector = Vector((1.0, 1.0, 1.0), f32)
 
 
@@ -13,10 +14,10 @@ class Camera:
     pixels: ti.MatrixField
     focal: float
 
-    def __init__(self, size: tuple[int, int]):
+    def __init__(self, size: tuple[int, int], angle: float):
         self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
-        self.focal = 100.0
+        self.focal = size[1] / ti.tan(angle / 2)
 
     @ti.kernel
     def render(self):
