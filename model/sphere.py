@@ -19,6 +19,7 @@ class Sphere:
     @ti.func
     def intersects(self, ray: Ray) -> bool:  # type: ignore
         line = ray.direction
-        tmp = self.origin - ray.origin
-        dist = ti.math.cross(line, tmp).norm() / line.norm()
-        return dist < self.radius
+        to_center = self.origin - ray.origin
+        dist = ti.math.cross(line, to_center).norm() / line.norm()
+        dot = ti.math.dot(line, to_center)
+        return dist < self.radius and dot >= 0
