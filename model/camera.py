@@ -37,7 +37,9 @@ class Camera:
             coef = objects[i].intersects(ray)
             if coef > 0:
                 hit = ray.origin + ray.direction * coef
-                color = self.sky(objects[i].normal(hit))
+                normal = objects[i].normal(hit)
+                reflection = ti.math.reflect(ray.direction, normal)
+                color = self.sky(reflection)
         return color
 
     @ti.func
