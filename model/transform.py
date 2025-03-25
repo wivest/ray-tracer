@@ -36,3 +36,8 @@ class Transform:
         mat = self.basis[None]
         x_axis = Vector((mat[0, 0], mat[1, 0], mat[2, 0]), f32)
         self.origin[None] += x_axis * by
+
+    def move_z(self, by: float):
+        mat = self.basis[None]
+        z_axis = Vector((mat[0, 2], mat[1, 2], mat[2, 2]), f32)
+        self.origin[None] += z_axis * by
