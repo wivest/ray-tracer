@@ -1,4 +1,5 @@
 import taichi as ti
+from taichi import StructField
 
 from model.camera import Camera
 
@@ -10,13 +11,15 @@ ANGLE = ti.math.pi * 2 / 3
 class App:
     window: ti.GUI
     camera: Camera
+    objects: StructField
 
     __view: bool
     __cursor: tuple[float, float]
 
-    def __init__(self, name: str, size: tuple[int, int], objects):
+    def __init__(self, name: str, size: tuple[int, int], objects: StructField):
         self.window = ti.GUI(name, size, fast_gui=True)
-        self.camera = Camera(size, ANGLE, objects)
+        self.camera = Camera(size, ANGLE)
+        self.objects = objects
 
         self.__view = False
         self.__cursor = self.window.get_cursor_pos()
@@ -29,7 +32,7 @@ class App:
                 self.camera.transform.rotate_y(delta[0] * ROTATION * 2)
                 self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
 
-            self.camera.render()
+            self.camera.render(self.objects)
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
