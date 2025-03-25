@@ -38,14 +38,17 @@ class App:
 
     def __handle_events(self):
         for event in self.window.get_events():
-            if event.key != ti.GUI.LMB:
-                return
+            if event.key == ti.GUI.LMB:
+                if event.type == ti.GUI.RELEASE:
+                    self.__view = False
+                else:
+                    self.__view = True
+                    self.__get_cursor_delta()
 
-            if event.type == ti.GUI.RELEASE:
-                self.__view = False
-            else:
-                self.__view = True
-                self.__get_cursor_delta()
+            elif event.key == "a":
+                self.camera.transform.move_x(-1)
+            elif event.key == "d":
+                self.camera.transform.move_x(1)
 
     def __get_cursor_delta(self, update=True) -> tuple[float, float]:
         actual = self.window.get_cursor_pos()
