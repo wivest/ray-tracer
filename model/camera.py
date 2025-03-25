@@ -34,8 +34,10 @@ class Camera:
     def cast_ray(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
         color = self.sky(ray.direction)
         for i in range(objects.shape[0]):
-            if objects[i].intersects(ray):
-                color = objects[i].color
+            coef = objects[i].intersects(ray)
+            if coef > 0:
+                hit = ray.origin + ray.direction * coef
+                color = self.sky(objects[i].normal(hit))
         return color
 
     @ti.func

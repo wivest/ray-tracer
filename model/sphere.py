@@ -17,14 +17,19 @@ class Sphere:
         self.color = color
 
     @ti.func
-    def intersects(self, ray: Ray) -> bool:  # type: ignore
+    def intersects(self, ray: Ray) -> f32:  # type: ignore
         line = ray.direction
         diff = ray.origin - self.origin
 
-        solution = False
+        solution = -1
         dot = ti.math.dot(line, diff)
         determinant = dot * dot - diff.norm_sqr() + self.radius * self.radius
         if determinant >= 0:
             coef = -dot + ti.math.sqrt(determinant)
-            solution = coef > 0
+            if coef >= 0:
+                solution = coef
         return solution
+
+    @ti.func
+    def normal(self, point: vec3) -> vec3:  # type: ignore
+        return (point - self.origin).normalized()
