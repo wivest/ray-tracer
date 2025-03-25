@@ -21,6 +21,10 @@ class Sphere:
         line = ray.direction
         diff = ray.origin - self.origin
 
+        solution = False
         dot = ti.math.dot(line, diff)
         determinant = dot * dot - diff.norm_sqr() + self.radius * self.radius
-        return determinant >= 0
+        if determinant >= 0:
+            coef = -dot + ti.math.sqrt(determinant)
+            solution = coef > 0
+        return solution
