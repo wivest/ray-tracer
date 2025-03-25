@@ -25,7 +25,7 @@ class Sphere:
         dot = ti.math.dot(line, diff)
         determinant = dot * dot - diff.norm_sqr() + self.radius * self.radius
         if determinant >= 0:
-            coef = -dot + ti.math.sqrt(determinant)
+            coef = -dot - ti.math.sqrt(determinant)
             if coef >= 0:
                 solution = coef
         return solution
