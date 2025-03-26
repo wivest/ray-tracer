@@ -33,9 +33,11 @@ class Camera:
     @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
         color = self.sky(ray.direction)
+        nearest = ti.math.inf
         for i in range(objects.shape[0]):
             coef = objects[i].intersects(ray)
-            if coef > 0:
+            if coef > 0 and coef < nearest:
+                nearest = coef
                 hit = ray.origin + ray.direction * coef
                 normal = objects[i].normal(hit)
                 reflection = ti.math.reflect(ray.direction, normal)
