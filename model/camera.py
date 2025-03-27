@@ -28,10 +28,10 @@ class Camera:
             pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
-            self.pixels[x, y] = self.cast_ray(ray, objects)
+            self.pixels[x, y] = self.cast_ray(ray, objects, 1)
 
     @ti.func
-    def cast_ray(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
+    def cast_ray(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
         color = self.sky(ray.direction)
         nearest = ti.math.inf
         for i in range(objects.shape[0]):
