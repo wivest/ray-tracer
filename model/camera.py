@@ -28,20 +28,14 @@ class Camera:
             pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
-            self.pixels[x, y] = self.get_color(ray, objects, 1)
+            self.pixels[x, y] = self.get_color(ray, objects, 3)
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        color = self.sky(ray.direction)
-        nearest = ti.math.inf
-        for i in range(objects.shape[0]):
-            coef = objects[i].intersects(ray)
-            if coef > 0 and coef < nearest:
-                nearest = coef
-                hit = ray.origin + ray.direction * coef
-                normal = objects[i].normal(hit)
-                reflection = ti.math.reflect(ray.direction, normal)
-                color = self.sky(reflection)
+        reflected, color = self.cast_ray(ray, objects)
+        while reflections > 0:
+            reflected, color = self.cast_ray(reflected, objects)
+            reflections -= 1
         return color
 
     @ti.func
