@@ -7,6 +7,7 @@ from .transform import Transform
 
 
 COLOR = Vector((1.0, 1.0, 1.0), f32)
+BLEND = 0.25
 
 
 @ti.data_oriented
@@ -32,11 +33,12 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        reflected, color = self.cast_ray(ray, objects)
+        reflected, blended = self.cast_ray(ray, objects)
         while reflections > 0:
             reflected, color = self.cast_ray(reflected, objects)
+            blended = blended * (1 - BLEND) + color * BLEND
             reflections -= 1
-        return color
+        return blended
 
     @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> (Ray, Vector):  # type: ignore
