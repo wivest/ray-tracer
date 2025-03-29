@@ -2,7 +2,7 @@ import taichi as ti
 from taichi import f32, Vector
 from taichi.math import vec3
 
-from .ray import Ray
+from .ray import Ray, HitInfo
 from .transform import Transform
 
 
@@ -33,31 +33,35 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        reflected, blended = self.cast_ray(ray, objects)
-        while reflections > 0:
-            reflected, color = self.cast_ray(reflected, objects)
-            blended = blended * (1 - BLEND) + color * BLEND
+        hit_info = self.cast_ray(ray, objects)
+        blended = hit_info.color
+
+        while reflections > 0 and hit_info.hit:
+            hit_info = self.cast_ray(hit_info.reflected, objects)
+            blended = blended * (1 - BLEND) + hit_info.color * BLEND
             reflections -= 1
         return blended
 
     @ti.func
-    def cast_ray(self, ray: Ray, objects: ti.template()) -> (Ray, Vector):  # type: ignore
+    def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
         color = self.sky(ray.direction)
         ray_origin = ray.origin
         ray_dir = ray.direction
+        hit = False
 
         nearest = ti.math.inf
         for i in range(objects.shape[0]):
             coef = objects[i].intersects(ray)
             if coef > 0 and coef < nearest:
                 nearest = coef
+                hit = True
 
                 color = objects[i].color
                 ray_origin = ray.origin + ray.direction * coef
                 normal = objects[i].normal(ray_origin)
                 ray_dir = ti.math.reflect(ray.direction, normal)
 
-        return (Ray(ray_origin, ray_dir), color)
+        return HitInfo(Ray(ray_origin, ray_dir), color, hit)
 
     @ti.func
     def sky(self, direction: vec3) -> Vector:  # type: ignore
