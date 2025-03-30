@@ -2,7 +2,8 @@ import taichi as ti
 from taichi import f32, Vector
 from taichi.math import vec3
 
-from .ray import Ray, HitInfo
+from .ray import Ray
+from .hit_info import HitInfo
 from .transform import Transform
 
 

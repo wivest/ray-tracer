@@ -10,15 +10,3 @@ class Ray:
     def __init__(self, origin: vec3, direction: vec3):  # type: ignore
         self.origin = origin
         self.direction = direction
-
-
-@ti.dataclass
-class HitInfo:
-    reflected: Ray  # type: ignore
-    color: vec3  # type: ignore
-    hit: bool
-
-    def __init__(self, reflected: Ray, color: vec3, hit: bool):  # type: ignore
-        self.reflected = reflected
-        self.color = color
-        self.hit = hit
