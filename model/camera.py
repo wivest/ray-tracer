@@ -7,8 +7,8 @@ from .hit_info import HitInfo
 from .transform import Transform
 
 
-COLOR = Vector((1.0, 1.0, 1.0), f32)
-BLEND = 0.25
+COLOR = Vector((1, 1, 1), f32)
+SPECULAR = 0.75
 
 
 @ti.data_oriented
@@ -30,18 +30,22 @@ class Camera:
             pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
-            self.pixels[x, y] = self.get_color(ray, objects, 3)
+            self.pixels[x, y] = self.get_color(ray, objects, 5)
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
         hit_info = self.cast_ray(ray, objects)
-        blended = hit_info.color
+        material = hit_info.color * (1 - SPECULAR) / SPECULAR
+        refl = hit_info.color
+        norm_factor = SPECULAR
 
         while reflections > 0 and hit_info.hit:
             hit_info = self.cast_ray(hit_info.reflected, objects)
-            blended = blended * (1 - BLEND) + hit_info.color * BLEND
+            material = (material + refl * (1 - SPECULAR)) / SPECULAR
+            refl = hit_info.color
+            norm_factor *= SPECULAR
             reflections -= 1
-        return blended
+        return (material + refl) * norm_factor
 
     @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
