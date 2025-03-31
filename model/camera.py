@@ -34,6 +34,7 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
+        LIGHT = vec3(0, 50, 0)
         hit_info = self.cast_ray(ray, objects)
         material = hit_info.color * (1 - SPECULAR) / SPECULAR
         refl = hit_info.color
@@ -45,6 +46,8 @@ class Camera:
             refl = hit_info.color
             norm_factor *= SPECULAR
             reflections -= 1
+        if self.is_shadow(hit_info.reflected.origin, LIGHT, objects):
+            norm_factor = 0
         return (material + refl) * norm_factor
 
     @ti.func
@@ -71,3 +74,8 @@ class Camera:
     @ti.func
     def sky(self, direction: vec3) -> Vector:  # type: ignore
         return COLOR * direction
+
+    @ti.func
+    def is_shadow(self, point: vec3, light: vec3, objects: ti.template()) -> bool:  # type: ignore
+        ray = Ray(point, (light - point).normalized())
+        return self.cast_ray(ray, objects).hit
