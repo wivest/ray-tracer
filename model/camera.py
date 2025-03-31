@@ -51,6 +51,10 @@ class Camera:
         return (material + refl) * norm_factor
 
     @ti.func
+    def get_diffuse(self, ray: Ray, objects: ti.template(), samples: int, reflections: int) -> Vector:  # type: ignore
+        return vec3(0, 0, 0)
+
+    @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
         color = self.sky(ray.direction)
         ray_origin = ray.origin
