@@ -8,10 +8,11 @@ from model.sphere import Sphere
 ti.init()
 
 SIZE = (1080, 720)
-SPHERES = Sphere.field(shape=3)
-SPHERES[0] = Sphere(10, Vector((50, 0, 0)), Vector((1.0, 0.0, 0.0)))
-SPHERES[1] = Sphere(10, Vector((25, 0, 0)), Vector((0.0, 1.0, 0.0)))
-SPHERES[2] = Sphere(10, Vector((25, 0, 25)), Vector((0.0, 0.0, 1.0)))
+SPHERES = Sphere.field(shape=4)
+SPHERES[0] = Sphere(10, Vector((50, 0, 0)), Vector((1.0, 0.25, 0.25)))
+SPHERES[1] = Sphere(10, Vector((25, 0, 0)), Vector((0.25, 1.0, 0.25)))
+SPHERES[2] = Sphere(10, Vector((25, 0, 25)), Vector((0.25, 0.25, 1.0)))
+SPHERES[3] = Sphere(10, Vector((50, 0, 25)), Vector((1.0, 1.0, 1.0)))
 
 
 app = App("Ray Tracing", SIZE, SPHERES)
