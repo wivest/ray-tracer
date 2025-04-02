@@ -36,19 +36,13 @@ class Camera:
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
         LIGHT = vec3(0, 50, 0)
         hit_info = self.cast_ray(ray, objects)
-        material = hit_info.color * (1 - SPECULAR) / SPECULAR
-        refl = hit_info.color
-        norm_factor = SPECULAR
+        color = hit_info.color
 
         while reflections > 0 and hit_info.hit:
             hit_info = self.cast_ray(hit_info.reflected, objects)
-            material = (material + refl * (1 - SPECULAR)) / SPECULAR
-            refl = hit_info.color
-            norm_factor *= SPECULAR
+            color = color * hit_info.color
             reflections -= 1
-        if self.is_shadow(hit_info.reflected.origin, LIGHT, objects):
-            norm_factor = 0
-        return (material + refl) * norm_factor
+        return color
 
     @ti.func
     def get_diffuse(self, ray: Ray, objects: ti.template(), samples: int, reflections: int) -> Vector:  # type: ignore
