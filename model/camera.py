@@ -49,6 +49,16 @@ class Camera:
         return vec3(0, 0, 0)
 
     @ti.func
+    def random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
+        x = ti.randn()
+        y = ti.randn()
+        z = ti.randn()
+        dir = vec3(x, y, z)
+        if ti.math.dot(dir, normal) < 0:
+            dir *= -1
+        return dir
+
+    @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
         color = self.sky(ray.direction)
         ray_origin = ray.origin
