@@ -1,5 +1,5 @@
 import taichi as ti
-from taichi import f32, Vector
+from taichi import i32, f32, Vector
 from taichi.math import vec3
 
 
@@ -18,17 +18,34 @@ class Camera:
     pixels: ti.MatrixField
     fov: float
     sky: Sky  # type: ignore
+    samples: int
 
-    def __init__(self, size: tuple[int, int], angle: float):
+    sampled: ti.MatrixField
+    ready: ti.Field
+
+    def __init__(self, size: tuple[int, int], angle: float, samples: int):
         self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
         self.fov = size[1] / ti.tan(angle / 2)
         self.sky = Sky()
+        self.samples = samples
+
+        self.sampled = Vector.field(3, f32, size)
+        self.sampled.fill(0.0)
+        self.ready = ti.field(int, ())
+        self.ready[None] = 0
+
+    @ti.kernel
+    def reset_samples(self):
+        self.sampled.fill(0.0)
+        self.ready[None] = 0
 
     @ti.kernel
     def render(self, objects: ti.template()):  # type: ignore
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
+        self.ready[None] += 1
+
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
             direction = self.transform.basis[None] @ pixel
@@ -36,7 +53,8 @@ class Camera:
 
             diffuse = self.get_diffuse(ray, objects, 16, 5)
             specular = self.get_specular(ray, objects, 5)
-            self.pixels[x, y] = diffuse * (1 - SPECULAR) + specular * SPECULAR
+            self.sampled[x, y] += diffuse * (1 - SPECULAR) + specular * SPECULAR
+            self.pixels[x, y] = self.sampled[x, y] / self.ready[None]
 
     @ti.func
     def get_specular(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
