@@ -30,23 +30,35 @@ class Camera:
             pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
-            self.pixels[x, y] = self.get_color(ray, objects, 5)
+            self.pixels[x, y] = self.get_diffuse(ray, objects, 16, 5)
 
     @ti.func
-    def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        LIGHT = vec3(0, 50, 0)
-        hit_info = self.cast_ray(ray, objects)
+    def get_specular(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
+        hit_info = self.cast_specular(ray, objects)
         color = hit_info.color
 
         while reflections > 0 and hit_info.hit:
-            hit_info = self.cast_ray(hit_info.reflected, objects)
+            hit_info = self.cast_specular(hit_info.reflected, objects)
             color = color * hit_info.color
             reflections -= 1
         return color
 
     @ti.func
     def get_diffuse(self, ray: Ray, objects: ti.template(), samples: int, reflections: int) -> Vector:  # type: ignore
-        return vec3(0, 0, 0)
+        accumulated = vec3(0)
+
+        for _ in range(samples):
+            refl_iter = reflections
+            hit_info = self.cast_diffuse(ray, objects)
+            color = hit_info.color
+
+            while refl_iter > 0 and hit_info.hit:
+                hit_info = self.cast_diffuse(hit_info.reflected, objects)
+                color = color * hit_info.color
+                refl_iter -= 1
+            accumulated += color
+
+        return accumulated / samples
 
     @ti.func
     def random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
@@ -59,7 +71,7 @@ class Camera:
         return dir.normalized()
 
     @ti.func
-    def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
+    def cast_specular(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
         color = self.sky(ray.direction)
         ray_origin = ray.origin
         ray_dir = ray.direction
@@ -75,7 +87,27 @@ class Camera:
                 color = objects[i].color
                 ray_origin = ray.origin + ray.direction * coef
                 normal = objects[i].normal(ray_origin)
-                # ray_dir = ti.math.reflect(ray.direction, normal)
+                ray_dir = ti.math.reflect(ray.direction, normal)
+
+        return HitInfo(Ray(ray_origin, ray_dir), color, hit)
+
+    @ti.func
+    def cast_diffuse(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
+        color = self.sky(ray.direction)
+        ray_origin = ray.origin
+        ray_dir = ray.direction
+        hit = False
+
+        nearest = ti.math.inf
+        for i in range(objects.shape[0]):
+            coef = objects[i].intersects(ray)
+            if coef > 0 and coef < nearest:
+                nearest = coef
+                hit = True
+
+                color = objects[i].color
+                ray_origin = ray.origin + ray.direction * coef
+                normal = objects[i].normal(ray_origin)
                 ray_dir = self.random_hemisphere(normal)
 
         return HitInfo(Ray(ray_origin, ray_dir), color, hit)
@@ -87,4 +119,4 @@ class Camera:
     @ti.func
     def is_shadow(self, point: vec3, light: vec3, objects: ti.template()) -> bool:  # type: ignore
         ray = Ray(point, (light - point).normalized())
-        return self.cast_ray(ray, objects).hit
+        return self.cast_specular(ray, objects).hit
