@@ -1,10 +1,8 @@
 import taichi as ti
 from taichi.math import vec3
 
+from .sky import Sky
 from .hit_info import HitInfo
-
-
-NO_COLOR = vec3(1, 0, 1)
 
 
 @ti.dataclass
@@ -17,8 +15,8 @@ class Ray:
         self.direction = direction
 
     @ti.func
-    def cast(self, objects: ti.template()) -> HitInfo:  # type: ignore
-        color = NO_COLOR
+    def cast(self, objects: ti.template(), sky: Sky) -> HitInfo:  # type: ignore
+        color = sky.get(self.direction)
         point = self.origin
         normal = self.direction
         hit = False

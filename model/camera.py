@@ -3,9 +3,9 @@ from taichi import f32, Vector
 from taichi.math import vec3
 
 
-from .ray import Ray
-from .hit_info import HitInfo
 from .transform import Transform
+from .sky import Sky
+from .ray import Ray
 
 
 COLOR = Vector((1, 1, 1), f32)
@@ -16,36 +16,39 @@ SPECULAR = 0.5
 class Camera:
     transform: Transform
     pixels: ti.MatrixField
-    focal: float
+    fov: float
+    sky: Sky  # type: ignore
 
     def __init__(self, size: tuple[int, int], angle: float):
         self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
-        self.focal = size[1] / ti.tan(angle / 2)
+        self.fov = size[1] / ti.tan(angle / 2)
+        self.sky = Sky()
 
     @ti.kernel
     def render(self, objects: ti.template()):  # type: ignore
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
         for x, y in self.pixels:
-            pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
+            pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
+
             diffuse = self.get_diffuse(ray, objects, 16, 5)
             specular = self.get_specular(ray, objects, 5)
             self.pixels[x, y] = diffuse * (1 - SPECULAR) + specular * SPECULAR
 
     @ti.func
     def get_specular(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        hit_info = ray.cast(objects)
+        hit_info = ray.cast(objects, self.sky)
         ray_dir = ti.math.reflect(ray.direction, hit_info.normal)
+        color = hit_info.color
         bounced = Ray(hit_info.point, ray_dir)
-        color = self.check_miss(hit_info, ray.direction)
 
         while reflections > 0 and hit_info.hit:
-            hit_info = bounced.cast(objects)  # type: ignore
+            hit_info = bounced.cast(objects, self.sky)  # type: ignore
             ray_dir = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
-            color = color * self.check_miss(hit_info, bounced.direction)  # type: ignore
+            color = color * hit_info.color
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1
 
@@ -58,15 +61,15 @@ class Camera:
         for _ in range(samples):
             refl_iter = reflections
 
-            hit_info = ray.cast(objects)
+            hit_info = ray.cast(objects, self.sky)
             ray_dir = self.random_hemisphere(hit_info.normal)
             bounced = Ray(hit_info.point, ray_dir)
-            color = self.check_miss(hit_info, ray.direction)
+            color = hit_info.color
 
             while refl_iter > 0 and hit_info.hit:
-                hit_info = bounced.cast(objects)  # type: ignore
+                hit_info = bounced.cast(objects, self.sky)  # type: ignore
                 ray_dir = self.random_hemisphere(hit_info.normal)
-                color = color * self.check_miss(hit_info, bounced.direction)  # type: ignore
+                color = color * hit_info.color
                 bounced = Ray(hit_info.point, ray_dir)
 
                 refl_iter -= 1
@@ -84,17 +87,6 @@ class Camera:
         if ti.math.dot(dir, normal) < 0:
             dir *= -1
         return dir.normalized()
-
-    @ti.func
-    def check_miss(self, hit_info: HitInfo, direction: vec3) -> Vector:  # type: ignore
-        color = hit_info.color
-        if not hit_info.hit:
-            color = self.sky(direction)
-        return color
-
-    @ti.func
-    def sky(self, direction: vec3) -> Vector:  # type: ignore
-        return COLOR * direction
 
     @ti.func
     def is_shadow(self, point: vec3, light: vec3, objects: ti.template()) -> bool:  # type: ignore
