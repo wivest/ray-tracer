@@ -8,7 +8,7 @@ from .transform import Transform
 
 
 COLOR = Vector((1, 1, 1), f32)
-SPECULAR = 0.75
+SPECULAR = 0.5
 
 
 @ti.data_oriented
@@ -30,7 +30,9 @@ class Camera:
             pixel = Vector((x - center_x, y - center_y, -self.focal), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
-            self.pixels[x, y] = self.get_diffuse(ray, objects, 16, 5)
+            diffuse = self.get_diffuse(ray, objects, 16, 5)
+            specular = self.get_specular(ray, objects, 5)
+            self.pixels[x, y] = diffuse * (1 - SPECULAR) + specular * SPECULAR
 
     @ti.func
     def get_specular(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
