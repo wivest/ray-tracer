@@ -5,7 +5,7 @@ from app.app import App
 from model.sphere import Sphere
 
 
-ti.init()
+ti.init(arch=ti.gpu)
 
 SIZE = (1080, 720)
 SPHERES = Sphere.field(shape=4)

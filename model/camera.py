@@ -56,7 +56,7 @@ class Camera:
         dir = vec3(x, y, z)
         if ti.math.dot(dir, normal) < 0:
             dir *= -1
-        return dir
+        return dir.normalized()
 
     @ti.func
     def cast_ray(self, ray: Ray, objects: ti.template()) -> HitInfo:  # type: ignore
@@ -75,7 +75,8 @@ class Camera:
                 color = objects[i].color
                 ray_origin = ray.origin + ray.direction * coef
                 normal = objects[i].normal(ray_origin)
-                ray_dir = ti.math.reflect(ray.direction, normal)
+                # ray_dir = ti.math.reflect(ray.direction, normal)
+                ray_dir = self.random_hemisphere(normal)
 
         return HitInfo(Ray(ray_origin, ray_dir), color, hit)
 
