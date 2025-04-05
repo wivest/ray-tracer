@@ -62,6 +62,13 @@ class App:
                 self.camera.transform.move_z(1)
                 self.camera.reset_samples()
 
+            elif event.key == "e":
+                self.camera.transform.move_y(1)
+                self.camera.reset_samples()
+            elif event.key == "x":
+                self.camera.transform.move_y(-1)
+                self.camera.reset_samples()
+
     def __get_cursor_delta(self, update=True) -> tuple[float, float]:
         actual = self.window.get_cursor_pos()
         delta = (actual[0] - self.__cursor[0], actual[1] - self.__cursor[1])
