@@ -49,24 +49,42 @@ class App:
                     self.__get_cursor_delta()
 
             elif event.key == "a":
-                self.camera.transform.move_x(-1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_x(-1)
+                else:
+                    self.camera.transform.move_x(-1)
                 self.camera.reset_samples()
             elif event.key == "d":
-                self.camera.transform.move_x(1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_x(1)
+                else:
+                    self.camera.transform.move_x(1)
                 self.camera.reset_samples()
 
             elif event.key == "w":
-                self.camera.transform.move_z(-1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_z(-1)
+                else:
+                    self.camera.transform.move_z(-1)
                 self.camera.reset_samples()
             elif event.key == "s":
-                self.camera.transform.move_z(1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_z(1)
+                else:
+                    self.camera.transform.move_z(1)
                 self.camera.reset_samples()
 
             elif event.key == "e":
-                self.camera.transform.move_y(1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_y(1)
+                else:
+                    self.camera.transform.move_y(1)
                 self.camera.reset_samples()
             elif event.key == "x":
-                self.camera.transform.move_y(-1)
+                if ti.GUI.SHIFT in event.modifier:  # type: ignore
+                    self.camera.transform.move_global_y(-1)
+                else:
+                    self.camera.transform.move_y(-1)
                 self.camera.reset_samples()
 
     def __get_cursor_delta(self, update=True) -> tuple[float, float]:

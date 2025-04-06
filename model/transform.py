@@ -46,3 +46,18 @@ class Transform:
         mat = self.basis[None]
         z_axis = Vector((mat[0, 2], mat[1, 2], mat[2, 2]), f32)
         self.origin[None] += z_axis * by
+
+    def move_global_x(self, by: float):
+        mat = self.basis[None]
+        x_axis = Vector((1, 0, 0), f32)
+        self.origin[None] += x_axis * by
+
+    def move_global_y(self, by: float):
+        mat = self.basis[None]
+        y_axis = Vector((0, 1, 0), f32)
+        self.origin[None] += y_axis * by
+
+    def move_global_z(self, by: float):
+        mat = self.basis[None]
+        z_axis = Vector((0, 0, 1), f32)
+        self.origin[None] += z_axis * by
