@@ -8,10 +8,6 @@ from .sky import Sky
 from .ray import Ray
 
 
-COLOR = Vector((1, 1, 1), f32)
-SPECULAR = 0.5
-
-
 @ti.data_oriented
 class Camera:
     transform: Transform
@@ -51,22 +47,26 @@ class Camera:
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
+            hit_info = ray.cast(objects, self.sky)  # type: ignore
             diffuse = self.get_diffuse(ray, objects, 16, 5)
             specular = self.get_specular(ray, objects, 5)
-            self._sampled[x, y] += diffuse * (1 - SPECULAR) + specular * SPECULAR
+            self._sampled[x, y] += (
+                diffuse * (1 - hit_info.material.specular)
+                + specular * hit_info.material.specular
+            )
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
     def get_specular(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
         hit_info = ray.cast(objects, self.sky)
         ray_dir = ti.math.reflect(ray.direction, hit_info.normal)
-        color = hit_info.color
+        color = hit_info.material.color
         bounced = Ray(hit_info.point, ray_dir)
 
         while reflections > 0 and hit_info.hit:
             hit_info = bounced.cast(objects, self.sky)  # type: ignore
             ray_dir = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
-            color = color * hit_info.color
+            color = color * hit_info.material.color
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1
 
@@ -82,12 +82,12 @@ class Camera:
             hit_info = ray.cast(objects, self.sky)
             ray_dir = self.random_hemisphere(hit_info.normal)
             bounced = Ray(hit_info.point, ray_dir)
-            color = hit_info.color
+            color = hit_info.material.color
 
             while refl_iter > 0 and hit_info.hit:
                 hit_info = bounced.cast(objects, self.sky)  # type: ignore
                 ray_dir = self.random_hemisphere(hit_info.normal)
-                color = color * hit_info.color
+                color = color * hit_info.material.color
                 bounced = Ray(hit_info.point, ray_dir)
 
                 refl_iter -= 1
