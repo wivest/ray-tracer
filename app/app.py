@@ -50,13 +50,13 @@ class App:
 
             elif event.key == "a":
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_x(-1)
+                    self.camera.transform.move_flat_x(-1)
                 else:
                     self.camera.transform.move_x(-1)
                 self.camera.reset_samples()
             elif event.key == "d":
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_x(1)
+                    self.camera.transform.move_flat_x(1)
                 else:
                     self.camera.transform.move_x(1)
                 self.camera.reset_samples()
