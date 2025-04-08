@@ -69,6 +69,9 @@ class Camera:
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1
 
+        if hit_info.hit:
+            color = vec3(0, 0, 0)
+
         return color
 
     @ti.func
