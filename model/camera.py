@@ -1,5 +1,5 @@
 import taichi as ti
-from taichi import i32, f32, Vector
+from taichi import i32, f32, Vector, Field
 from taichi.math import vec3
 
 
@@ -10,25 +10,17 @@ from .ray import Ray
 
 @ti.data_oriented
 class Camera:
-    transform: Transform
-    pixels: ti.MatrixField
-    fov: float
-    sky: Sky  # type: ignore
-    samples: int
-
-    _sampled: ti.MatrixField
-    _ready: ti.Field
 
     def __init__(self, size: tuple[int, int], angle: float, samples: int):
         self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
-        self.fov = size[1] / ti.tan(angle / 2)
+        self.fov: float = size[1] / ti.tan(angle / 2)
         self.sky = Sky()
         self.samples = samples
 
         self._sampled = Vector.field(3, f32, size)
         self._sampled.fill(0.0)
-        self._ready = ti.field(int, ())
+        self._ready: Field = ti.field(int, ())
         self._ready[None] = 0
 
     @ti.kernel

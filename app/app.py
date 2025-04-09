@@ -9,12 +9,6 @@ ANGLE = ti.math.pi * 2 / 3
 
 
 class App:
-    window: ti.GUI
-    camera: Camera
-    objects: StructField
-
-    __rotating: bool
-    __cursor: tuple[float, float]
 
     def __init__(self, name: str, size: tuple[int, int], objects: StructField):
         self.window = ti.GUI(name, size, fast_gui=True)
