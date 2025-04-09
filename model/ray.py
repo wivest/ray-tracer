@@ -11,10 +11,6 @@ class Ray:
     origin: vec3  # type: ignore
     direction: vec3  # type: ignore
 
-    def __init__(self, origin: vec3, direction: vec3):  # type: ignore
-        self.origin = origin
-        self.direction = direction
-
     @ti.func
     def cast(self, objects: ti.template(), sky: Sky) -> HitInfo:  # type: ignore
         color = sky.get(self.direction)

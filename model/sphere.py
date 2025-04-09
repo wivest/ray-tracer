@@ -12,11 +12,6 @@ class Sphere:
     origin: vec3  # type: ignore
     material: Material  # type: ignore
 
-    def __init__(self, r: f32, origin: vec3, material: Material):  # type: ignore
-        self.radius = r
-        self.origin = origin
-        self.material = material
-
     @ti.func
     def intersects(self, ray: Ray) -> f32:  # type: ignore
         line = ray.direction
