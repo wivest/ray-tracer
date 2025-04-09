@@ -1,11 +1,8 @@
 import taichi as ti
 from taichi import f32, Matrix, Vector
-from taichi.math import vec3
 
 
 class Transform:
-    origin: ti.MatrixField
-    basis: ti.MatrixField
 
     def __init__(self):
         ORIG = Vector((0, 0, 0), f32)
