@@ -4,8 +4,19 @@ from .action import Action
 
 LEFT = "left"
 RIGHT = "right"
+UP = "up"
+DOWN = "down"
+FORWARD = "forward"
+BACKWARD = "backward"
 
-ACTIONS: dict[str, Action] = {LEFT: Action("a"), RIGHT: Action("d")}
+ACTIONS: dict[str, Action] = {
+    LEFT: Action("a"),
+    RIGHT: Action("d"),
+    UP: Action("e"),
+    DOWN: Action("x"),
+    FORWARD: Action("w"),
+    BACKWARD: Action("s"),
+}
 
 
 class Input:

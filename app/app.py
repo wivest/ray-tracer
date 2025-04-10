@@ -37,9 +37,20 @@ class App:
 
     def __handle_events(self):
         self.input.read_events()
+
         x_axis = self.input.get_axis(LEFT, RIGHT)
         if x_axis != 0.0:
             self.camera.transform.move_x(x_axis)
+            self.camera.reset_samples()
+
+        y_axis = self.input.get_axis(DOWN, UP)
+        if y_axis != 0.0:
+            self.camera.transform.move_y(y_axis)
+            self.camera.reset_samples()
+
+        z_axis = self.input.get_axis(FORWARD, BACKWARD)
+        if z_axis != 0.0:
+            self.camera.transform.move_z(z_axis)
             self.camera.reset_samples()
 
         for event in self.window.get_events():
@@ -54,15 +65,13 @@ class App:
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
                     self.camera.transform.move_flat_x(-1)
                 else:
-                    pass
-                # self.camera.transform.move_x(-1)
+                    self.camera.transform.move_x(-1)
                 self.camera.reset_samples()
             elif event.key == "d":
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
                     self.camera.transform.move_flat_x(1)
                 else:
-                    pass
-                # self.camera.transform.move_x(1)
+                    self.camera.transform.move_x(1)
                 self.camera.reset_samples()
 
             elif event.key == "w":
