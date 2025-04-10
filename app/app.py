@@ -1,6 +1,7 @@
 import taichi as ti
 from taichi import StructField
 
+from .input import *
 from model.camera import Camera
 
 
@@ -16,6 +17,7 @@ class App:
         self.camera = Camera(size, ANGLE, 64)
         self.objects = objects
 
+        self.input = Input(self.window)
         self.__rotating = False
         self.__cursor = self.window.get_cursor_pos()
 
@@ -34,6 +36,12 @@ class App:
             self.window.show()
 
     def __handle_events(self):
+        self.input.read_events()
+        x_axis = self.input.get_axis(LEFT, RIGHT)
+        if x_axis != 0.0:
+            self.camera.transform.move_x(x_axis)
+            self.camera.reset_samples()
+
         for event in self.window.get_events():
             if event.key == ti.GUI.LMB:
                 if event.type == ti.GUI.RELEASE:
@@ -46,13 +54,15 @@ class App:
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
                     self.camera.transform.move_flat_x(-1)
                 else:
-                    self.camera.transform.move_x(-1)
+                    pass
+                # self.camera.transform.move_x(-1)
                 self.camera.reset_samples()
             elif event.key == "d":
                 if ti.GUI.SHIFT in event.modifier:  # type: ignore
                     self.camera.transform.move_flat_x(1)
                 else:
-                    self.camera.transform.move_x(1)
+                    pass
+                # self.camera.transform.move_x(1)
                 self.camera.reset_samples()
 
             elif event.key == "w":
