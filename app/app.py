@@ -53,6 +53,21 @@ class App:
             self.camera.transform.move_z(z_axis)
             self.camera.reset_samples()
 
+        x_axis_flat = self.input.get_axis(LEFT_FLAT, RIGHT_FLAT)
+        if x_axis_flat != 0.0:
+            self.camera.transform.move_flat_x(x_axis_flat)
+            self.camera.reset_samples()
+
+        y_axis_global = self.input.get_axis(DOWN_GLOBAL, UP_GLOBAL)
+        if y_axis_global != 0.0:
+            self.camera.transform.move_global_y(y_axis_global)
+            self.camera.reset_samples()
+
+        z_axis_flat = self.input.get_axis(FORWARD_FLAT, BACKWARD_FLAT)
+        if z_axis_flat != 0.0:
+            self.camera.transform.move_flat_z(z_axis_flat)
+            self.camera.reset_samples()
+
         for event in self.window.get_events():
             if event.key == ti.GUI.LMB:
                 if event.type == ti.GUI.RELEASE:
@@ -60,45 +75,6 @@ class App:
                 else:
                     self.__rotating = True
                     self.__get_cursor_delta()
-
-            elif event.key == "a":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_flat_x(-1)
-                else:
-                    self.camera.transform.move_x(-1)
-                self.camera.reset_samples()
-            elif event.key == "d":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_flat_x(1)
-                else:
-                    self.camera.transform.move_x(1)
-                self.camera.reset_samples()
-
-            elif event.key == "w":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_z(-1)
-                else:
-                    self.camera.transform.move_z(-1)
-                self.camera.reset_samples()
-            elif event.key == "s":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_z(1)
-                else:
-                    self.camera.transform.move_z(1)
-                self.camera.reset_samples()
-
-            elif event.key == "e":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_y(1)
-                else:
-                    self.camera.transform.move_y(1)
-                self.camera.reset_samples()
-            elif event.key == "x":
-                if ti.GUI.SHIFT in event.modifier:  # type: ignore
-                    self.camera.transform.move_global_y(-1)
-                else:
-                    self.camera.transform.move_y(-1)
-                self.camera.reset_samples()
 
     def __get_cursor_delta(self, update=True) -> tuple[float, float]:
         actual = self.window.get_cursor_pos()

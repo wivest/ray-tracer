@@ -9,6 +9,13 @@ DOWN = "down"
 FORWARD = "forward"
 BACKWARD = "backward"
 
+LEFT_FLAT = "left_flat"
+RIGHT_FLAT = "right_flat"
+UP_GLOBAL = "up_global"
+DOWN_GLOBAL = "down_global"
+FORWARD_FLAT = "forward_flat"
+BACKWARD_FLAT = "backward_flat"
+
 ACTIONS: dict[str, Action] = {
     LEFT: Action("a"),
     RIGHT: Action("d"),
@@ -16,6 +23,12 @@ ACTIONS: dict[str, Action] = {
     DOWN: Action("x"),
     FORWARD: Action("w"),
     BACKWARD: Action("s"),
+    LEFT_FLAT: Action("a", [GUI.SHIFT]),
+    RIGHT_FLAT: Action("d", [GUI.SHIFT]),
+    UP_GLOBAL: Action("e", [GUI.SHIFT]),
+    DOWN_GLOBAL: Action("x", [GUI.SHIFT]),
+    FORWARD_FLAT: Action("w", [GUI.SHIFT]),
+    BACKWARD_FLAT: Action("s", [GUI.SHIFT]),
 }
 
 

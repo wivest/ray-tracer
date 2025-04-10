@@ -53,7 +53,7 @@ class Transform:
         y_axis = Vector((0, 1, 0), f32)
         self.origin[None] += y_axis * by
 
-    def move_global_z(self, by: float):
+    def move_flat_z(self, by: float):
         mat = self.basis[None]
         z_axis = Vector((mat[0, 2], 0, mat[2, 2]), f32).normalized()
         self.origin[None] += z_axis * by
