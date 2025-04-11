@@ -38,31 +38,30 @@ class App:
             self.camera.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
-        if x_axis != 0.0:
-            self.camera.transform.move_x(x_axis)
-            self.camera.reset_samples()
+        self.camera.transform.move_x(x_axis)
 
         y_axis = self.input.get_axis(DOWN, UP)
-        if y_axis != 0.0:
-            self.camera.transform.move_y(y_axis)
-            self.camera.reset_samples()
+        self.camera.transform.move_y(y_axis)
 
         z_axis = self.input.get_axis(FORWARD, BACKWARD)
-        if z_axis != 0.0:
-            self.camera.transform.move_z(z_axis)
-            self.camera.reset_samples()
+        self.camera.transform.move_z(z_axis)
 
         x_axis_flat = self.input.get_axis(LEFT_FLAT, RIGHT_FLAT)
-        if x_axis_flat != 0.0:
-            self.camera.transform.move_flat_x(x_axis_flat)
-            self.camera.reset_samples()
+        self.camera.transform.move_flat_x(x_axis_flat)
 
         y_axis_global = self.input.get_axis(DOWN_GLOBAL, UP_GLOBAL)
-        if y_axis_global != 0.0:
-            self.camera.transform.move_global_y(y_axis_global)
-            self.camera.reset_samples()
+        self.camera.transform.move_global_y(y_axis_global)
 
         z_axis_flat = self.input.get_axis(FORWARD_FLAT, BACKWARD_FLAT)
-        if z_axis_flat != 0.0:
-            self.camera.transform.move_flat_z(z_axis_flat)
+        self.camera.transform.move_flat_z(z_axis_flat)
+
+        if (
+            abs(x_axis)
+            + abs(y_axis)
+            + abs(z_axis)
+            + abs(x_axis_flat)
+            + abs(y_axis_global)
+            + abs(z_axis_flat)
+            > 0
+        ):
             self.camera.reset_samples()
