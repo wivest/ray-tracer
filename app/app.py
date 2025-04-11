@@ -18,17 +18,10 @@ class App:
         self.objects = objects
 
         self.input = Input(self.window)
-        self.__rotating = False
-        self.__cursor = self.window.get_cursor_pos()
 
     def run(self):
         while self.window.running:
             self.__handle_events()
-            if self.__rotating:
-                delta = self.__get_cursor_delta()
-                self.camera.transform.rotate_y(delta[0] * ROTATION * 2)
-                self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
-                self.camera.reset_samples()
 
             if self.camera._ready[None] < self.camera.samples:
                 self.camera.render(self.objects)
@@ -37,6 +30,12 @@ class App:
 
     def __handle_events(self):
         self.input.read_events()
+
+        delta = self.input.get_cursor_delta()
+        if self.input.is_action_pressed(LMB):
+            self.camera.transform.rotate_y(delta[0] * ROTATION * 2)
+            self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
+            self.camera.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
         if x_axis != 0.0:
@@ -67,18 +66,3 @@ class App:
         if z_axis_flat != 0.0:
             self.camera.transform.move_flat_z(z_axis_flat)
             self.camera.reset_samples()
-
-        for event in self.window.get_events():
-            if event.key == ti.GUI.LMB:
-                if event.type == ti.GUI.RELEASE:
-                    self.__rotating = False
-                else:
-                    self.__rotating = True
-                    self.__get_cursor_delta()
-
-    def __get_cursor_delta(self, update=True) -> tuple[float, float]:
-        actual = self.window.get_cursor_pos()
-        delta = (actual[0] - self.__cursor[0], actual[1] - self.__cursor[1])
-        if update:
-            self.__cursor = actual
-        return delta
