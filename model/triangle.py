@@ -14,4 +14,7 @@ class Triangle:
 
     @ti.func
     def intersects(self, ray: Ray) -> f32:  # type: ignore
+        side1 = self.v2 - self.v1
+        side2 = self.v3 - self.v1
+        normal = ti.math.cross(side1, side2)
         return -1.0
