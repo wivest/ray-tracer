@@ -5,6 +5,7 @@ from .input import *
 from model.camera import Camera
 
 
+SENSIVITY = 0.1
 ROTATION = ti.math.pi
 ANGLE = ti.math.pi * 2 / 3
 
@@ -38,22 +39,22 @@ class App:
             self.camera.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
-        self.camera.transform.move_x(x_axis)
+        self.camera.transform.move_x(x_axis * SENSIVITY)
 
         y_axis = self.input.get_axis(DOWN, UP)
-        self.camera.transform.move_y(y_axis)
+        self.camera.transform.move_y(y_axis * SENSIVITY)
 
         z_axis = self.input.get_axis(FORWARD, BACKWARD)
-        self.camera.transform.move_z(z_axis)
+        self.camera.transform.move_z(z_axis * SENSIVITY)
 
         x_axis_flat = self.input.get_axis(LEFT_FLAT, RIGHT_FLAT)
-        self.camera.transform.move_flat_x(x_axis_flat)
+        self.camera.transform.move_flat_x(x_axis_flat * SENSIVITY)
 
         y_axis_global = self.input.get_axis(DOWN_GLOBAL, UP_GLOBAL)
-        self.camera.transform.move_global_y(y_axis_global)
+        self.camera.transform.move_global_y(y_axis_global * SENSIVITY)
 
         z_axis_flat = self.input.get_axis(FORWARD_FLAT, BACKWARD_FLAT)
-        self.camera.transform.move_flat_z(z_axis_flat)
+        self.camera.transform.move_flat_z(z_axis_flat * SENSIVITY)
 
         if (
             abs(x_axis)
