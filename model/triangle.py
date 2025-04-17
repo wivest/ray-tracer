@@ -20,18 +20,26 @@ class Triangle:
 
         edgeAB = self.b - self.a
         edgeAC = self.c - self.a
-        ray_dir = -ray.direction
-        det = self._det(ray_dir, edgeAB, edgeAC)
+        inv_ray_dir = -ray.direction
+        det = self._det(inv_ray_dir, edgeAB, edgeAC)
 
         inv_det = 1.0 / det
         vecAO = ray.origin - self.a
+        front = ti.math.dot(inv_ray_dir, self.normal(vec3(0, 0, 0))) > 0
 
-        t = inv_det * self._det(vecAO, edgeAB, edgeAC)
-        u = inv_det * self._det(ray_dir, vecAO, edgeAC)
-        v = inv_det * self._det(ray_dir, edgeAB, vecAO)
+        sol = inv_det * self._det(vecAO, edgeAB, edgeAC)
+        ab = inv_det * self._det(inv_ray_dir, vecAO, edgeAC)
+        ac = inv_det * self._det(inv_ray_dir, edgeAB, vecAO)
 
-        if det != 0.0 and 0.0 < u + v and u + v < 1.0 and u * v > 0.0 and t > 0:
-            solution = t
+        if (
+            det != 0.0
+            and 0.0 < ab + ac
+            and ab + ac < 1.0
+            and ab * ac > 0.0
+            and sol > 0
+            and front
+        ):
+            solution = sol
 
         return solution
 
