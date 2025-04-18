@@ -5,6 +5,7 @@ from app.app import App
 from model.sphere import Sphere
 from model.triangle import Triangle
 from model.material import Material
+from app.spatial import Spatial
 
 
 ti.init(arch=ti.gpu)
@@ -43,6 +44,8 @@ TRIANGLES[3] = Triangle(
     Material(Vector((1, 1, 1))),
 )
 
+
+spatial = Spatial("untitled.obj")
 
 app = App("Ray Tracing", SIZE, TRIANGLES)
 app.run()
