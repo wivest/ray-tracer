@@ -1,6 +1,7 @@
-from taichi import StructField
+from taichi import StructField, Vector
 
 from model.triangle import Triangle
+from model.material import Material
 
 
 class Spatial:
@@ -37,5 +38,16 @@ class Spatial:
                 self.faces.append((a, b, c))
 
     def export(self) -> StructField:
-        data = Triangle.field()
+        n = len(self.faces)
+        data = Triangle.field(shape=n)
+
+        for i in range(n):
+            face = self.faces[i]
+            data[i] = Triangle(
+                Vector(face[0]),
+                Vector(face[1]),
+                Vector(face[2]),
+                Material(Vector((1, 1, 1)), 0.5),
+            )
+
         return data
