@@ -7,3 +7,4 @@ from taichi.math import vec3
 class Material:
     color: vec3  # type: ignore
     specular: f32  # type: ignore
+    emmision: f32  # type: ignore
