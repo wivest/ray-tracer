@@ -47,7 +47,7 @@ class Spatial:
                 Vector(face[0]),
                 Vector(face[1]),
                 Vector(face[2]),
-                Material(Vector((1, 1, 1)), 0.5),
+                Material(Vector((1, 1, 1)), 0.5, 0.5),
             )
 
         return data
