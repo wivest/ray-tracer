@@ -45,7 +45,7 @@ class Triangle:
 
     @ti.func
     def normal(self, point: vec3) -> vec3:  # type: ignore
-        return ti.math.cross(self.b - self.a, self.c - self.a)
+        return ti.math.cross(self.b - self.a, self.c - self.a).normalized()
 
     @ti.func
     def _det(self, col1: vec3, col2: vec3, col3: vec3) -> f32:  # type: ignore
