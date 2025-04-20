@@ -13,8 +13,9 @@ class Ray:
 
     @ti.func
     def cast(self, objects: ti.template(), sky: Sky) -> HitInfo:  # type: ignore
-        color = sky.get(self.direction)
-        specular = 1.0
+        sky_color = sky.get(self.direction)
+
+        material = Material()
         point = self.origin
         normal = self.direction
         hit = False
@@ -26,14 +27,11 @@ class Ray:
                 nearest = coef
                 hit = True
 
-                color = objects[i].material.color
-                specular = objects[i].material.specular
+                material = objects[i].material
                 point = self.origin + self.direction * coef
                 normal = objects[i].normal(point)
 
-        return HitInfo(
-            hit,
-            point,
-            normal,
-            Material(color, specular),
-        )
+        if not hit:
+            material.color = sky_color  # type: ignore
+
+        return HitInfo(hit, point, normal, material)
