@@ -45,11 +45,14 @@ class Camera:
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
         hit_info = ray.cast(objects, self.sky)
-        color = hit_info.material.color
+        incoming_light = Vector((0.0, 0.0, 0.0))
+        ray_color = Vector((1.0, 1.0, 1.0))
 
         specular = ti.math.reflect(ray.direction, hit_info.normal)  # type: ignore
         diffuse = self.random_hemisphere(hit_info.normal)
         ray_dir = ti.math.mix(diffuse, specular, hit_info.material.specular)
+        ray_color = ray_color * hit_info.material.color
+        incoming_light += ray_color * hit_info.material.emmision
         bounced = Ray(hit_info.point, ray_dir)
 
         while reflections > 0 and hit_info.hit:
@@ -57,14 +60,15 @@ class Camera:
             specular = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
             diffuse = self.random_hemisphere(hit_info.normal)
             ray_dir = ti.math.mix(diffuse, specular, hit_info.material.specular)
-            color = color * hit_info.material.color
+            ray_color = ray_color * hit_info.material.color
+            incoming_light += ray_color * hit_info.material.emmision
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1
 
-        if hit_info.hit:
-            color = vec3(0, 0, 0)
+        if not hit_info.hit:
+            incoming_light += hit_info.material.color
 
-        return color
+        return incoming_light
 
     @ti.func
     def random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
