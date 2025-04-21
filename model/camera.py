@@ -50,7 +50,9 @@ class Camera:
 
         specular = ti.math.reflect(ray.direction, hit_info.normal)  # type: ignore
         diffuse = self.random_hemisphere(hit_info.normal)
-        ray_dir = ti.math.mix(diffuse, specular, hit_info.material.specular)
+        ray_dir = ti.math.mix(
+            diffuse, specular, hit_info.material.specular
+        ).normalized()
         ray_color = ray_color * hit_info.material.color
         incoming_light += ray_color * hit_info.material.emmision
         bounced = Ray(hit_info.point, ray_dir)
@@ -59,7 +61,9 @@ class Camera:
             hit_info = bounced.cast(objects, self.sky)  # type: ignore
             specular = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
             diffuse = self.random_hemisphere(hit_info.normal)
-            ray_dir = ti.math.mix(diffuse, specular, hit_info.material.specular)
+            ray_dir = ti.math.mix(
+                diffuse, specular, hit_info.material.specular
+            ).normalized()
             ray_color = ray_color * hit_info.material.color
             incoming_light += ray_color * hit_info.material.emmision
             bounced = Ray(hit_info.point, ray_dir)
