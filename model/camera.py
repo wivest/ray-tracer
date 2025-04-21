@@ -70,7 +70,7 @@ class Camera:
             reflections -= 1
 
         if not hit_info.hit:
-            incoming_light += hit_info.material.color
+            incoming_light += ray_color
 
         return incoming_light
 
