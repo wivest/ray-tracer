@@ -12,6 +12,7 @@ class Spatial:
                 tuple[float, float, float],
                 tuple[float, float, float],
                 tuple[float, float, float],
+                Material,  # type: ignore
             ]
         ] = []
 
@@ -21,6 +22,7 @@ class Spatial:
     def __parse(self, lines: list[str]):
         vertices: list[tuple[float, float, float]] = []
         materials: dict[str, Material] = {}  # type: ignore
+        current = Material()
 
         def vertex_i(tokens: list[str], i: int) -> int:
             return int(tokens[i].split("/")[0]) - 1
@@ -38,10 +40,12 @@ class Spatial:
                 a = vertices[vertex_i(tokens, 1)]
                 b = vertices[vertex_i(tokens, 2)]
                 c = vertices[vertex_i(tokens, 3)]
-                self.faces.append((a, b, c))
+                self.faces.append((a, b, c, current))
             elif key == "mtllib":
                 new_materials = self.__load_materials(tokens[1])
                 materials.update(new_materials)
+            elif key == "usemtl":
+                current = materials[tokens[1]]
 
     def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
         materials: dict[str, Material] = {}  # type: ignore
@@ -52,6 +56,8 @@ class Spatial:
 
             for line in lines:
                 tokens = line.split()
+                if len(tokens) == 0:
+                    continue
                 key = tokens[0]
 
                 if key == "newmtl":
@@ -72,10 +78,7 @@ class Spatial:
         for i in range(n):
             face = self.faces[i]
             data[i] = Triangle(
-                Vector(face[0]),
-                Vector(face[1]),
-                Vector(face[2]),
-                Material(Vector((1, 1, 1)), 0.5, 0.5),
+                Vector(face[0]), Vector(face[1]), Vector(face[2]), face[3]
             )
 
         return data
