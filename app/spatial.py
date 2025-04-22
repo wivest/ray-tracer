@@ -68,6 +68,8 @@ class Spatial:
                     g = float(tokens[2])
                     b = float(tokens[3])
                     current.color = (r, g, b)  # type: ignore
+                elif key == "Ks":
+                    current.specular = float(tokens[1])  # type: ignore
 
         return materials
 
