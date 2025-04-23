@@ -3,6 +3,8 @@ from taichi import StructField, Vector
 from model.triangle import Triangle
 from model.material import Material
 
+SCENE_PATH = "./scene/"
+
 
 class Spatial:
 
@@ -16,7 +18,7 @@ class Spatial:
             ]
         ] = []
 
-        with open(path) as file:
+        with open(SCENE_PATH + path) as file:
             self.__parse(file.readlines())
 
     def __parse(self, lines: list[str]):
@@ -50,7 +52,7 @@ class Spatial:
     def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
         materials: dict[str, Material] = {}  # type: ignore
 
-        with open(path) as file:
+        with open(SCENE_PATH + path) as file:
             lines = file.readlines()
             current = Material()
 
