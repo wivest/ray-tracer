@@ -1,5 +1,5 @@
 import taichi as ti
-from taichi import i32, f32, Vector, Field
+from taichi import f32, Vector, Field
 from taichi.math import vec3
 
 
