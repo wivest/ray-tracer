@@ -53,7 +53,7 @@ class Camera:
         ray_dir = ti.math.mix(
             diffuse, specular, hit_info.material.specular
         ).normalized()
-        ray_color = ray_color * hit_info.material.color
+        ray_color = ray_color * hit_info.material.diffuse
         incoming_light += ray_color * hit_info.material.emmision
         bounced = Ray(hit_info.point, ray_dir)
 
@@ -64,7 +64,7 @@ class Camera:
             ray_dir = ti.math.mix(
                 diffuse, specular, hit_info.material.specular
             ).normalized()
-            ray_color = ray_color * hit_info.material.color
+            ray_color = ray_color * hit_info.material.diffuse
             incoming_light += ray_color * hit_info.material.emmision
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1

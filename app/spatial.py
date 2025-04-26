@@ -69,9 +69,12 @@ class Spatial:
                     r = float(tokens[1])
                     g = float(tokens[2])
                     b = float(tokens[3])
-                    current.color = (r, g, b)  # type: ignore
+                    current.diffuse = (r, g, b)  # type: ignore
                 elif key == "Ks":
-                    current.specular = float(tokens[1])  # type: ignore
+                    r = float(tokens[1])
+                    g = float(tokens[2])
+                    b = float(tokens[3])
+                    current.specular = (r, g, b)  # type: ignore
 
         return materials
 

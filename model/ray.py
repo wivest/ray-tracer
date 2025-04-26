@@ -32,6 +32,6 @@ class Ray:
                 normal = objects[i].normal(point)
 
         if not hit:
-            material.color = sky_color  # type: ignore
+            material.diffuse = sky_color  # type: ignore
 
         return HitInfo(hit, point, normal, material)

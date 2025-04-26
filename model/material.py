@@ -5,6 +5,6 @@ from taichi.math import vec3
 
 @ti.dataclass
 class Material:
-    color: vec3  # type: ignore
-    specular: f32  # type: ignore
+    diffuse: vec3  # type: ignore
+    specular: vec3  # type: ignore
     emmision: f32  # type: ignore
