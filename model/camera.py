@@ -49,7 +49,7 @@ class Camera:
         ray_color = Vector((1.0, 1.0, 1.0))
 
         specular = ti.math.reflect(ray.direction, hit_info.normal)  # type: ignore
-        diffuse = self.__random_hemisphere(hit_info.normal)
+        diffuse = self._random_hemisphere(hit_info.normal)
         ray_dir = ti.math.mix(
             diffuse, specular, hit_info.material.specular
         ).normalized()
@@ -60,7 +60,7 @@ class Camera:
         while reflections > 0 and hit_info.hit:
             hit_info = bounced.cast(objects, self.sky)  # type: ignore
             specular = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
-            diffuse = self.__random_hemisphere(hit_info.normal)
+            diffuse = self._random_hemisphere(hit_info.normal)
             ray_dir = ti.math.mix(
                 diffuse, specular, hit_info.material.specular
             ).normalized()
@@ -75,7 +75,7 @@ class Camera:
         return incoming_light
 
     @ti.func
-    def __random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
+    def _random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
         x = ti.randn()
         y = ti.randn()
         z = ti.randn()
