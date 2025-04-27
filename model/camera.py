@@ -3,6 +3,7 @@ from taichi import f32, Vector, Field
 from taichi.math import vec3
 
 
+from . import tonemapping
 from .transform import Transform
 from .sky import Sky
 from .ray import Ray
@@ -39,7 +40,8 @@ class Camera:
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
-            self._sampled[x, y] += self.get_color(ray, objects, 5)
+            incoming_light = self.get_color(ray, objects, 5)
+            self._sampled[x, y] += tonemapping.raw(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
