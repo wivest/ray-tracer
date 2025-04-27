@@ -41,7 +41,7 @@ class Camera:
             ray = Ray(self.transform.origin[None], direction)
 
             incoming_light = self.get_color(ray, objects, 5)
-            self._sampled[x, y] += tonemapping.raw(incoming_light)
+            self._sampled[x, y] += tonemapping.aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
