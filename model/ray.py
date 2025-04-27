@@ -1,7 +1,6 @@
 import taichi as ti
 from taichi.math import vec3
 
-from .sky import Sky
 from .hit_info import HitInfo
 from .material import Material
 
@@ -12,7 +11,7 @@ class Ray:
     direction: vec3  # type: ignore
 
     @ti.func
-    def cast(self, objects: ti.template(), sky: Sky) -> HitInfo:  # type: ignore
+    def cast(self, objects: ti.template(), sky: ti.template()) -> HitInfo:  # type: ignore
         sky_color = sky.get(self.direction)
 
         material = Material()
