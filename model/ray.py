@@ -5,6 +5,9 @@ from .hit_info import HitInfo
 from .material import Material
 
 
+TRESHHOLD = 0.001
+
+
 @ti.dataclass
 class Ray:
     origin: vec3  # type: ignore
@@ -22,7 +25,7 @@ class Ray:
         nearest = ti.math.inf
         for i in range(objects.shape[0]):
             coef = objects[i].intersects(self)
-            if coef > 0 and coef < nearest:
+            if coef > TRESHHOLD and coef < nearest:
                 nearest = coef
                 hit = True
 
