@@ -47,33 +47,36 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        hit_info = ray.cast(objects, self.sky)
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
+        hit_info = ray.cast(objects, self.sky, ray.direction)
         specular = ti.math.reflect(ray.direction, hit_info.normal)  # type: ignore
         diffuse = self._random_hemisphere(hit_info.normal)
         ray_dir = ti.math.mix(
             diffuse, specular, hit_info.material.specular
         ).normalized()
         ray_color = ray_color * hit_info.material.diffuse
-        incoming_light += ray_color * hit_info.material.emmision
+        sin = ti.math.cross(ray_dir, hit_info.normal).norm()
+        incoming_light += sin * ray_color * hit_info.material.emmision
         bounced = Ray(hit_info.point, ray_dir)
 
         while reflections > 0 and hit_info.hit:
-            hit_info = bounced.cast(objects, self.sky)  # type: ignore
+            hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
             specular = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
             diffuse = self._random_hemisphere(hit_info.normal)
             ray_dir = ti.math.mix(
                 diffuse, specular, hit_info.material.specular
             ).normalized()
             ray_color = ray_color * hit_info.material.diffuse
-            incoming_light += ray_color * hit_info.material.emmision
+            sin = ti.math.cross(ray_dir, hit_info.normal).norm()
+            incoming_light += sin * ray_color * hit_info.material.emmision
             bounced = Ray(hit_info.point, ray_dir)
             reflections -= 1
 
         if not hit_info.hit:
-            incoming_light += ray_color
+            sin = ti.math.cross(ray_dir, hit_info.normal).norm()
+            incoming_light += sin * ray_color
 
         return incoming_light
 

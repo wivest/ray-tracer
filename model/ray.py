@@ -14,12 +14,11 @@ class Ray:
     direction: vec3  # type: ignore
 
     @ti.func
-    def cast(self, objects: ti.template(), sky: ti.template()) -> HitInfo:  # type: ignore
+    def cast(self, objects: ti.template(), sky: ti.template(), normal: vec3) -> HitInfo:  # type: ignore
         sky_color = sky.get(self.direction)
 
         material = Material()
         point = self.origin
-        normal = self.direction
         hit = False
 
         nearest = ti.math.inf
