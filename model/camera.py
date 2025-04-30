@@ -6,7 +6,7 @@ from taichi.math import vec3
 from . import tonemapping
 from .transform import Transform
 from .ray import Ray
-from sky.directed import Directed
+from .hit_info import HitInfo
 from sky.colored import Colored
 
 
@@ -51,34 +51,30 @@ class Camera:
         ray_color = Vector((1.0, 1.0, 1.0))
 
         hit_info = ray.cast(objects, self.sky, ray.direction)
-        specular = ti.math.reflect(ray.direction, hit_info.normal)  # type: ignore
+        bounced = self._bounce_ray(ray, hit_info)
+        ray_color = ray_color * hit_info.material.diffuse
+        incoming_light += ray_color * hit_info.material.emmision
+
+        while reflections > 0 and hit_info.hit:
+            hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
+            bounced = self._bounce_ray(bounced, hit_info)
+            ray_color = ray_color * hit_info.material.diffuse
+            incoming_light += ray_color * hit_info.material.emmision
+            reflections -= 1
+
+        if not hit_info.hit:
+            incoming_light += ray_color
+
+        return incoming_light
+
+    @ti.func
+    def _bounce_ray(self, ray: Ray, hit_info: HitInfo) -> Ray:  # type: ignore
+        specular = ti.math.reflect(ray.direction, hit_info.normal)
         diffuse = self._random_hemisphere(hit_info.normal)
         ray_dir = ti.math.mix(
             diffuse, specular, hit_info.material.specular
         ).normalized()
-        ray_color = ray_color * hit_info.material.diffuse
-        sin = ti.math.cross(ray_dir, hit_info.normal).norm()
-        incoming_light += sin * ray_color * hit_info.material.emmision
-        bounced = Ray(hit_info.point, ray_dir)
-
-        while reflections > 0 and hit_info.hit:
-            hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
-            specular = ti.math.reflect(bounced.direction, hit_info.normal)  # type: ignore
-            diffuse = self._random_hemisphere(hit_info.normal)
-            ray_dir = ti.math.mix(
-                diffuse, specular, hit_info.material.specular
-            ).normalized()
-            ray_color = ray_color * hit_info.material.diffuse
-            sin = ti.math.cross(ray_dir, hit_info.normal).norm()
-            incoming_light += sin * ray_color * hit_info.material.emmision
-            bounced = Ray(hit_info.point, ray_dir)
-            reflections -= 1
-
-        if not hit_info.hit:
-            sin = ti.math.cross(ray_dir, hit_info.normal).norm()
-            incoming_light += sin * ray_color
-
-        return incoming_light
+        return Ray(hit_info.point, ray_dir)
 
     @ti.func
     def _random_hemisphere(self, normal: vec3) -> Vector:  # type: ignore
