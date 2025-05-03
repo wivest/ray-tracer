@@ -17,7 +17,7 @@ class Camera:
         self.transform = Transform()
         self.pixels = Vector.field(3, f32, size)
         self.fov: float = size[1] / ti.tan(angle / 2)
-        self.sky = Colored(Vector((1.0, 1.0, 1.0)))  # Directed()
+        self.sky = Colored(Vector((1.0, 1.0, 1.0)))
         self.samples = samples
 
         self._sampled = Vector.field(3, f32, size)
