@@ -58,7 +58,8 @@ class Camera:
         while reflections > 0 and hit_info.hit:
             hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
             bounced = self._bounce_ray(bounced, hit_info)
-            ray_color = ray_color * hit_info.material.diffuse
+            sin = ti.math.dot(bounced.direction, hit_info.normal)
+            ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * hit_info.material.emmision
             reflections -= 1
 

@@ -12,4 +12,3 @@ class HitInfo:
     point: vec3  # type: ignore
     normal: vec3  # type: ignore
     material: Material  # type: ignore
-    sin: f32  # type: ignore
