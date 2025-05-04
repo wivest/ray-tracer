@@ -1,6 +1,4 @@
-import taichi as ti
-from taichi import f32
-from taichi.math import vec3
+from imports.common import *
 
 
 @ti.dataclass

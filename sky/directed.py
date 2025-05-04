@@ -1,8 +1,6 @@
-import taichi as ti
+from imports.common import *
 
 from math import inf
-from taichi import f32, Vector
-from taichi.math import vec3
 
 
 FILTER = Vector((1, 1, 1), f32)

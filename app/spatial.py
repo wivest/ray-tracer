@@ -1,4 +1,4 @@
-from taichi import StructField, Vector
+from imports.common import *
 
 from model.triangle import Triangle
 from model.material import Material

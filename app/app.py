@@ -1,5 +1,4 @@
-import taichi as ti
-from taichi import StructField
+from imports.common import *
 
 from .input import *
 from model.camera import Camera

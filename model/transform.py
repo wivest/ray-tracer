@@ -1,5 +1,4 @@
-import taichi as ti
-from taichi import f32, Matrix, Vector
+from imports.common import *
 
 
 class Transform:

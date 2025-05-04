@@ -1,5 +1,4 @@
-import taichi as ti
-from taichi.math import vec3
+from imports.common import *
 
 from .hit_info import HitInfo
 from .material import Material
