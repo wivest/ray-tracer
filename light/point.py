@@ -1,8 +1,6 @@
 from imports.common import *
 
-from .light import Light
-
 
 @ti.dataclass
-class Point(Light):
+class Point:
     color: vec3  # type: ignore
