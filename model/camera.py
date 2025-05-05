@@ -4,6 +4,7 @@ from . import tonemapping
 from .transform import Transform
 from .ray import Ray
 from .hit_info import HitInfo
+from light.point import Point
 from sky.colored import Colored
 
 
@@ -63,6 +64,11 @@ class Camera:
         if not hit_info.hit:
             incoming_light += ray_color
 
+        # TEST: light
+        incoming_light += self.sample_direct_light(
+            Vector((0.0, 0.0, 0.0)), objects, Point(Vector((0.5, 0.5, 0.5)))
+        )
+
         return incoming_light
 
     @ti.func
@@ -83,3 +89,11 @@ class Camera:
         if ti.math.dot(dir, normal) < 0:
             dir *= -1
         return dir.normalized()
+
+    @ti.func
+    def sample_direct_light(self, point: vec3, objects: ti.template(), light: ti.template()) -> Vector:  # type: ignore
+        sampled = Vector((0.0, 0.0, 0.0))
+
+        sampled += light.color
+
+        return sampled
