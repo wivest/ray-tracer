@@ -60,8 +60,10 @@ class Camera:
             sin = ti.math.dot(bounced.direction, hit_info.normal)
 
             ray_color = sin * ray_color * hit_info.material.diffuse
-            incoming_light += ray_color * hit_info.material.emmision
-            incoming_light += self.sample_direct_light(hit_info.point, objects, light)
+            incoming_light += ray_color * (
+                hit_info.material.emmision
+                + self.sample_direct_light(hit_info.point, objects, light)
+            )
 
             reflections -= 1
 

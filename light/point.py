@@ -13,4 +13,4 @@ class Point:
     def is_visible(self, point: vec3, objects: ti.template()) -> bool:  # type: ignore
         ray = Ray(point, (self.position - point).normalized())
         hit_info = ray.cast(objects, Colored(vec3(0)), vec3(0))  # type: ignore
-        return hit_info.hit
+        return not hit_info.hit
