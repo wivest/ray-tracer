@@ -45,6 +45,7 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
+        light = Point(Vector((1.5, 1.5, 1.5)), Vector((0, 20, 0)))
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
@@ -57,19 +58,15 @@ class Camera:
             hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
             bounced = self._bounce_ray(bounced, hit_info)
             sin = ti.math.dot(bounced.direction, hit_info.normal)
+
             ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * hit_info.material.emmision
+            incoming_light += self.sample_direct_light(hit_info.point, objects, light)
+
             reflections -= 1
 
         if not hit_info.hit:
             incoming_light += ray_color
-
-        # TEST: light
-        incoming_light += self.sample_direct_light(
-            Vector((0.0, 10.0, 0.0)),
-            objects,
-            Point(Vector((1.5, 1.5, 1.5)), Vector((0, 20, 0))),
-        )
 
         return incoming_light
 
