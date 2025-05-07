@@ -22,20 +22,12 @@ class Triangle:
 
         inv_det = 1.0 / det
         vecAO = ray.origin - self.a
-        front = ti.math.dot(inv_ray_dir, self.normal(vec3(0, 0, 0))) > 0
 
         sol = inv_det * self._det(vecAO, edgeAB, edgeAC)
         ab = inv_det * self._det(inv_ray_dir, vecAO, edgeAC)
         ac = inv_det * self._det(inv_ray_dir, edgeAB, vecAO)
 
-        if (
-            det != 0.0
-            and 0.0 < ab + ac
-            and ab + ac < 1.0
-            and ab * ac > 0.0
-            and sol > 0
-            and front
-        ):
+        if det != 0.0 and 0.0 < ab + ac and ab + ac < 1.0 and ab * ac > 0.0 and sol > 0:
             solution = sol
 
         return solution
