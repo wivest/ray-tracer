@@ -96,6 +96,6 @@ class Camera:
         sampled = Vector((0.0, 0.0, 0.0))
 
         if light.is_visible(point, objects):
-            sampled += light.color
+            sampled = light.color
 
         return sampled
