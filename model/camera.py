@@ -4,7 +4,9 @@ from . import tonemapping
 from .transform import Transform
 from .ray import Ray
 from .hit_info import HitInfo
-from light.point import Point
+
+# from light.point import Point
+from light.sun import Sun
 from sky.colored import Colored
 
 
@@ -45,7 +47,7 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
-        light = Point(Vector((1.5, 1.5, 1.5)), Vector((0, 20, 0)))
+        light = Sun(Vector((1.5, 1.5, 1.5)), Vector((-1, -1, -1)))
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
