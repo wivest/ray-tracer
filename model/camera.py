@@ -41,25 +41,21 @@ class Camera:
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
-            incoming_light = self.get_color(ray, objects, 5)
+            incoming_light = self.get_color(ray, objects, 6)
             self._sampled[x, y] += tonemapping.aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
-    def get_color(self, ray: Ray, objects: ti.template(), reflections: int) -> Vector:  # type: ignore
+    def get_color(self, ray: Ray, objects: ti.template(), hits: int) -> Vector:  # type: ignore
         light = Sun(Vector((1.5, 1.5, 1.5)), Vector((-1, -1, -1)))
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
         hit_info = ray.cast(objects, self.sky, ray.direction)
-        bounced = self._bounce_ray(ray, hit_info)
-        ray_color = ray_color * hit_info.material.diffuse
-        incoming_light += ray_color * hit_info.material.emmision
 
-        while reflections > 0 and hit_info.hit:
-            hit_info = bounced.cast(objects, self.sky, hit_info.normal)  # type: ignore
-            bounced = self._bounce_ray(bounced, hit_info)
-            sin = ti.math.dot(bounced.direction, hit_info.normal)
+        while hits > 0 and hit_info.hit:
+            ray = self._bounce_ray(ray, hit_info)
+            sin = ti.math.dot(ray.direction, hit_info.normal)
 
             ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * (
@@ -67,7 +63,8 @@ class Camera:
                 + self.sample_direct_light(hit_info.point, objects, light)
             )
 
-            reflections -= 1
+            hit_info = ray.cast(objects, self.sky, hit_info.normal)  # type: ignore
+            hits -= 1
 
         if not hit_info.hit:
             incoming_light += ray_color
