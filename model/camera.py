@@ -52,7 +52,7 @@ class Camera:
         ray_color = Vector((1.0, 1.0, 1.0))
 
         for i in range(hits):
-            hit_info = ray.cast(objects, ray.direction)
+            hit_info = ray.cast(objects)
             if not hit_info.hit:
                 incoming_light += ray_color * self.sky.get(ray.direction)  # type: ignore
                 break

@@ -11,5 +11,5 @@ class Sun:
     @ti.func
     def is_visible(self, point: vec3, objects: ti.template()) -> bool:  # type: ignore
         ray = Ray(point, -self.direction.normalized())
-        hit_info = ray.cast(objects, vec3(0))  # type: ignore
+        hit_info = ray.cast(objects)  # type: ignore
         return not hit_info.hit

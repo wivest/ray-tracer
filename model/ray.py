@@ -13,9 +13,10 @@ class Ray:
     direction: vec3  # type: ignore
 
     @ti.func
-    def cast(self, objects: ti.template(), normal: vec3) -> HitInfo:  # type: ignore
-        material = Material()
+    def cast(self, objects: ti.template()) -> HitInfo:  # type: ignore
         point = self.origin
+        normal = vec3(0)
+        material = Material()
         hit = False
 
         nearest = ti.math.inf
