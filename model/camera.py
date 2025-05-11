@@ -52,9 +52,9 @@ class Camera:
         ray_color = Vector((1.0, 1.0, 1.0))
 
         for i in range(hits):
-            hit_info = ray.cast(objects, self.sky, ray.direction)
+            hit_info = ray.cast(objects, ray.direction)
             if not hit_info.hit:
-                incoming_light += ray_color * hit_info.material.diffuse
+                incoming_light += ray_color * self.sky.get(ray.direction)  # type: ignore
                 break
 
             ray = self._bounce_ray(ray, hit_info)

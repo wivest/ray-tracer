@@ -13,9 +13,7 @@ class Ray:
     direction: vec3  # type: ignore
 
     @ti.func
-    def cast(self, objects: ti.template(), sky: ti.template(), normal: vec3) -> HitInfo:  # type: ignore
-        sky_color = sky.get(self.direction)
-
+    def cast(self, objects: ti.template(), normal: vec3) -> HitInfo:  # type: ignore
         material = Material()
         point = self.origin
         hit = False
@@ -30,8 +28,5 @@ class Ray:
                 material = objects[i].material
                 point = self.origin + self.direction * coef
                 normal = objects[i].normal(point)
-
-        if not hit:
-            material.diffuse = sky_color  # type: ignore
 
         return HitInfo(hit, point, normal, material)
