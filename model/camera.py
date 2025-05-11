@@ -51,21 +51,19 @@ class Camera:
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
-        while hits > 0:
+        for i in range(hits):
             hit_info = ray.cast(objects, self.sky, ray.direction)
             if not hit_info.hit:
                 incoming_light += ray_color * hit_info.material.diffuse
                 break
+
             ray = self._bounce_ray(ray, hit_info)
             sin = ti.math.dot(ray.direction, hit_info.normal)
-
             ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * (
                 hit_info.material.emmision
                 + self.sample_direct_light(hit_info.point, objects, light)
             )
-
-            hits -= 1
 
         return incoming_light
 
