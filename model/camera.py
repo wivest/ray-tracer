@@ -88,9 +88,11 @@ class Camera:
 
     @ti.func
     def sample_direct_light(self, point: vec3, objects: ti.template(), light: ti.template()) -> Vector:  # type: ignore
-        sampled = Vector((0.0, 0.0, 0.0))
+        sampled = light.color
 
-        if light.is_visible(point, objects):
-            sampled = light.color
+        ray = light.get_ray(point)
+
+        if ray.cast(objects).hit:
+            sampled = Vector((0.0, 0.0, 0.0))
 
         return sampled

@@ -9,7 +9,5 @@ class Sun:
     direction: vec3  # type: ignore
 
     @ti.func
-    def is_visible(self, point: vec3, objects: ti.template()) -> bool:  # type: ignore
-        ray = Ray(point, -self.direction.normalized())
-        hit_info = ray.cast(objects)  # type: ignore
-        return not hit_info.hit
+    def get_ray(self, point: vec3):  # type: ignore
+        return Ray(point, -self.direction.normalized())
