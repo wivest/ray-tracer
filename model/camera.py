@@ -47,7 +47,7 @@ class Camera:
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), hits: int) -> Vector:  # type: ignore
-        light = Sun(Vector((1.5, 1.5, 1.5)), Vector((-1, -1, -1)))
+        light = Sun(Vector((5, 5, 5)), Vector((-1, -1, -1)))
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
@@ -62,7 +62,9 @@ class Camera:
             ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * (
                 hit_info.material.emmision
-                + self.sample_direct_light(hit_info.point, objects, light)
+                + self.sample_direct_light(
+                    hit_info.point, objects, light, hit_info.normal
+                )
             )
 
         return incoming_light
@@ -87,10 +89,10 @@ class Camera:
         return dir.normalized()
 
     @ti.func
-    def sample_direct_light(self, point: vec3, objects: ti.template(), light: ti.template()) -> Vector:  # type: ignore
-        sampled = light.color
-
+    def sample_direct_light(self, point: vec3, objects: ti.template(), light: ti.template(), normal: vec3) -> Vector:  # type: ignore
         ray = light.get_ray(point)
+        sin = ti.math.dot(ray.direction, normal)
+        sampled = sin * light.color
 
         if ray.cast(objects).hit:
             sampled = Vector((0.0, 0.0, 0.0))
