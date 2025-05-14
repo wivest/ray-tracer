@@ -11,5 +11,5 @@ SIZE = (1080, 720)
 
 spatial = Spatial("untitled.obj")
 
-app = App("Ray Tracing", SIZE, spatial.export())
+app = App("Ray Tracing", SIZE, spatial.triangles)
 app.run()

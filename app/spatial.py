@@ -22,6 +22,8 @@ class Spatial:
         with open(SCENE_PATH + path) as file:
             self.__parse(file.readlines())
 
+        self.triangles = Triangle.field(shape=len(self.faces))
+
     def __parse(self, lines: list[str]):
         vertices: list[tuple[float, float, float]] = []
         materials: dict[str, Material] = {}  # type: ignore
@@ -80,15 +82,10 @@ class Spatial:
         return materials
 
     @ti.kernel
-    def export(self) -> StructField:
-        n = len(self.faces)
-        data = Triangle.field(shape=n)
-
-        for i in data:
+    def export(self):
+        for i in self.triangles:
             face = self.faces[i]
-            data[i] = Triangle(
+            self.triangles[i] = Triangle(
                 Vector(face[0]), Vector(face[1]), Vector(face[2]), face[3]
             )
-            data[i].update_normal()  # type: ignore
-
-        return data
+            self.triangles[i].update_normal()  # type: ignore
