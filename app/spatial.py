@@ -6,6 +6,7 @@ from model.material import Material
 SCENE_PATH = "./scene/"
 
 
+@ti.data_oriented
 class Spatial:
 
     def __init__(self, path: str):
@@ -78,14 +79,16 @@ class Spatial:
 
         return materials
 
+    @ti.kernel
     def export(self) -> StructField:
         n = len(self.faces)
         data = Triangle.field(shape=n)
 
-        for i in range(n):
+        for i in data:
             face = self.faces[i]
             data[i] = Triangle(
                 Vector(face[0]), Vector(face[1]), Vector(face[2]), face[3]
             )
+            data[i].update_normal()  # type: ignore
 
         return data

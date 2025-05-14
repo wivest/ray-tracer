@@ -28,6 +28,6 @@ class Ray:
 
                 material = objects[i].material
                 point = self.origin + self.direction * coef
-                normal = objects[i].normal(point)
+                normal = objects[i].normal
 
         return HitInfo(hit, point, normal, material)

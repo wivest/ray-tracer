@@ -10,6 +10,7 @@ class Triangle:
     b: vec3  # type: ignore
     c: vec3  # type: ignore
     material: Material  # type: ignore
+    normal: vec3  # type: ignore
 
     @ti.func
     def intersects(self, ray: Ray) -> f32:  # type: ignore
@@ -33,8 +34,8 @@ class Triangle:
         return solution
 
     @ti.func
-    def normal(self, point: vec3) -> vec3:  # type: ignore
-        return ti.math.cross(self.b - self.a, self.c - self.a).normalized()
+    def update_normal(self):  # type: ignore
+        self.normal = ti.math.cross(self.b - self.a, self.c - self.a).normalized()
 
     @ti.func
     def _det(self, col1: vec3, col2: vec3, col3: vec3) -> f32:  # type: ignore
