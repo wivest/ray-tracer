@@ -18,8 +18,11 @@ class Camera:
         self.pixels = Vector.field(3, f32, size)
         self.fov: float = size[1] / ti.tan(angle / 2)
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))
-        self.lights = Sun.field(shape=(1))
+
+        self.lights = Sun.field(shape=(2))
         self.lights[0] = Sun(Vector((5, 5, 5)), Vector((-1, -1, -1)))
+        self.lights[1] = Sun(Vector((5, 5, 5)), Vector((1, -1, 1)))
+
         self.samples = samples
 
         self._sampled = Vector.field(3, f32, size)
