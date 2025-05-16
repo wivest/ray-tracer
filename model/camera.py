@@ -5,7 +5,6 @@ from .transform import Transform
 from .ray import Ray
 from .hit_info import HitInfo
 
-# from light.point import Point
 from light.sun import Sun
 from sky.colored import Colored
 
