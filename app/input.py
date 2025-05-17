@@ -18,6 +18,8 @@ BACKWARD_FLAT = "backward_flat"
 
 LMB = "lbm"
 
+MODE = "mode"
+
 ACTIONS: dict[str, Action] = {
     LEFT: Action("a"),
     RIGHT: Action("d"),
@@ -32,6 +34,7 @@ ACTIONS: dict[str, Action] = {
     FORWARD_FLAT: Action("w", [GUI.SHIFT]),
     BACKWARD_FLAT: Action("s", [GUI.SHIFT]),
     LMB: Action(GUI.LMB),
+    MODE: Action("m"),
 }
 
 

@@ -9,6 +9,10 @@ from light.sun import Sun
 from sky.colored import Colored
 
 
+RENDER_HITS = 6
+PREVIEW_HITS = 1
+
+
 @ti.data_oriented
 class Camera:
 
@@ -23,6 +27,8 @@ class Camera:
         self.lights[1] = Sun(Vector((5, 5, 5)), Vector((1, -1, 1)))
 
         self.samples = samples
+        self.mode: Field = ti.field(bool, ())
+        self.mode[None] = True
 
         self._sampled = Vector.field(3, f32, size)
         self._sampled.fill(0.0)
@@ -39,13 +45,14 @@ class Camera:
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
         self._ready[None] += 1
+        hits = PREVIEW_HITS if self.mode[None] else RENDER_HITS
 
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
-            incoming_light = self.get_color(ray, objects, 6)
+            incoming_light = self.get_color(ray, objects, hits)
             self._sampled[x, y] += tonemapping.aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 

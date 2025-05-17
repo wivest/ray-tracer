@@ -37,6 +37,9 @@ class App:
             self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
             self.camera.reset_samples()
 
+        if self.input.is_action_pressed(MODE):
+            self.camera.mode[None] = not self.camera.mode[None]
+
         x_axis = self.input.get_axis(LEFT, RIGHT)
         self.camera.transform.move_x(x_axis * SENSIVITY)
 
