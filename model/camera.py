@@ -41,17 +41,15 @@ class Camera:
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
         self._ready[None] += 1
-        incoming_light = vec3(0)
 
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
-            if self.mode[None]:
+            incoming_light = self.get_preview_color(ray, objects)
+            if not self.mode[None]:
                 incoming_light = self.get_color(ray, objects, 6)
-            else:
-                incoming_light = self.get_preview_color(ray, objects)
             self._sampled[x, y] += tonemapping.aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
@@ -61,7 +59,10 @@ class Camera:
 
         hit_info = ray.cast(objects)
         if hit_info.hit:
-            incoming_light = hit_info.material.emmision + hit_info.material.diffuse
+            sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
+            incoming_light = sin * (
+                hit_info.material.emmision + hit_info.material.diffuse
+            )
 
         return incoming_light
 
