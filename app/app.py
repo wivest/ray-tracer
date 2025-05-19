@@ -39,6 +39,7 @@ class App:
 
         if self.input.is_action_pressed(MODE):
             self.camera.mode[None] = not self.camera.mode[None]
+            self.camera.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
         self.camera.transform.move_x(x_axis * SENSIVITY)
