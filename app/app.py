@@ -37,7 +37,7 @@ class App:
             self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
             self.camera.reset_samples()
 
-        if self.input.is_action_pressed(MODE):
+        if self.input.is_action_just_pressed(MODE):
             self.camera.mode[None] = not self.camera.mode[None]
             self.camera.reset_samples()
 

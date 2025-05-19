@@ -54,6 +54,10 @@ class Input:
         action = ACTIONS[name]
         return action.pressed
 
+    def is_action_just_pressed(self, name: str) -> bool:
+        action = ACTIONS[name]
+        return action.is_just_pressed()
+
     def get_axis(self, neg: str, pos: str) -> float:
         negative = 1.0 if ACTIONS[neg].pressed else 0.0
         positive = 1.0 if ACTIONS[pos].pressed else 0.0
