@@ -9,10 +9,6 @@ from light.sun import Sun
 from sky.colored import Colored
 
 
-RENDER_HITS = 6
-PREVIEW_HITS = 1
-
-
 @ti.data_oriented
 class Camera:
 
@@ -45,20 +41,32 @@ class Camera:
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
         self._ready[None] += 1
-        hits = PREVIEW_HITS if self.mode[None] else RENDER_HITS
+        incoming_light = vec3(0)
 
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
             direction = self.transform.basis[None] @ pixel
             ray = Ray(self.transform.origin[None], direction)
 
-            incoming_light = self.get_color(ray, objects, hits)
+            if self.mode[None]:
+                incoming_light = self.get_color(ray, objects, 6)
+            else:
+                incoming_light = self.get_preview_color(ray, objects)
             self._sampled[x, y] += tonemapping.aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
+    def get_preview_color(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
+        incoming_light = self.sky.get(ray.direction)  # type: ignore
+
+        hit_info = ray.cast(objects)
+        if hit_info.hit:
+            incoming_light = hit_info.material.emmision + hit_info.material.diffuse
+
+        return incoming_light
+
+    @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), hits: int) -> Vector:  # type: ignore
-        # light = self.lights[0]
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
