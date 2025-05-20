@@ -23,8 +23,11 @@ class App:
         while self.window.running:
             self.__handle_events()
 
-            if self.camera._ready[None] < self.camera.samples:
-                self.camera.render(self.objects)
+            if self.camera.mode[None]:
+                self.camera.preview(self.objects)
+            else:
+                if self.camera._ready[None] < self.camera.samples:
+                    self.camera.render(self.objects)
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
