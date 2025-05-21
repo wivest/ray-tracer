@@ -28,7 +28,7 @@ class Triangle:
         ab = inv_det * self._det(inv_ray_dir, vecAO, edgeAC)
         ac = inv_det * self._det(inv_ray_dir, edgeAB, vecAO)
 
-        if det != 0.0 and 0.0 < ab + ac and ab + ac < 1.0 and ab * ac > 0.0 and sol > 0:
+        if det != 0.0 and 0.0 <= ab + ac and ab + ac <= 1.0 and ab * ac > 0 and sol > 0:
             solution = sol
 
         return solution
