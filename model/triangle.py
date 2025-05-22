@@ -4,6 +4,10 @@ from .ray import Ray
 from .material import Material
 
 
+# treshhold
+TH_ZERO = 0.001
+
+
 @ti.dataclass
 class Triangle:
     a: vec3  # type: ignore
@@ -28,7 +32,14 @@ class Triangle:
         ab = inv_det * self._det(inv_ray_dir, vecAO, edgeAC)
         ac = inv_det * self._det(inv_ray_dir, edgeAB, vecAO)
 
-        if det != 0.0 and 0.0 <= ab + ac and ab + ac <= 1.0 and ab * ac > 0 and sol > 0:
+        if (
+            det != 0.0
+            and -TH_ZERO <= ab + ac
+            and ab + ac <= 1 + TH_ZERO
+            and ab > -TH_ZERO
+            and ac > -TH_ZERO
+            and sol > 0
+        ):
             solution = sol
 
         return solution
