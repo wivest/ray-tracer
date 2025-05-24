@@ -14,7 +14,7 @@ class App:
     def __init__(self, name: str, size: tuple[int, int], objects: StructField):
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
-        self.camera = Camera(size, ANGLE, 64)
+        self.camera = Camera(size, ANGLE, 1024)
         self.objects = objects
 
         self.input = Input(self.window)
