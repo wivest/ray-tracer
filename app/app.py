@@ -1,7 +1,8 @@
 from imports.common import *
 
 from .input import *
-from model.camera import Camera
+
+from camera.camera import Camera
 
 
 SENSIVITY = 0.1

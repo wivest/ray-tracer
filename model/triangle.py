@@ -1,7 +1,8 @@
 from imports.common import *
 
-from .ray import Ray
 from .material import Material
+
+from camera.ray import Ray
 
 
 # treshhold

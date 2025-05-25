@@ -1,6 +1,6 @@
 from imports.common import *
 
-from model.ray import Ray
+from camera.ray import Ray
 
 
 @ti.dataclass
