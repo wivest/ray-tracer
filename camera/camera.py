@@ -1,10 +1,10 @@
 from imports.common import *
 
+from . import tonemapping
 from .transform import Transform
 from .ray import Ray
 from .hit_info import HitInfo
 
-from model import tonemapping
 from light.sun import Sun
 from sky.colored import Colored
 
