@@ -1,15 +1,14 @@
 from imports.common import *
 
-from model.triangle import Triangle
-from model.material import Material
-
-SCENE_PATH = "./scene/"
+from .triangle import Triangle
+from .material import Material
 
 
 @ti.data_oriented
 class Spatial:
 
-    def __init__(self, path: str):
+    def __init__(self, scene: str, path: str):
+        self.scene_path = scene
         self.faces: list[
             tuple[
                 tuple[float, float, float],
@@ -19,7 +18,7 @@ class Spatial:
             ]
         ] = []
 
-        with open(SCENE_PATH + path) as file:
+        with open(self.scene_path + path) as file:
             self.__parse(file.readlines())
 
         n = len(self.faces)
@@ -58,7 +57,7 @@ class Spatial:
     def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
         materials: dict[str, Material] = {}  # type: ignore
 
-        with open(SCENE_PATH + path) as file:
+        with open(self.scene_path + path) as file:
             lines = file.readlines()
             current = Material()
 
