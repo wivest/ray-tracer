@@ -6,19 +6,16 @@ from .triangle import Triangle
 from .material import Material
 
 
+# alias
+vec = tuple[float, float, float]
+
+
 @ti.data_oriented
 class Spatial:
 
     def __init__(self, scene: str, path: str):
         self.scene_path = scene
-        self.faces: list[
-            tuple[
-                tuple[float, float, float],
-                tuple[float, float, float],
-                tuple[float, float, float],
-                Material,  # type: ignore
-            ]
-        ] = []
+        self.faces: list[tuple[vec, vec, vec, Material]] = []  # type: ignore
 
         with open(self.scene_path + path) as file:
             lines = file.readlines()
@@ -44,7 +41,7 @@ class Spatial:
         # self._update_normals()
 
     def __parse(self, lines: list[str]):
-        vertices: list[tuple[float, float, float]] = []
+        vertices: list[vec] = []
         materials: dict[str, Material] = {}  # type: ignore
         current = Material()
         tri_i = 0
@@ -74,16 +71,10 @@ class Spatial:
             elif key == "usemtl":
                 current = materials[tokens[1]]
 
-    def __assign_triangle(
-        self,
-        tri_i: int,
-        a: tuple[float, float, float],
-        b: tuple[float, float, float],
-        c: tuple[float, float, float],
-    ):
-        self.tmp_triangles["a"][tri_i] = a
-        self.tmp_triangles["b"][tri_i] = b
-        self.tmp_triangles["c"][tri_i] = c
+    def __assign_triangle(self, idx: int, a: vec, b: vec, c: vec):
+        self.tmp_triangles["a"][idx] = a
+        self.tmp_triangles["b"][idx] = b
+        self.tmp_triangles["c"][idx] = c
 
     def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
         materials: dict[str, Material] = {}  # type: ignore
