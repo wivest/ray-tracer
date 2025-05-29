@@ -73,7 +73,7 @@ class Spatial:
                 a = vertices[vertex_i(tokens, 1)]
                 b = vertices[vertex_i(tokens, 2)]
                 c = vertices[vertex_i(tokens, 3)]
-                self.__assign_triangle(tri_i, a, b, c)
+                self.__assign_triangle(tri_i, a, b, c, current)
                 self.faces.append((a, b, c, current))
                 tri_i += 1
             elif key == "mtllib":
@@ -82,10 +82,12 @@ class Spatial:
             elif key == "usemtl":
                 current = materials[tokens[1]]
 
-    def __assign_triangle(self, idx: int, a: vec, b: vec, c: vec):
+    def __assign_triangle(self, idx: int, a: vec, b: vec, c: vec, mtl: PyMaterial):
         self.tmp_triangles["a"][idx] = a
         self.tmp_triangles["b"][idx] = b
         self.tmp_triangles["c"][idx] = c
+        for key in mtl.colors:
+            self.tmp_materials[key][idx] = mtl.colors[key]
 
     def __load_materials(self, path: str) -> dict[str, PyMaterial]:
         materials: dict[str, PyMaterial] = {}
