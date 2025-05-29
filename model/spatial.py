@@ -10,12 +10,23 @@ from .material import Material
 vec = tuple[float, float, float]
 
 
+class PyMaterial:
+    def __init__(self):
+        self.colors: dict[str, vec] = {}
+
+    def assign_color(self, color: str, rgb: list[str]):
+        r = float(rgb[0])
+        g = float(rgb[1])
+        b = float(rgb[2])
+        self.colors[color] = (r, g, b)
+
+
 @ti.data_oriented
 class Spatial:
 
     def __init__(self, scene: str, path: str):
         self.scene_path = scene
-        self.faces: list[tuple[vec, vec, vec, Material]] = []  # type: ignore
+        self.faces: list[tuple[vec, vec, vec, PyMaterial]] = []
 
         with open(self.scene_path + path) as file:
             lines = file.readlines()
@@ -42,8 +53,8 @@ class Spatial:
 
     def __parse(self, lines: list[str]):
         vertices: list[vec] = []
-        materials: dict[str, Material] = {}  # type: ignore
-        current = Material()
+        materials: dict[str, PyMaterial] = {}
+        current = PyMaterial()
         tri_i = 0
 
         def vertex_i(tokens: list[str], i: int) -> int:
@@ -76,12 +87,12 @@ class Spatial:
         self.tmp_triangles["b"][idx] = b
         self.tmp_triangles["c"][idx] = c
 
-    def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
-        materials: dict[str, Material] = {}  # type: ignore
+    def __load_materials(self, path: str) -> dict[str, PyMaterial]:
+        materials: dict[str, PyMaterial] = {}
 
         with open(self.scene_path + path) as file:
             lines = file.readlines()
-            current = Material()
+            current = PyMaterial()
 
             for line in lines:
                 tokens = line.split()
@@ -90,23 +101,14 @@ class Spatial:
                 key = tokens[0]
 
                 if key == "newmtl":
-                    current = Material()
+                    current = PyMaterial()
                     materials[tokens[1]] = current
                 elif key == "Kd":
-                    r = float(tokens[1])
-                    g = float(tokens[2])
-                    b = float(tokens[3])
-                    current.diffuse = (r, g, b)  # type: ignore
+                    current.assign_color("diffuse", tokens[1:4])
                 elif key == "Ks":
-                    r = float(tokens[1])
-                    g = float(tokens[2])
-                    b = float(tokens[3])
-                    current.specular = (r, g, b)  # type: ignore
+                    current.assign_color("specular", tokens[1:4])
                 elif key == "Ke":
-                    r = float(tokens[1])
-                    g = float(tokens[2])
-                    b = float(tokens[3])
-                    current.emission = (r, g, b)  # type: ignore
+                    current.assign_color("emmision", tokens[1:4])
 
         return materials
 
@@ -123,7 +125,7 @@ class Spatial:
         for i in range(len(self.faces)):
             face = self.faces[i]
             self.triangles[i] = Triangle(
-                Vector(face[0]), Vector(face[1]), Vector(face[2]), face[3]
+                Vector(face[0]), Vector(face[1]), Vector(face[2])
             )
 
     def tmp_export(self) -> StructField:
