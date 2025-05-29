@@ -20,14 +20,14 @@ class Scene:
     def export(self) -> StructField:
         n = 0
         for spatial in self.spatials:
-            n += spatial.triangles.shape[0]
+            n += spatial.deprecated_triangles.shape[0]
 
         triangles = Triangle.field(shape=n)
 
         i = 0
         for spatial in self.spatials:
-            for t in range(spatial.triangles.shape[0]):
-                triangles[i] = spatial.triangles[t]
+            for t in range(spatial.deprecated_triangles.shape[0]):
+                triangles[i] = spatial.deprecated_triangles[t]
                 i += 1
 
         return triangles

@@ -14,5 +14,5 @@ SCENE_PATH = "./scene/"
 scene = Scene(SCENE_PATH)
 spatial = Spatial(SCENE_PATH, "untitled.obj")
 
-app = App("Ray Tracing", SIZE, spatial.tmp_export())
+app = App("Ray Tracing", SIZE, spatial.export())
 app.run()
