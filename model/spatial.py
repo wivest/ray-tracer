@@ -88,6 +88,15 @@ class Spatial:
 
         return materials
 
+    def __count_triangles(self, lines: list[str]) -> int:
+        count = 0
+
+        for line in lines:
+            if line[0:2] == "f ":
+                count += 1
+
+        return count
+
     def _export(self):
         for i in range(len(self.faces)):
             face = self.faces[i]
