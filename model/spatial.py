@@ -1,3 +1,5 @@
+import numpy as np
+
 from imports.common import *
 
 from .triangle import Triangle
@@ -19,9 +21,24 @@ class Spatial:
         ] = []
 
         with open(self.scene_path + path) as file:
-            self.__parse(file.readlines())
+            lines = file.readlines()
 
-        n = len(self.faces)
+            n = self.__count_triangles(lines)
+            self.tmp_materials = {
+                "diffuse": np.empty(shape=(n, 3), dtype=np.float32),
+                "specular": np.empty(shape=(n, 3), dtype=np.float32),
+                "emmision": np.empty(shape=(n, 3), dtype=np.float32),
+            }
+            self.tmp_triangles = {
+                "a": np.empty(shape=(n, 3), dtype=np.float32),
+                "b": np.empty(shape=(n, 3), dtype=np.float32),
+                "c": np.empty(shape=(n, 3), dtype=np.float32),
+                "material": self.tmp_materials,
+                "normal": np.empty(shape=(n, 3), dtype=np.float32),
+            }
+
+            self.__parse(lines)
+
         self.triangles = Triangle.field(shape=n)
         self._export()
         self._update_normals()
