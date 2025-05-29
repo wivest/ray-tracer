@@ -40,13 +40,14 @@ class Spatial:
             self.__parse(lines)
 
         self.triangles = Triangle.field(shape=n)
-        self._export()
-        self._update_normals()
+        # self._export()
+        # self._update_normals()
 
     def __parse(self, lines: list[str]):
         vertices: list[tuple[float, float, float]] = []
         materials: dict[str, Material] = {}  # type: ignore
         current = Material()
+        tri_i = 0
 
         def vertex_i(tokens: list[str], i: int) -> int:
             return int(tokens[i].split("/")[0]) - 1
@@ -64,12 +65,25 @@ class Spatial:
                 a = vertices[vertex_i(tokens, 1)]
                 b = vertices[vertex_i(tokens, 2)]
                 c = vertices[vertex_i(tokens, 3)]
+                self.__assign_triangle(tri_i, a, b, c)
                 self.faces.append((a, b, c, current))
+                tri_i += 1
             elif key == "mtllib":
                 new_materials = self.__load_materials(tokens[1])
                 materials.update(new_materials)
             elif key == "usemtl":
                 current = materials[tokens[1]]
+
+    def __assign_triangle(
+        self,
+        tri_i: int,
+        a: tuple[float, float, float],
+        b: tuple[float, float, float],
+        c: tuple[float, float, float],
+    ):
+        self.tmp_triangles["a"][tri_i] = a
+        self.tmp_triangles["b"][tri_i] = b
+        self.tmp_triangles["c"][tri_i] = c
 
     def __load_materials(self, path: str) -> dict[str, Material]:  # type: ignore
         materials: dict[str, Material] = {}  # type: ignore
@@ -121,7 +135,18 @@ class Spatial:
                 Vector(face[0]), Vector(face[1]), Vector(face[2]), face[3]
             )
 
+    def tmp_export(self) -> StructField:
+        tri_field = Triangle.field(shape=len(self.faces))
+        tri_field.from_numpy(self.tmp_triangles)
+        self._tmp_update_normals(tri_field)
+        return tri_field
+
     @ti.kernel
     def _update_normals(self):
         for i in self.triangles:
             self.triangles[i].update_normal()  # type: ignore
+
+    @ti.kernel
+    def _tmp_update_normals(self, triangles: ti.template()):  # type: ignore
+        for i in triangles:
+            triangles[i].update_normal()  # type: ignore
