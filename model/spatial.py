@@ -42,8 +42,6 @@ class Spatial:
 
             self.__parse(lines)
 
-        self.deprecated_triangles = Triangle.field(shape=self.n)
-
     def __parse(self, lines: list[str]):
         vertices: list[vec] = []
         mtls: dict[str, PyMaterial] = {}

@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 from imports.common import *
 
@@ -16,18 +17,3 @@ class Scene:
                 if not file.endswith(".obj"):
                     continue
                 self.spatials.append(Spatial(root, file))
-
-    def export(self) -> StructField:
-        n = 0
-        for spatial in self.spatials:
-            n += spatial.deprecated_triangles.shape[0]
-
-        triangles = Triangle.field(shape=n)
-
-        i = 0
-        for spatial in self.spatials:
-            for t in range(spatial.deprecated_triangles.shape[0]):
-                triangles[i] = spatial.deprecated_triangles[t]
-                i += 1
-
-        return triangles
