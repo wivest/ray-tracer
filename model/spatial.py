@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from imports.common import *
@@ -20,10 +21,10 @@ class PyMaterial(dict[str, vec]):
 @ti.data_oriented
 class Spatial:
 
-    def __init__(self, scene: str, path: str):
-        self.scene_path = scene
+    def __init__(self, path: str):
+        self.scene_path = os.path.dirname(path) + "/"
 
-        with open(self.scene_path + path) as file:
+        with open(path) as file:
             lines = file.readlines()
 
             self.n = self.__count_triangles(lines)
@@ -56,7 +57,9 @@ class Spatial:
             key = tokens[0]
 
             if key == "mtllib":
-                mtls.update(self.__load_materials(tokens[1]))
+                with open(self.scene_path + tokens[1]) as f:
+                    mtl_lines = f.readlines()
+                mtls.update(self.__load_materials(mtl_lines))
 
             elif key == "v":
                 x = float(tokens[1])
@@ -80,10 +83,7 @@ class Spatial:
         for key in mtl:
             self.materials[key][i] = mtl[key]
 
-    def __load_materials(self, path: str) -> dict[str, PyMaterial]:
-        with open(self.scene_path + path) as file:
-            lines = file.readlines()
-
+    def __load_materials(self, lines: list[str]) -> dict[str, PyMaterial]:
         materials: dict[str, PyMaterial] = {}
         current_mtl = PyMaterial()
 
