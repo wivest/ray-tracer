@@ -10,20 +10,33 @@ class Setup:
             lines = file.readlines()
 
         camera_pos: vec = (0.0, 0.0, 0.0)
-        camera_basis: basis = ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))
+        camera_bx: vec = (0.0, 0.0, 0.0)
+        camera_by: vec = (0.0, 0.0, 0.0)
+        camera_bz: vec = (0.0, 0.0, 0.0)
 
         for line in lines:
             tokens = line.split()
             key = tokens[0]
 
             if key == "cp":
-                x = float(tokens[1])
-                y = float(tokens[2])
-                z = float(tokens[3])
-                camera_pos = (x, y, z)
+                camera_pos = Setup.__parse_vec(tokens[1:])
 
-        return camera_pos, camera_basis
+            elif key == "bx":
+                camera_bx = Setup.__parse_vec(tokens[1:])
+            elif key == "by":
+                camera_by = Setup.__parse_vec(tokens[1:])
+            elif key == "bz":
+                camera_bz = Setup.__parse_vec(tokens[1:])
+
+        return camera_pos, (camera_bx, camera_by, camera_bz)
 
     @staticmethod
     def get_light(path: str):
         pass
+
+    @staticmethod
+    def __parse_vec(tokens: list[str]) -> vec:
+        x = float(tokens[0])
+        y = float(tokens[1])
+        z = float(tokens[2])
+        return (x, y, z)
