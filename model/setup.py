@@ -10,9 +10,9 @@ class Setup:
             lines = file.readlines()
 
         camera_pos: vec = (0.0, 0.0, 0.0)
-        camera_bx: vec = (0.0, 0.0, 0.0)
-        camera_by: vec = (0.0, 0.0, 0.0)
-        camera_bz: vec = (0.0, 0.0, 0.0)
+        camera_bx: vec = (1.0, 0.0, 0.0)
+        camera_by: vec = (0.0, 1.0, 0.0)
+        camera_bz: vec = (0.0, 0.0, 1.0)
 
         for line in lines:
             tokens = line.split()
