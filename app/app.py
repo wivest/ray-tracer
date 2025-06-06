@@ -3,6 +3,7 @@ from imports.common import *
 from .input import *
 
 from camera.camera import Camera
+from camera.transform import Transform
 
 
 SENSIVITY = 0.1
@@ -12,10 +13,16 @@ ANGLE = ti.math.pi * 2 / 3
 
 class App:
 
-    def __init__(self, name: str, size: tuple[int, int], objects: StructField):
+    def __init__(
+        self,
+        name: str,
+        size: tuple[int, int],
+        objects: StructField,
+        camera_transform: Transform,
+    ):
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
-        self.camera = Camera(size, ANGLE, 1024)
+        self.camera = Camera(size, camera_transform, ANGLE, 1024)
         self.objects = objects
 
         self.input = Input(self.window)

@@ -1,3 +1,5 @@
+from camera.transform import Transform
+
 # aliases
 vec = tuple[float, float, float]
 basis = tuple[vec, vec, vec]
@@ -5,7 +7,7 @@ basis = tuple[vec, vec, vec]
 
 class Setup:
     @staticmethod
-    def get_camera(path: str) -> tuple[vec, basis]:
+    def get_camera_transform(path: str) -> Transform:
         with open(path) as file:
             lines = file.readlines()
 
@@ -28,7 +30,7 @@ class Setup:
             elif key == "bz":
                 camera_bz = Setup.__parse_vec(tokens[1:])
 
-        return camera_pos, (camera_bx, camera_by, camera_bz)
+        return Transform(camera_pos, (camera_bx, camera_by, camera_bz))
 
     @staticmethod
     def get_light(path: str):

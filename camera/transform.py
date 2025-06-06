@@ -1,14 +1,18 @@
 from imports.common import *
 
+# aliases
+vec = tuple[float, float, float]
+basis = tuple[vec, vec, vec]
+
 
 class Transform:
 
-    def __init__(self):
-        ORIG = Vector((0, 0, 0), f32)
+    def __init__(self, origin: vec, transform_basis: basis):
+        ORIG = Vector(origin, f32)
         self.origin = Vector.field(3, f32, ())
         self.origin[None] = ORIG
 
-        MAT = Matrix(((1, 0, 0), (0, 1, 0), (0, 0, 1)), f32)
+        MAT = Matrix(transform_basis, f32)
         self.basis = Matrix.field(3, 3, f32, ())
         self.basis[None] = MAT
 

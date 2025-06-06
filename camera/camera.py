@@ -8,12 +8,22 @@ from .hit_info import HitInfo
 from light.sun import Sun
 from sky.colored import Colored
 
+# aliases
+vec = tuple[float, float, float]
+basis = tuple[vec, vec, vec]
+
 
 @ti.data_oriented
 class Camera:
 
-    def __init__(self, size: tuple[int, int], angle: float, samples: int):
-        self.transform = Transform()
+    def __init__(
+        self,
+        size: tuple[int, int],
+        transform: Transform,
+        angle: float,
+        samples: int,
+    ):
+        self.transform = transform
         self.pixels = Vector.field(3, f32, size)
         self.fov: float = size[1] / ti.tan(angle / 2)
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))
