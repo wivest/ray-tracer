@@ -5,6 +5,9 @@ from app.app import App
 from model.spatial import Spatial
 from model.setup import Setup
 
+# tmp
+from model.gltf_parser import *
+
 
 ti.init(arch=ti.gpu)
 
@@ -17,6 +20,9 @@ DEFAULT_SETUP = DEFAULT_SCENE + "setup"
 obj_path = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_OBJ
 spatial = Spatial(obj_path)
 camera_transform = Setup.get_camera_transform(DEFAULT_SETUP)
+
+# tmp
+get_camera_data(FILENAME)
 
 app = App("Ray Tracing", SIZE, spatial.export(), camera_transform)
 app.run()
