@@ -1,8 +1,6 @@
 from pygltflib import GLTF2
 
-# aliases
-vec = tuple[float, float, float]
-basis = tuple[vec, vec, vec]
+from . import vec, basis
 
 FILENAME = "./scene/untitled.gltf"
 

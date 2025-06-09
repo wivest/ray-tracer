@@ -5,6 +5,8 @@ from .spatial import *
 from .sphere import *
 from .triangle import *
 
+from typing import TypeAlias
+
 # aliases
-vec = tuple[float]
-basis = tuple[vec, vec, vec]
+vec: TypeAlias = tuple[float, float, float]
+basis: TypeAlias = tuple[vec, vec, vec]
