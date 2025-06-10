@@ -3,11 +3,8 @@ import numpy as np
 
 from imports.common import *
 
+from .aliases import vec
 from .triangle import Triangle
-
-
-# alias
-vec = tuple[float, float, float]
 
 
 class PyMaterial(dict[str, vec]):

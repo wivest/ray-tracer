@@ -1,8 +1,6 @@
 from camera.transform import Transform
 
-# aliases
-vec = tuple[float, float, float]
-basis = tuple[vec, vec, vec]
+from .aliases import vec
 
 
 class Setup:

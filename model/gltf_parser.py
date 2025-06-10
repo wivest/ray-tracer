@@ -1,6 +1,6 @@
 from pygltflib import GLTF2
 
-from . import vec, basis
+from .aliases import vec, basis
 
 FILENAME = "./scene/untitled.gltf"
 
