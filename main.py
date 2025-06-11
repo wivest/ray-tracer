@@ -2,8 +2,7 @@ import sys
 import taichi as ti
 
 from app.app import App
-from model.spatial import Spatial
-from model.setup import Setup
+from model import Spatial, Setup
 
 # tmp
 from model.gltf_parser import *
