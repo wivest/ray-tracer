@@ -1,6 +1,12 @@
-from .gltf_parser import *
-from .material import *
-from .setup import *
-from .spatial import *
-from .sphere import *
-from .triangle import *
+from typing import TypeAlias
+
+from .gltf_parser import get_camera_data
+from .material import Material
+from .setup import Setup
+from .spatial import Spatial
+from .sphere import Sphere
+from .triangle import Triangle
+
+# aliases
+vec: TypeAlias = tuple[float, float, float]
+basis: TypeAlias = tuple[vec, vec, vec]

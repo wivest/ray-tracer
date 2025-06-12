@@ -1,6 +1,6 @@
 from camera.transform import Transform
 
-from .aliases import vec
+from . import vec
 
 
 class Setup:
