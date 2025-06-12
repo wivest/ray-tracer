@@ -1,6 +1,6 @@
 from imports.common import *
 
-from model.material import Material
+from model import Material
 
 
 @ti.dataclass

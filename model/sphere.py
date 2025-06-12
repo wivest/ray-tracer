@@ -1,6 +1,6 @@
 from imports.common import *
 
-from .material import Material
+from . import Material
 
 from camera.ray import Ray
 

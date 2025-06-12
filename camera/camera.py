@@ -8,10 +8,6 @@ from .hit_info import HitInfo
 from light.sun import Sun
 from sky.colored import Colored
 
-# aliases
-vec = tuple[float, float, float]
-basis = tuple[vec, vec, vec]
-
 
 @ti.data_oriented
 class Camera:

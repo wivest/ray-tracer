@@ -3,8 +3,7 @@ import numpy as np
 
 from imports.common import *
 
-from . import vec
-from .triangle import Triangle
+from . import vec, Triangle
 
 
 class PyMaterial(dict[str, vec]):

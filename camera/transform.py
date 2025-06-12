@@ -1,8 +1,6 @@
 from imports.common import *
 
-# aliases
-vec = tuple[float, float, float]
-basis = tuple[vec, vec, vec]
+from model import vec, basis
 
 
 class Transform:
