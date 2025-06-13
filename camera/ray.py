@@ -1,6 +1,6 @@
 from imports.common import *
 
-from .hit_info import HitInfo
+from . import HitInfo
 from model import Material
 
 

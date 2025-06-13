@@ -1,9 +1,6 @@
 from imports.common import *
 
-from . import tonemapping
-from .transform import Transform
-from .ray import Ray
-from .hit_info import HitInfo
+from . import aces, Transform, Ray, HitInfo
 
 from light.sun import Sun
 from sky.colored import Colored
@@ -53,7 +50,7 @@ class Camera:
             ray = Ray(self.transform.origin[None], direction)
 
             incoming_light = self.get_preview_color(ray, objects)
-            self.pixels[x, y] = tonemapping.aces(incoming_light)
+            self.pixels[x, y] = aces(incoming_light)
 
     @ti.func
     def get_preview_color(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
@@ -80,7 +77,7 @@ class Camera:
             ray = Ray(self.transform.origin[None], direction)
 
             incoming_light = self.get_color(ray, objects, 6)
-            self._sampled[x, y] += tonemapping.aces(incoming_light)
+            self._sampled[x, y] += aces(incoming_light)
             self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
 
     @ti.func
