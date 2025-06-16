@@ -1,7 +1,7 @@
 from imports.common import *
 
-from . import HitInfo
-from model import Material
+from .hit_info import HitInfo
+from model.material import Material
 
 
 TRESHHOLD = 0.001

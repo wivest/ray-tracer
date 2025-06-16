@@ -4,7 +4,7 @@ import numpy as np
 from imports.common import *
 from imports.aliases import vec
 
-from . import Triangle
+from .triangle import Triangle
 
 
 class PyMaterial(dict[str, vec]):

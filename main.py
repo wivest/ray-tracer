@@ -2,8 +2,8 @@ import sys
 import taichi as ti
 
 from app.app import App
-from model import Spatial
-from camera import Transform
+from model.spatial import Spatial
+from camera.camera import Transform
 
 # tmp
 from model.gltf_parser import *
