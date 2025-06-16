@@ -1,6 +1,5 @@
 from imports.common import *
-
-from model import vec, basis
+from imports.aliases import vec, basis
 
 
 class Transform:

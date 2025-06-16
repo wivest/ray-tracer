@@ -2,8 +2,9 @@ import os
 import numpy as np
 
 from imports.common import *
+from imports.aliases import vec
 
-from . import vec, Triangle
+from . import Triangle
 
 
 class PyMaterial(dict[str, vec]):
