@@ -3,6 +3,8 @@ from imports.aliases import vec, basis
 from pygltflib import GLTF2
 from scipy.spatial.transform import Rotation
 
+from camera.transform import Transform
+
 
 FILENAME = "./scene/untitled.gltf"
 
@@ -29,9 +31,7 @@ def get_camera_data(path: str):
     return __convert_transform(t, r)
 
 
-def __convert_transform(
-    translation: list[float], rotation: list[float]
-) -> tuple[vec, basis]:
+def __convert_transform(translation: list[float], rotation: list[float]) -> Transform:
     if len(translation) != 3:
         raise Exception()
 
@@ -39,4 +39,4 @@ def __convert_transform(
     mat = Rotation.from_quat(rotation).as_matrix()
     bas = tuple(tuple(i) for i in mat.tolist())
 
-    return origin, bas  # type: ignore
+    return Transform(origin, bas)  # type: ignore
