@@ -1,6 +1,7 @@
 from imports.aliases import vec, basis
 
 from pygltflib import GLTF2
+from scipy.spatial.transform import Rotation
 
 
 FILENAME = "./scene/untitled.gltf"
@@ -22,9 +23,6 @@ def get_camera_data(path: str):
             t = node.translation
             r = node.rotation
 
-    print(f"TRANSLATION: {t}")
-    print(f"ROTATION: {r}")
-
     if t == None or r == None:
         raise Exception()
 
@@ -38,5 +36,7 @@ def __convert_transform(
         raise Exception()
 
     origin = (translation[0], translation[1], translation[2])
+    mat = Rotation.from_quat(rotation).as_matrix()
+    bas = tuple(tuple(i) for i in mat.tolist())
 
-    return origin, basis()
+    return origin, bas  # type: ignore

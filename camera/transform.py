@@ -46,7 +46,10 @@ class Transform:
 
     def move_flat_x(self, by: float):
         mat = self.basis[None]
-        x_axis = Vector((mat[0, 0], 0, mat[2, 0]), f32).normalized()
+        x_axis = Vector((mat[0, 0], 0, mat[2, 0]), f32)
+        if x_axis.norm_sqr() < 0.001:
+            return
+        x_axis = x_axis.normalized()
         self.origin[None] += x_axis * by
 
     def move_global_y(self, by: float):
@@ -55,5 +58,8 @@ class Transform:
 
     def move_flat_z(self, by: float):
         mat = self.basis[None]
-        z_axis = Vector((mat[0, 2], 0, mat[2, 2]), f32).normalized()
+        z_axis = Vector((mat[0, 2], 0, mat[2, 2]), f32)
+        if z_axis.norm_sqr() < 0.001:
+            return
+        z_axis = z_axis.normalized()
         self.origin[None] += z_axis * by
