@@ -18,6 +18,9 @@ obj_path = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_OBJ
 spatial = Spatial(obj_path)
 camera_transform = get_camera_data(FILENAME)
 
+# tmp
+get_triangles(FILENAME)
+
 
 app = App("Ray Tracing", SIZE, spatial.export(), camera_transform)
 app.run()

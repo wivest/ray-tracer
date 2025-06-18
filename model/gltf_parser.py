@@ -40,3 +40,17 @@ def __convert_transform(translation: list[float], rotation: list[float]) -> Tran
     bas = tuple(tuple(i) for i in mat.tolist())
 
     return Transform(origin, bas)  # type: ignore
+
+
+def get_triangles(path: str):
+    gltf = GLTF2().load(path)
+    if gltf == None:
+        raise Exception()
+
+    primitives = gltf.meshes[0].primitives
+    # from pypi docs
+    accessor = gltf.accessors[primitives[0].attributes.POSITION]  # type: ignore
+    bufferView = gltf.bufferViews[accessor.bufferView]
+    buffer = gltf.buffers[bufferView.buffer]
+    data = gltf.get_data_from_buffer_uri(buffer.uri)
+    print(data)
