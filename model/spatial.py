@@ -1,5 +1,7 @@
 import os
+import struct
 import numpy as np
+from pygltflib import GLTF2
 
 from imports.common import *
 from imports.aliases import vec
@@ -110,6 +112,28 @@ class Spatial:
                 count += 1
 
         return count
+
+    def __get_triangles_tmp(self, path: str):
+        gltf = GLTF2().load(path)
+        if gltf == None:
+            raise Exception()
+
+        primitives = gltf.meshes[0].primitives
+
+        accessor: Accessor = gltf.accessors[primitives[0].attributes.POSITION]  # type: ignore
+        bufferView: BufferView = gltf.bufferViews[accessor.bufferView]  # type: ignore
+        buffer = gltf.buffers[bufferView.buffer]
+        data = gltf.get_data_from_buffer_uri(buffer.uri)
+
+        if type(data) is not bytes:
+            raise Exception()
+        if bufferView.byteOffset == None:
+            raise Exception()
+        TYPE_SIZE = 12  # accessor.type = "VEC3"
+        for i in range(accessor.count):
+            idx = bufferView.byteOffset + i * TYPE_SIZE
+            a, b, c = struct.unpack("fff", data[idx : idx + 12])
+            print(a, b, c)
 
     def export(self) -> StructField:
         tri_field = Triangle.field(shape=self.n)
