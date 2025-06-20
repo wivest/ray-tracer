@@ -133,7 +133,7 @@ class Spatial:
         for i in range(accessor.count):
             idx = bufferView.byteOffset + i * TYPE_SIZE
             a, b, c = struct.unpack("fff", data[idx : idx + 12])
-            print(a, b, c)
+            yield a, b, c
 
     def export(self) -> StructField:
         tri_field = Triangle.field(shape=self.n)
