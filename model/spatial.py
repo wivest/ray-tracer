@@ -120,8 +120,8 @@ class Spatial:
 
         primitives = gltf.meshes[0].primitives
 
-        accessor: Accessor = gltf.accessors[primitives[0].attributes.POSITION]  # type: ignore
-        bufferView: BufferView = gltf.bufferViews[accessor.bufferView]  # type: ignore
+        accessor = gltf.accessors[primitives[0].attributes.POSITION or 0]
+        bufferView = gltf.bufferViews[accessor.bufferView or 0]
         buffer = gltf.buffers[bufferView.buffer]
         data = gltf.get_data_from_buffer_uri(buffer.uri)
 
