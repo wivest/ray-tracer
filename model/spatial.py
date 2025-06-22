@@ -20,13 +20,13 @@ class PyMaterial(dict[str, vec]):
 @ti.data_oriented
 class Spatial:
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, gltf_path: str):
         self.scene_path = os.path.dirname(path) + "/"
 
         with open(path) as file:
             lines = file.readlines()
 
-            self.n = self.__count_triangles(lines)
+            self.n = self.__count_triangles(lines) + 1
             self.materials = {
                 "diffuse": np.empty(shape=(self.n, 3), dtype=np.float32),
                 "specular": np.empty(shape=(self.n, 3), dtype=np.float32),
@@ -40,10 +40,11 @@ class Spatial:
                 "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
             }
 
-            self.__parse(lines)
+            self.__parse(lines, gltf_path)
 
-    def __parse(self, lines: list[str]):
-        vertices: list[vec] = []
+    def __parse(self, lines: list[str], gltf_path: str):
+        vertices: list[vec] = list(self.__get_triangles_tmp(gltf_path))
+        tris = self.__get_indices_tmp(gltf_path)
         mtls: dict[str, PyMaterial] = {}
         current_mtl = PyMaterial()
         tri_idx = 0
@@ -60,20 +61,28 @@ class Spatial:
                     mtl_lines = f.readlines()
                 mtls.update(self.__load_materials(mtl_lines))
 
-            elif key == "v":
-                x = float(tokens[1])
-                y = float(tokens[2])
-                z = float(tokens[3])
-                vertices.append((x, y, z))
+            # elif key == "v":
+            #     x = float(tokens[1])
+            #     y = float(tokens[2])
+            #     z = float(tokens[3])
+            #     vertices.append((x, y, z))
 
             elif key == "usemtl":
                 current_mtl = mtls[tokens[1]]
-            elif key == "f":
-                a = vertices[vertex_i(tokens, 1)]
-                b = vertices[vertex_i(tokens, 2)]
-                c = vertices[vertex_i(tokens, 3)]
-                self.__assign_triangle(tri_idx, a, b, c, current_mtl)
-                tri_idx += 1
+            # elif key == "f":
+            #     a = vertices[vertex_i(tokens, 1)]
+            #     b = vertices[vertex_i(tokens, 2)]
+            #     c = vertices[vertex_i(tokens, 3)]
+            #     self.__assign_triangle(tri_idx, a, b, c, current_mtl)
+            #     tri_idx += 1
+
+        tri_idx = 0
+        for tri in tris:
+            a = vertices[tri[0]]
+            b = vertices[tri[1]]
+            c = vertices[tri[2]]
+            self.__assign_triangle(tri_idx, a, b, c, current_mtl)
+            tri_idx += 1
 
     def __assign_triangle(self, i: int, a: vec, b: vec, c: vec, mtl: PyMaterial):
         self.triangles["a"][i] = a
