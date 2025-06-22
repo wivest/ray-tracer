@@ -135,6 +135,28 @@ class Spatial:
             a, b, c = struct.unpack("fff", data[idx : idx + 12])
             yield a, b, c
 
+    def __get_indices_tmp(self, path: str):
+        gltf = GLTF2().load(path)
+        if gltf == None:
+            raise Exception()
+
+        primitives = gltf.meshes[0].primitives
+
+        accessor = gltf.accessors[primitives[0].indices or 0]  # type: ignore
+        bufferView = gltf.bufferViews[accessor.bufferView or 0]  # type: ignore
+        buffer = gltf.buffers[bufferView.buffer]
+        data = gltf.get_data_from_buffer_uri(buffer.uri)
+
+        if type(data) is not bytes:
+            raise Exception()
+        if bufferView.byteOffset == None:
+            raise Exception()
+        TYPE_SIZE = 2  # accessor.type = "SCALAR"
+        for i in range(accessor.count // 3):
+            idx = bufferView.byteOffset + i * TYPE_SIZE * 3
+            ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
+            yield ns
+
     def export(self) -> StructField:
         tri_field = Triangle.field(shape=self.n)
         tri_field.from_numpy(self.triangles)
