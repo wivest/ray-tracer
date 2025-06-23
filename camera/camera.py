@@ -46,11 +46,13 @@ class Camera:
     def preview(self, objects: ti.template()):  # type: ignore
         center_x = self.pixels.shape[0] / 2
         center_y = self.pixels.shape[1] / 2
+        basis = self.transform.basis[None]
+        origin = self.transform.origin[None]
 
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
-            direction = self.transform.basis[None] @ pixel
-            ray = Ray(self.transform.origin[None], direction)
+            direction = basis @ pixel
+            ray = Ray(origin, direction)
 
             incoming_light = self.get_preview_color(ray, objects)
             self.pixels[x, y] = aces(incoming_light)
@@ -74,14 +76,18 @@ class Camera:
         center_y = self.pixels.shape[1] / 2
         self._ready[None] += 1
 
+        ready = self._ready[None]
+        basis = self.transform.basis[None]
+        origin = self.transform.origin[None]
+
         for x, y in self.pixels:
             pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
-            direction = self.transform.basis[None] @ pixel
-            ray = Ray(self.transform.origin[None], direction)
+            direction = basis @ pixel
+            ray = Ray(origin, direction)
 
             incoming_light = self.get_color(ray, objects, 6)
             self._sampled[x, y] += aces(incoming_light)
-            self.pixels[x, y] = self._sampled[x, y] / self._ready[None]
+            self.pixels[x, y] = self._sampled[x, y] / ready
 
     @ti.func
     def get_color(self, ray: Ray, objects: ti.template(), hits: int) -> Vector:  # type: ignore
