@@ -22,11 +22,16 @@ class Spatial:
 
     def __init__(self, path: str, gltf_path: str):
         self.scene_path = os.path.dirname(path) + "/"
+        gltf = GLTF2().load(gltf_path)
+        if gltf == None:
+            raise Exception()
+        primitives = gltf.meshes[0].primitives
+        accessor = gltf.accessors[primitives[0].attributes.POSITION or 0]
 
         with open(path) as file:
             lines = file.readlines()
 
-            self.n = self.__count_triangles(lines) + 1
+            self.n = accessor.count
             self.materials = {
                 "diffuse": np.empty(shape=(self.n, 3), dtype=np.float32),
                 "specular": np.empty(shape=(self.n, 3), dtype=np.float32),
@@ -40,17 +45,14 @@ class Spatial:
                 "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
             }
 
-            self.__parse(lines, gltf_path)
+            self.__parse(lines, gltf)
 
-    def __parse(self, lines: list[str], gltf_path: str):
-        vertices: list[vec] = list(self.__get_triangles_tmp(gltf_path))
-        tris = self.__get_indices_tmp(gltf_path)
+    def __parse(self, lines: list[str], gltf: GLTF2):
+        vertices: list[vec] = list(self.__get_triangles_tmp(gltf))
+        tris = self.__get_indices_tmp(gltf)
         mtls: dict[str, PyMaterial] = {}
         current_mtl = PyMaterial()
         tri_idx = 0
-
-        def vertex_i(tokens: list[str], i: int) -> int:
-            return int(tokens[i].split("/")[0]) - 1
 
         for line in lines:
             tokens = line.split()
@@ -61,20 +63,8 @@ class Spatial:
                     mtl_lines = f.readlines()
                 mtls.update(self.__load_materials(mtl_lines))
 
-            # elif key == "v":
-            #     x = float(tokens[1])
-            #     y = float(tokens[2])
-            #     z = float(tokens[3])
-            #     vertices.append((x, y, z))
-
             elif key == "usemtl":
                 current_mtl = mtls[tokens[1]]
-            # elif key == "f":
-            #     a = vertices[vertex_i(tokens, 1)]
-            #     b = vertices[vertex_i(tokens, 2)]
-            #     c = vertices[vertex_i(tokens, 3)]
-            #     self.__assign_triangle(tri_idx, a, b, c, current_mtl)
-            #     tri_idx += 1
 
         tri_idx = 0
         for tri in tris:
@@ -113,20 +103,7 @@ class Spatial:
 
         return materials
 
-    def __count_triangles(self, lines: list[str]) -> int:
-        count = 0
-
-        for line in lines:
-            if line.startswith("f "):
-                count += 1
-
-        return count
-
-    def __get_triangles_tmp(self, path: str):
-        gltf = GLTF2().load(path)
-        if gltf == None:
-            raise Exception()
-
+    def __get_triangles_tmp(self, gltf: GLTF2):
         primitives = gltf.meshes[0].primitives
 
         accessor = gltf.accessors[primitives[0].attributes.POSITION or 0]
@@ -144,11 +121,7 @@ class Spatial:
             a, b, c = struct.unpack("fff", data[idx : idx + 12])
             yield a, b, c
 
-    def __get_indices_tmp(self, path: str):
-        gltf = GLTF2().load(path)
-        if gltf == None:
-            raise Exception()
-
+    def __get_indices_tmp(self, gltf: GLTF2):
         primitives = gltf.meshes[0].primitives
 
         accessor = gltf.accessors[primitives[0].indices or 0]  # type: ignore
