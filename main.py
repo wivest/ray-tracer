@@ -16,7 +16,6 @@ DEFAULT_SETUP = DEFAULT_SCENE + "setup"
 
 obj_path = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_OBJ
 spatial = Spatial(obj_path, FILENAME)
-camera_transform = get_camera_data(FILENAME)
 
-app = App("Ray Tracing", SIZE, spatial.export(), camera_transform)
+app = App("Ray Tracing", SIZE, spatial.export(), FILENAME)
 app.run()

@@ -1,3 +1,6 @@
+from pygltflib import GLTF2
+from scipy.spatial.transform import Rotation
+
 from imports.common import *
 
 from .tonemapping import aces
@@ -15,11 +18,11 @@ class Camera:
     def __init__(
         self,
         size: tuple[int, int],
-        transform: Transform,
+        gltf_path: str,
         angle: float,
         samples: int,
     ):
-        self.transform = transform
+        self.transform = self.__get_camera_data(gltf_path)
         self.pixels = Vector.field(3, f32, size)
         self.fov: float = size[1] / ti.tan(angle / 2)
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))
@@ -36,6 +39,39 @@ class Camera:
         self._sampled.fill(0.0)
         self._ready: Field = ti.field(int, ())
         self._ready[None] = 0
+
+    def __get_camera_data(self, path: str):
+        data = GLTF2().load(path)
+        if data == None:
+            raise Exception()
+        scene = data.scenes[data.scene]
+        if scene.nodes == None:
+            raise Exception()
+
+        t = []
+        r = []
+        for i in scene.nodes:
+            node = data.nodes[i]
+            if node.camera != None:
+                t = node.translation
+                r = node.rotation
+
+        if t == None or r == None:
+            raise Exception()
+
+        return self.__convert_transform(t, r)
+
+    def __convert_transform(
+        self, translation: list[float], rotation: list[float]
+    ) -> Transform:
+        if len(translation) != 3:
+            raise Exception()
+
+        origin = (translation[0], translation[1], translation[2])
+        mat = Rotation.from_quat(rotation).as_matrix()
+        bas = tuple(tuple(i) for i in mat.tolist())
+
+        return Transform(origin, bas)  # type: ignore
 
     @ti.kernel
     def reset_samples(self):

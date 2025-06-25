@@ -18,11 +18,11 @@ class App:
         name: str,
         size: tuple[int, int],
         objects: StructField,
-        camera_transform: Transform,
+        gltf_path: str,
     ):
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
-        self.camera = Camera(size, camera_transform, ANGLE, 1024)
+        self.camera = Camera(size, gltf_path, ANGLE, 1024)
         self.objects = objects
 
         self.input = Input(self.window)
