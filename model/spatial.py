@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-from pygltflib import GLTF2
+from pygltflib import GLTF2, Primitive, Material
 
 from imports.common import *
 from imports.aliases import vec
@@ -9,6 +9,9 @@ from .triangle import Triangle
 
 
 class PyMaterial(dict[str, vec]):
+    def __init__(self, material: Material):
+        pass
+
     def assign_color(self, color: str, rgb: vec):
         r = rgb[0]
         g = rgb[1]
@@ -43,9 +46,11 @@ class Spatial:
         self.__parse(gltf)
 
     def __parse(self, gltf: GLTF2):
-        vertices: list[vec] = list(self.__get_triangles(gltf))
+        primitive = gltf.meshes[0].primitives[0]
+        vertices: list[vec] = list(self.__get_triangles(gltf, primitive))
         tris = self.__get_indices(gltf)
-        current_mtl = PyMaterial()
+        material = gltf.materials[primitive.material or 0]
+        current_mtl = PyMaterial(material)
 
         tri_idx = 0
         for tri in tris:
@@ -62,9 +67,7 @@ class Spatial:
         for key in mtl:
             self.materials[key][i] = mtl[key]
 
-    def __get_triangles(self, gltf: GLTF2):
-        primitive = gltf.meshes[0].primitives[0]
-
+    def __get_triangles(self, gltf: GLTF2, primitive: Primitive):
         accessor = gltf.accessors[primitive.attributes.POSITION or 0]
         bufferView = gltf.bufferViews[accessor.bufferView or 0]
         buffer = gltf.buffers[bufferView.buffer]
