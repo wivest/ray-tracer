@@ -10,7 +10,11 @@ from .triangle import Triangle
 
 class PyMaterial(dict[str, vec]):
     def __init__(self, material: Material):
-        pass
+        if material.pbrMetallicRoughness == None:
+            return
+        diffuse = material.pbrMetallicRoughness.baseColorFactor
+        roughness = material.pbrMetallicRoughness.metallicFactor
+        emission = material.emissiveFactor
 
     def assign_color(self, color: str, rgb: vec):
         r = rgb[0]
