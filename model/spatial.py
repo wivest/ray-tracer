@@ -10,7 +10,9 @@ from .triangle import Triangle
 
 class PyMaterial(dict[str, list[float]]):
 
-    def __init__(self, material: Material):
+    def __init__(self, material: Material | None = None):
+        if material == None:
+            material = Material()
         if material.pbrMetallicRoughness == None:
             material.pbrMetallicRoughness = PbrMetallicRoughness()
         diffuse = (material.pbrMetallicRoughness.baseColorFactor or [1, 1, 1])[:3]
@@ -51,7 +53,11 @@ class Spatial:
     def __parse(self, primitive: Primitive, gltf: GLTF2):
         vertices: list[vec] = list(self.__get_triangles(primitive, gltf))
         tris = self.__get_indices(gltf)
-        material = PyMaterial(gltf.materials[primitive.material or 0])
+        material = (
+            PyMaterial(gltf.materials[primitive.material])
+            if primitive.material != None
+            else PyMaterial()
+        )
 
         tri_idx = 0
         for tri in tris:
