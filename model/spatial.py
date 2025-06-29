@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-from pygltflib import GLTF2, Primitive, Material
+from pygltflib import GLTF2, Primitive, Material, PbrMetallicRoughness
 
 from imports.common import *
 from imports.aliases import vec
@@ -11,12 +11,15 @@ from .triangle import Triangle
 class PyMaterial(dict[str, vec]):
     def __init__(self, material: Material):
         if material.pbrMetallicRoughness == None:
-            return
-        diffuse = material.pbrMetallicRoughness.baseColorFactor
-        roughness = material.pbrMetallicRoughness.metallicFactor
-        emission = material.emissiveFactor
+            material.pbrMetallicRoughness = PbrMetallicRoughness()
+        diffuse = material.pbrMetallicRoughness.baseColorFactor or [1, 1, 1, 1]
+        spec = material.pbrMetallicRoughness.metallicFactor or 1.0
+        emission = material.emissiveFactor or [0, 0, 0]
+        self.assign_color("diffuse", diffuse)
+        self.assign_color("specular", [spec, spec, spec])
+        self.assign_color("emmision", emission)
 
-    def assign_color(self, color: str, rgb: vec):
+    def assign_color(self, color: str, rgb: list[float]):
         r = rgb[0]
         g = rgb[1]
         b = rgb[2]
