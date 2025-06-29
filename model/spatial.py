@@ -17,7 +17,7 @@ class PyMaterial(dict[str, vec]):
         emission = material.emissiveFactor or [0, 0, 0]
         self.assign_color("diffuse", diffuse)
         self.assign_color("specular", [spec, spec, spec])
-        self.assign_color("emmision", emission)
+        self.assign_color("emission", emission)
 
     def assign_color(self, color: str, rgb: list[float]):
         r = rgb[0]
@@ -40,7 +40,7 @@ class Spatial:
         self.materials = {
             "diffuse": np.empty(shape=(self.n, 3), dtype=np.float32),
             "specular": np.empty(shape=(self.n, 3), dtype=np.float32),
-            "emmision": np.empty(shape=(self.n, 3), dtype=np.float32),
+            "emission": np.empty(shape=(self.n, 3), dtype=np.float32),
         }
         self.triangles = {
             "a": np.empty(shape=(self.n, 3), dtype=np.float32),

@@ -101,7 +101,7 @@ class Camera:
         if hit_info.hit:
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
             incoming_light = sin * (
-                hit_info.material.emmision + hit_info.material.diffuse
+                hit_info.material.emission + hit_info.material.diffuse
             )
 
         return incoming_light
@@ -140,7 +140,7 @@ class Camera:
             sin = ti.math.dot(ray.direction, hit_info.normal)
             ray_color = sin * ray_color * hit_info.material.diffuse
             incoming_light += ray_color * (
-                hit_info.material.emmision
+                hit_info.material.emission
                 + self.sample_direct_light(
                     hit_info.point, objects, self.lights, hit_info.normal
                 )
