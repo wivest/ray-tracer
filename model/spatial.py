@@ -8,22 +8,16 @@ from imports.aliases import vec
 from .triangle import Triangle
 
 
-class PyMaterial(dict[str, vec]):
+class PyMaterial(dict[str, list[float]]):
+
     def __init__(self, material: Material):
         if material.pbrMetallicRoughness == None:
             material.pbrMetallicRoughness = PbrMetallicRoughness()
-        diffuse = material.pbrMetallicRoughness.baseColorFactor or [1, 1, 1, 1]
+        diffuse = (material.pbrMetallicRoughness.baseColorFactor or [1, 1, 1])[:3]
+        self["diffuse"] = diffuse
         spec = material.pbrMetallicRoughness.metallicFactor or 1.0
-        emission = material.emissiveFactor or [0, 0, 0]
-        self.assign_color("diffuse", diffuse)
-        self.assign_color("specular", [spec, spec, spec])
-        self.assign_color("emission", emission)
-
-    def assign_color(self, color: str, rgb: list[float]):
-        r = rgb[0]
-        g = rgb[1]
-        b = rgb[2]
-        self[color] = (r, g, b)
+        self["specular"] = [spec, spec, spec]
+        self["emission"] = material.emissiveFactor or [0, 0, 0]
 
 
 @ti.data_oriented
