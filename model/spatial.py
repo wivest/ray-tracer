@@ -52,7 +52,7 @@ class Spatial:
 
     def __parse(self, primitive: Primitive, gltf: GLTF2):
         vertices: list[vec] = list(self.__get_triangles(primitive, gltf))
-        tris = self.__get_indices(gltf)
+        tris = self.__get_indices(primitive, gltf)
         material = (
             PyMaterial(gltf.materials[primitive.material])
             if primitive.material != None
@@ -88,12 +88,10 @@ class Spatial:
         for i in range(accessor.count):
             idx = bufferView.byteOffset + i * TYPE_SIZE
             a, b, c = struct.unpack("fff", data[idx : idx + 12])
-            yield a, b, c
+            yield (a, b, c)
 
-    def __get_indices(self, gltf: GLTF2):
-        primitives = gltf.meshes[0].primitives
-
-        accessor = gltf.accessors[primitives[0].indices or 0]  # type: ignore
+    def __get_indices(self, primitive: Primitive, gltf: GLTF2):
+        accessor = gltf.accessors[primitive.indices or 0]  # type: ignore
         bufferView = gltf.bufferViews[accessor.bufferView or 0]  # type: ignore
         buffer = gltf.buffers[bufferView.buffer]
         data = gltf.get_data_from_buffer_uri(buffer.uri)
