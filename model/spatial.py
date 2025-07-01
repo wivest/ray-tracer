@@ -39,20 +39,18 @@ class Spatial:
 
     def __parse(self, primitive: Primitive, gltf: GLTF2):
         vertices: list[vec] = list(self.__get_triangles(primitive, gltf))
-        tris = self.__get_indices(primitive, gltf)
+        tris = list(self.__get_indices(primitive, gltf))
         material = (
             PyMaterial(gltf.materials[primitive.material])
             if primitive.material != None
             else PyMaterial()
         )
 
-        tri_idx = 0
-        for tri in tris:
-            a = vertices[tri[0]]
-            b = vertices[tri[1]]
-            c = vertices[tri[2]]
-            self.__assign_triangle(tri_idx, a, b, c, material)
-            tri_idx += 1
+        for i in range(len(tris)):
+            a = vertices[tris[i][0]]
+            b = vertices[tris[i][1]]
+            c = vertices[tris[i][2]]
+            self.__assign_triangle(i, a, b, c, material)
 
     def __assign_triangle(self, i: int, a: vec, b: vec, c: vec, mtl: PyMaterial):
         self.triangles["a"][i] = a
