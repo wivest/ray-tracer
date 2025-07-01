@@ -15,8 +15,9 @@ class Spatial:
     def __init__(self, mesh: Mesh, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
 
+        offset = 0
         for primitive in mesh.primitives:
-            self.__parse(primitive, gltf)
+            offset += self.__parse(primitive, gltf, offset)
 
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
@@ -37,7 +38,7 @@ class Spatial:
             "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
         }
 
-    def __parse(self, primitive: Primitive, gltf: GLTF2):
+    def __parse(self, primitive: Primitive, gltf: GLTF2, offset: int) -> int:
         vertices: list[vec] = list(self.__get_triangles(primitive, gltf))
         tris = list(self.__get_indices(primitive, gltf))
         material = (
@@ -50,7 +51,8 @@ class Spatial:
             a = vertices[tris[i][0]]
             b = vertices[tris[i][1]]
             c = vertices[tris[i][2]]
-            self.__assign_triangle(i, a, b, c, material)
+            self.__assign_triangle(offset + i, a, b, c, material)
+        return len(tris)
 
     def __assign_triangle(self, i: int, a: vec, b: vec, c: vec, mtl: PyMaterial):
         self.triangles["a"][i] = a
