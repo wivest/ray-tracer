@@ -10,7 +10,8 @@
 			"nodes":[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -46,6 +47,20 @@
 			"translation":[
 				0,
 				10,
+				0
+			]
+		},
+		{
+			"mesh":1,
+			"name":"Torus",
+			"scale":[
+				2,
+				1,
+				2
+			],
+			"translation":[
+				0,
+				-1,
 				0
 			]
 		}
@@ -125,6 +140,19 @@
 					"material":1
 				}
 			]
+		},
+		{
+			"name":"Torus",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":8,
+						"NORMAL":9,
+						"TEXCOORD_0":10
+					},
+					"indices":11
+				}
+			]
 		}
 	],
 	"accessors":[
@@ -195,6 +223,40 @@
 			"componentType":5123,
 			"count":480,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":2304,
+			"max":[
+				1.25,
+				0.25,
+				1.25
+			],
+			"min":[
+				-1.25,
+				-0.25,
+				-1.25
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":2304,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5126,
+			"count":2304,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":11,
+			"componentType":5123,
+			"count":3456,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -245,11 +307,35 @@
 			"byteLength":960,
 			"byteOffset":67760,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":27648,
+			"byteOffset":68720,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":27648,
+			"byteOffset":96368,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":18432,
+			"byteOffset":124016,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":6912,
+			"byteOffset":142448,
+			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":68720,
+			"byteLength":149360,
 			"uri":"untitled.bin"
 		}
 	]
