@@ -1,3 +1,4 @@
+import numpy as np
 from pygltflib import GLTF2
 
 from imports.common import *
@@ -21,3 +22,8 @@ class Scene:
                 continue
             mesh = gltf.meshes[node.mesh]
             self.spatials.append(Spatial(mesh, gltf))
+
+    def export(self):
+        n = 0
+        for spatial in self.spatials:
+            n += spatial.n
