@@ -10,8 +10,7 @@
 			"nodes":[
 				0,
 				1,
-				2,
-				3
+				2
 			]
 		}
 	],
@@ -36,21 +35,6 @@
 			"name":"Suzanne"
 		},
 		{
-			"camera":1,
-			"name":"Camera.001",
-			"rotation":[
-				-0.7071068286895752,
-				0,
-				0,
-				0.7071068286895752
-			],
-			"translation":[
-				0,
-				10,
-				0
-			]
-		},
-		{
 			"mesh":1,
 			"name":"Torus",
 			"scale":[
@@ -72,16 +56,6 @@
 				"aspectRatio":1.7777777777777777,
 				"yfov":0.39959652046304894,
 				"zfar":100,
-				"znear":0.10000000149011612
-			},
-			"type":"perspective"
-		},
-		{
-			"name":"Camera.001",
-			"perspective":{
-				"aspectRatio":1.7777777777777777,
-				"yfov":0.39959652046304894,
-				"zfar":1000,
 				"znear":0.10000000149011612
 			},
 			"type":"perspective"
