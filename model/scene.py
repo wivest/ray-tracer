@@ -31,7 +31,6 @@ class Scene:
 
         for spatial in self.spatials:
             n += spatial.n
-            print(spatial.n)
 
         for key in ["diffuse", "specular", "emission"]:
             materials[key] = np.concatenate(

@@ -10,6 +10,6 @@ class PyMaterial(dict[str, list[float]]):
             material.pbrMetallicRoughness = PbrMetallicRoughness()
         diffuse = (material.pbrMetallicRoughness.baseColorFactor or [1, 1, 1])[:3]
         self["diffuse"] = diffuse
-        spec = material.pbrMetallicRoughness.metallicFactor or 1.0
+        spec = 1.0 - (material.pbrMetallicRoughness.roughnessFactor or 1.0)
         self["specular"] = [spec, spec, spec]
         self["emission"] = material.emissiveFactor or [0, 0, 0]
