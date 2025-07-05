@@ -22,8 +22,10 @@ class Spatial:
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
         for primitive in mesh.primitives:
-            accessor = gltf.accessors[primitive.attributes.POSITION or 0]
-            self.n += accessor.count
+            if primitive.indices == None:
+                continue
+            accessor = gltf.accessors[primitive.indices]
+            self.n += accessor.count // 3
 
         self.materials = {
             "diffuse": np.empty(shape=(self.n, 3), dtype=np.float32),

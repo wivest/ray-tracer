@@ -31,12 +31,17 @@ class Scene:
 
         for spatial in self.spatials:
             n += spatial.n
+            print(spatial.n)
 
         for key in ["diffuse", "specular", "emission"]:
-            materials[key] = np.concatenate([s.materials[key] for s in self.spatials])
+            materials[key] = np.concatenate(
+                [s.materials[key] for s in self.spatials], dtype=np.float32
+            )
         triangles["material"] = materials
         for key in ["a", "b", "c", "normal"]:
-            triangles[key] = np.concatenate([s.triangles[key] for s in self.spatials])
+            triangles[key] = np.concatenate(
+                [s.triangles[key] for s in self.spatials], dtype=np.float32
+            )
 
         f = Triangle.field(shape=n)
         f.from_numpy(triangles)
