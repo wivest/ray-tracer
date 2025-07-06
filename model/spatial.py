@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-from pygltflib import GLTF2, Mesh, Primitive
+from pygltflib import GLTF2, Node, Mesh, Primitive
 
 from imports.common import *
 from imports.aliases import vec
@@ -12,12 +12,12 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    def __init__(self, mesh: Mesh, gltf: GLTF2):
+    def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
 
         offset = 0
         for primitive in mesh.primitives:
-            offset += self.__parse(primitive, gltf, offset)
+            offset += self.__parse(primitive, node, gltf, offset)
 
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
@@ -40,8 +40,10 @@ class Spatial:
             "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
         }
 
-    def __parse(self, primitive: Primitive, gltf: GLTF2, offset: int) -> int:
-        vertices: list[vec] = list(self.__get_triangles(primitive, gltf))
+    def __parse(
+        self, primitive: Primitive, node: Node, gltf: GLTF2, offset: int
+    ) -> int:
+        vertices: list[vec] = list(self.__get_triangles(primitive, node, gltf))
         tris = list(self.__get_indices(primitive, gltf))
         material = (
             PyMaterial(gltf.materials[primitive.material])
@@ -63,7 +65,7 @@ class Spatial:
         for key in mtl:
             self.materials[key][i] = mtl[key]
 
-    def __get_triangles(self, primitive: Primitive, gltf: GLTF2):
+    def __get_triangles(self, primitive: Primitive, node: Node, gltf: GLTF2):
         accessor = gltf.accessors[primitive.attributes.POSITION or 0]
         bufferView = gltf.bufferViews[accessor.bufferView or 0]
         buffer = gltf.buffers[bufferView.buffer]

@@ -22,7 +22,7 @@ class Scene:
             if node.mesh == None:
                 continue
             mesh = gltf.meshes[node.mesh]
-            self.spatials.append(Spatial(mesh, gltf))
+            self.spatials.append(Spatial(mesh, node, gltf))
 
     def export(self):
         n = 0
