@@ -43,7 +43,7 @@ class Spatial:
     def __parse(
         self, primitive: Primitive, node: Node, gltf: GLTF2, offset: int
     ) -> int:
-        vertices: list[vec] = list(self.__get_triangles(primitive, node, gltf))
+        vertices: list[vec] = list(self.__get_vertices(primitive, node, gltf))
         tris = list(self.__get_indices(primitive, gltf))
         material = (
             PyMaterial(gltf.materials[primitive.material])
@@ -65,7 +65,9 @@ class Spatial:
         for key in mtl:
             self.materials[key][i] = mtl[key]
 
-    def __get_triangles(self, primitive: Primitive, node: Node, gltf: GLTF2):
+    def __get_vertices(self, primitive: Primitive, node: Node, gltf: GLTF2):
+        translation = node.translation or [0, 0, 0]
+
         accessor = gltf.accessors[primitive.attributes.POSITION or 0]
         bufferView = gltf.bufferViews[accessor.bufferView or 0]
         buffer = gltf.buffers[bufferView.buffer]
@@ -78,8 +80,15 @@ class Spatial:
         TYPE_SIZE = 12  # accessor.type = "VEC3"
         for i in range(accessor.count):
             idx = bufferView.byteOffset + i * TYPE_SIZE
-            a, b, c = struct.unpack("fff", data[idx : idx + 12])
-            yield (a, b, c)
+            x, y, z = struct.unpack("fff", data[idx : idx + 12])
+            yield Spatial.__apply_transform((x, y, z), translation)
+
+    @staticmethod
+    def __apply_transform(point: vec, translation: list[float]) -> vec:
+        x = point[0] + translation[0]
+        y = point[1] + translation[1]
+        z = point[2] + translation[2]
+        return (x, y, z)
 
     def __get_indices(self, primitive: Primitive, gltf: GLTF2):
         accessor = gltf.accessors[primitive.indices or 0]  # type: ignore
