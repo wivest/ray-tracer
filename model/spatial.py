@@ -1,6 +1,8 @@
 import struct
 import numpy as np
 from pygltflib import GLTF2, Node, Mesh, Primitive
+from scipy.spatial.transform import Rotation
+
 
 from imports.common import *
 from imports.aliases import vec
@@ -66,8 +68,9 @@ class Spatial:
             self.materials[key][i] = mtl[key]
 
     def __get_vertices(self, primitive: Primitive, node: Node, gltf: GLTF2):
-        translation = node.translation or [0, 0, 0]
         scale = node.scale or [1, 1, 1]
+        rotation = node.rotation or [0, 0, 0, 1]
+        translation = node.translation or [0, 0, 0]
 
         accessor = gltf.accessors[primitive.attributes.POSITION or 0]
         bufferView = gltf.bufferViews[accessor.bufferView or 0]
@@ -82,15 +85,21 @@ class Spatial:
         for i in range(accessor.count):
             idx = bufferView.byteOffset + i * TYPE_SIZE
             x, y, z = struct.unpack("fff", data[idx : idx + 12])
-            yield Spatial.__apply_transform((x, y, z), scale, translation)
+            yield Spatial.__apply_transform((x, y, z), scale, rotation, translation)
 
     @staticmethod
     def __apply_transform(
-        point: vec, scale: list[float], translation: list[float]
+        point: vec, scale: list[float], rotation: list[float], translation: list[float]
     ) -> vec:
-        x = point[0] * scale[0] + translation[0]
-        y = point[1] * scale[1] + translation[1]
-        z = point[2] * scale[2] + translation[2]
+        r = Rotation.from_quat(rotation)
+        x = point[0] * scale[0]
+        y = point[1] * scale[1]
+        z = point[2] * scale[2]
+        v: list[float] = r.apply(np.array((x, y, z))).tolist()  # type: ignore
+        x, y, z = v
+        x += translation[0]
+        y += translation[1]
+        z += translation[2]
         return (x, y, z)
 
     def __get_indices(self, primitive: Primitive, gltf: GLTF2):
