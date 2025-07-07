@@ -69,7 +69,8 @@ class Spatial:
 
     def __get_vertices(self, primitive: Primitive, node: Node, gltf: GLTF2):
         scale = node.scale or [1, 1, 1]
-        rotation = node.rotation or [0, 0, 0, 1]
+        r = node.rotation or [0, 0, 0, 1]
+        rotation = Rotation.from_quat(r)
         translation = node.translation or [0, 0, 0]
 
         accessor = gltf.accessors[primitive.attributes.POSITION or 0]
@@ -89,13 +90,12 @@ class Spatial:
 
     @staticmethod
     def __apply_transform(
-        point: vec, scale: list[float], rotation: list[float], translation: list[float]
+        point: vec, scale: list[float], rotation: Rotation, translation: list[float]
     ) -> vec:
-        r = Rotation.from_quat(rotation)
         x = point[0] * scale[0]
         y = point[1] * scale[1]
         z = point[2] * scale[2]
-        v: list[float] = r.apply(np.array((x, y, z))).tolist()  # type: ignore
+        v: list[float] = rotation.apply(np.array((x, y, z))).tolist()  # type: ignore
         x, y, z = v
         x += translation[0]
         y += translation[1]
