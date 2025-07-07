@@ -1,3 +1,6 @@
+from pygltflib import GLTF2
+from scipy.spatial.transform import Rotation
+
 from imports.common import *
 from imports.aliases import vec, basis
 
@@ -12,6 +15,36 @@ class Transform:
         MAT = Matrix(transform_basis, f32)
         self.basis = Matrix.field(3, 3, f32, ())
         self.basis[None] = MAT
+
+    @staticmethod
+    def get_camera_data(path: str):
+        data = GLTF2().load(path)
+        if data == None:
+            raise Exception()
+        scene = data.scenes[data.scene]
+        if scene.nodes == None:
+            raise Exception()
+
+        t = []
+        r = []
+        for i in scene.nodes:
+            node = data.nodes[i]
+            if node.camera != None:
+                t = node.translation
+                r = node.rotation
+
+        if t == None or r == None:
+            raise Exception()
+
+        return Transform.__convert_transform(t, r)
+
+    @classmethod
+    def __convert_transform(cls, translation: list[float], rotation: list[float]):
+        origin = (translation[0], translation[1], translation[2])
+        mat = Rotation.from_quat(rotation).as_matrix()
+        bas = tuple(tuple(i) for i in mat.tolist())
+
+        return cls(origin, bas)  # type: ignore
 
     def rotate_local_x(self, rad: float):
         sin = ti.sin(rad)
