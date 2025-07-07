@@ -8,7 +8,7 @@ from .ray import Ray
 @ti.data_oriented
 class Preview:
 
-    sky = vec3(0.5)
+    sky = vec3(0.5, 0.5, 0.5)
 
     def __init__(
         self,

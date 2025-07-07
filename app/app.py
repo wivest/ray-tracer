@@ -3,7 +3,7 @@ from imports.common import *
 from .input import *
 
 from camera.camera import Camera
-from camera.transform import Transform
+from camera.preview import Preview
 
 
 SENSIVITY = 0.1
@@ -23,20 +23,23 @@ class App:
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
         self.camera = Camera(size, gltf_path, ANGLE, 1024)
+        self.preview = Preview(size, gltf_path, ANGLE)
         self.objects = objects
 
         self.input = Input(self.window)
+        self.mode = True
 
     def run(self):
         while self.window.running:
             self.__handle_events()
 
-            if self.camera.mode[None]:
-                self.camera.preview(self.objects)
+            if self.mode:
+                self.preview.render(self.objects)
+                self.window.set_image(self.preview.pixels)
             else:
                 if self.camera._ready[None] < self.camera.samples:
                     self.camera.render(self.objects)
-            self.window.set_image(self.camera.pixels)
+                self.window.set_image(self.camera.pixels)
             self.window.show()
 
     def __handle_events(self):
@@ -49,7 +52,7 @@ class App:
             self.camera.reset_samples()
 
         if self.input.is_action_just_pressed(MODE):
-            self.camera.mode[None] = not self.camera.mode[None]
+            self.mode = not self.mode
             self.camera.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)

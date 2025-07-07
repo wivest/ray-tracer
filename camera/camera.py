@@ -1,6 +1,3 @@
-from pygltflib import GLTF2
-from scipy.spatial.transform import Rotation
-
 from imports.common import *
 
 from .tonemapping import aces
@@ -32,8 +29,6 @@ class Camera:
         self.lights[1] = Sun(Vector((5, 5, 5)), Vector((1, -1, 1)))
 
         self.samples = samples
-        self.mode: Field = ti.field(bool, ())
-        self.mode[None] = True
 
         self._sampled = Vector.field(3, f32, size)
         self._sampled.fill(0.0)
@@ -44,34 +39,6 @@ class Camera:
     def reset_samples(self):
         self._sampled.fill(0.0)
         self._ready[None] = 0
-
-    @ti.kernel
-    def preview(self, objects: ti.template()):  # type: ignore
-        center_x = self.pixels.shape[0] / 2
-        center_y = self.pixels.shape[1] / 2
-        basis = self.transform.basis[None]
-        origin = self.transform.origin[None]
-
-        for x, y in self.pixels:
-            pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
-            direction = basis @ pixel
-            ray = Ray(origin, direction)
-
-            incoming_light = self.get_preview_color(ray, objects)
-            self.pixels[x, y] = aces(incoming_light)
-
-    @ti.func
-    def get_preview_color(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
-        incoming_light = self.sky.get(ray.direction)  # type: ignore
-
-        hit_info = ray.cast(objects)
-        if hit_info.hit:
-            sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
-            incoming_light = sin * (
-                hit_info.material.emission + hit_info.material.diffuse
-            )
-
-        return incoming_light
 
     @ti.kernel
     def render(self, objects: ti.template()):  # type: ignore
