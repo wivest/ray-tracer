@@ -32,13 +32,17 @@ class Render(Lens):
         self._ready: Field = ti.field(int, ())
         self._ready[None] = 0
 
+    def render(self, pixels: StructField, objects: StructField):
+        if self._ready[None] < self.samples:
+            self.render_sample(pixels, objects)
+
     @ti.kernel
     def reset_samples(self):
         self._sampled.fill(0.0)
         self._ready[None] = 0
 
     @ti.kernel
-    def render(self, pixels: ti.template(), objects: ti.template()):  # type: ignore
+    def render_sample(self, pixels: ti.template(), objects: ti.template()):  # type: ignore
         center_x = pixels.shape[0] / 2
         center_y = pixels.shape[1] / 2
         self._ready[None] += 1
