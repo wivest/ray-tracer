@@ -1,12 +1,13 @@
 from imports.common import *
 
+from .lens import Lens
 from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
 
 
 @ti.data_oriented
-class Preview:
+class Preview(Lens):
 
     sky = vec3(0.5, 0.5, 0.5)
 

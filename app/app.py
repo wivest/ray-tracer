@@ -3,7 +3,7 @@ from imports.common import *
 from .input import *
 
 from camera.camera import Camera
-from camera.lenses.preview import Preview
+from camera.lenses import Preview, Render
 
 
 SENSIVITY = 0.1
@@ -22,7 +22,9 @@ class App:
     ):
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
-        self.camera = Camera(size, gltf_path, ANGLE)
+
+        self.preview = Preview(size, gltf_path, ANGLE)
+        self.camera = Camera(size, gltf_path, self.preview)
         self.objects = objects
 
         self.input = Input(self.window)

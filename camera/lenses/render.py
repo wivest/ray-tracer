@@ -1,15 +1,17 @@
 from imports.common import *
 
+from .lens import Lens
 from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
+from ..hit_info import HitInfo
 
 from light.sun import Sun
 from sky.colored import Colored
 
 
 @ti.data_oriented
-class Preview:
+class Render(Lens):
 
     def __init__(
         self, size: tuple[int, int], gltf_path: str, angle: float, samples: int
