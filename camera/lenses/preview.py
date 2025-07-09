@@ -18,7 +18,6 @@ class Preview(Lens):
         angle: float,
     ):
         self.transform = Transform.get_camera_data(gltf_path)
-        pixels = Vector.field(3, f32, size)
         self.fov: float = size[1] / ti.tan(angle / 2)
 
     @ti.kernel
