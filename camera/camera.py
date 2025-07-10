@@ -19,4 +19,5 @@ class Camera:
         self.lens = lens
 
     def render(self, objects: StructField):
+        self.lens.transform = self.transform
         self.lens.render(self.pixels, objects)
