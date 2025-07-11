@@ -11,14 +11,9 @@ class Preview(Lens):
 
     sky = vec3(0.5, 0.5, 0.5)
 
-    def __init__(
-        self,
-        size: tuple[int, int],
-        gltf_path: str,
-        angle: float,
-    ):
-        self.transform = Transform.get_camera_data(gltf_path)
+    def __init__(self, size: tuple[int, int], angle: float, transform: Transform):
         self.fov: float = size[1] / ti.tan(angle / 2)
+        self.transform = transform
 
     @ti.kernel
     def render(self, pixels: ti.template(), objects: ti.template()):  # type: ignore

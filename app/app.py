@@ -23,11 +23,12 @@ class App:
         self.window = ti.GUI(name, size, fast_gui=True)
         self.window.fps_limit = 1000
 
-        self.preview = Preview(size, gltf_path, ANGLE)
-        self.render = Render(size, gltf_path, ANGLE, 1024)
-        self.camera = Camera(size, gltf_path, self.preview)
-        self.objects = objects
+        self.camera = Camera(size, gltf_path)
+        self.preview = Preview(size, ANGLE, self.camera.transform)
+        self.render = Render(size, ANGLE, 1024, self.camera.transform)
+        self.camera.lens = self.preview
 
+        self.objects = objects
         self.input = Input(self.window)
         self.mode = True
 

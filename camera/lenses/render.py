@@ -14,10 +14,10 @@ from sky.colored import Colored
 class Render(Lens):
 
     def __init__(
-        self, size: tuple[int, int], gltf_path: str, angle: float, samples: int
+        self, size: tuple[int, int], angle: float, samples: int, transform: Transform
     ):
-        self.transform = Transform.get_camera_data(gltf_path)
         self.fov: float = size[1] / ti.tan(angle / 2)
+        self.transform = transform
 
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))
 
