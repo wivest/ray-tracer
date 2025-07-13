@@ -1,6 +1,5 @@
 import sys
 import taichi as ti
-from pygltflib import GLTF2
 
 from app.app import App
 from model.scene import Scene

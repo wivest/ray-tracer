@@ -10,6 +10,7 @@ from ..ray import Ray
 class Preview(Lens):
 
     sky = vec3(0.5, 0.5, 0.5)
+    hit_color = (1.0, 1.0, 1.0)
 
     def __init__(self, size: tuple[int, int], angle: float, transform: Transform):
         self.fov: float = size[1] / ti.tan(angle / 2)
@@ -37,8 +38,6 @@ class Preview(Lens):
         hit_info = ray.cast(objects)
         if hit_info.hit:
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
-            incoming_light = sin * (
-                hit_info.material.emission + hit_info.material.diffuse
-            )
+            incoming_light = sin * self.hit_color
 
         return incoming_light
