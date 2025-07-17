@@ -9,6 +9,7 @@ from imports.aliases import vec
 
 from .triangle import Triangle
 from .py_material import PyMaterial
+from .bounding_box import BoundingBox
 
 
 @ti.data_oriented
