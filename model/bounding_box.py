@@ -13,7 +13,10 @@ class BoundingBox:
         low = (self.min_point - ray.origin) / ray.direction
         high = (self.max_point - ray.origin) / ray.direction
 
-        close = ti.math.max(low.x, low.y, low.z)
-        far = ti.math.max(high.x, high.y, high.z)
+        close = ti.math.min(low, high)
+        far = ti.math.max(low, high)
 
-        return close > 0 and close <= high
+        close_fac = ti.math.max(close.x, close.y, close.z)
+        far_fac = ti.math.min(far.x, far.y, far.z)
+
+        return close_fac > 0 and close_fac <= far_fac
