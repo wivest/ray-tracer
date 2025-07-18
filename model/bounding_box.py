@@ -10,4 +10,10 @@ class BoundingBox:
 
     @ti.func
     def intersects(self, ray: Ray) -> bool:  # type: ignore
-        return False
+        low = (self.min_point - ray.origin) / ray.direction
+        high = (self.max_point - ray.origin) / ray.direction
+
+        close = ti.math.max(low.x, low.y, low.z)
+        far = ti.math.max(high.x, high.y, high.z)
+
+        return close > 0 and close <= high
