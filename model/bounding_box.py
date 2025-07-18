@@ -8,5 +8,6 @@ class BoundingBox:
     min_point: vec3  # type: ignore
     max_point: vec3  # type: ignore
 
+    @ti.func
     def intersects(self, ray: Ray) -> bool:  # type: ignore
         return False
