@@ -19,4 +19,4 @@ class BoundingBox:
         close_fac = ti.math.max(close.x, close.y, close.z)
         far_fac = ti.math.min(far.x, far.y, far.z)
 
-        return close_fac > 0 and close_fac <= far_fac
+        return far_fac > 0 and close_fac <= far_fac
