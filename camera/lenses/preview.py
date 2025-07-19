@@ -5,12 +5,14 @@ from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
 
+from model.bounding_box import BoundingBox
+
 
 @ti.data_oriented
 class Preview(Lens):
 
     sky = vec3(0.5, 0.5, 0.5)
-    hit_color = (1.0, 1.0, 1.0)
+    hit_color = vec3(1.0, 1.0, 1.0)
 
     def __init__(self, size: tuple[int, int], angle: float, transform: Transform):
         self.fov: float = size[1] / ti.tan(angle / 2)
@@ -28,7 +30,7 @@ class Preview(Lens):
             direction = basis @ pixel
             ray = Ray(origin, direction)
 
-            incoming_light = self._get_color(ray, objects)
+            incoming_light = self._cast_AABB(ray)
             pixels[x, y] = aces(incoming_light)
 
     @ti.func
@@ -40,4 +42,12 @@ class Preview(Lens):
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
             incoming_light = sin * self.hit_color
 
+        return incoming_light
+
+    @ti.func
+    def _cast_AABB(self, ray: Ray) -> Vector:  # type: ignore
+        incoming_light = self.sky
+        aabb = BoundingBox(vec3(-5), vec3(5))
+        if aabb.intersects(ray):  # type: ignore
+            incoming_light = self.hit_color
         return incoming_light
