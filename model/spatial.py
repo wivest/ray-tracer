@@ -46,6 +46,7 @@ class Spatial:
     def __parse(
         self, primitive: Primitive, node: Node, gltf: GLTF2, offset: int
     ) -> int:
+        aabb = BoundingBox()
         vertices: list[vec] = list(self.__get_vertices(primitive, node, gltf))
         tris = list(self.__get_indices(primitive, gltf))
         material = (
