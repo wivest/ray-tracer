@@ -10,6 +10,7 @@ from imports.aliases import vec
 from .triangle import Triangle
 from .py_material import PyMaterial
 from .bounding_box import BoundingBox
+from .py_bvh import PyBVH
 
 
 @ti.data_oriented
@@ -125,6 +126,9 @@ class Spatial:
         tri_field.from_numpy(self.triangles)
         self._update_normals(tri_field)
         return tri_field
+
+    def export_BVH(self) -> PyBVH:
+        return PyBVH(self.export())
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
