@@ -121,14 +121,8 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export(self) -> StructField:
-        tri_field = Triangle.field(shape=self.n)
-        tri_field.from_numpy(self.triangles)
-        self._update_normals(tri_field)
-        return tri_field
-
-    def export_BVH(self) -> PyBVH:
-        return PyBVH(self.export())
+    def export_BVH(self):
+        return None
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
