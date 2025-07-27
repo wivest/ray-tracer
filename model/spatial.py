@@ -10,7 +10,7 @@ from imports.aliases import vec
 from .triangle import Triangle
 from .py_material import PyMaterial
 from .bounding_box import BoundingBox
-from .py_bvh import PyBVH
+from .bvh import BVH
 
 
 @ti.data_oriented
