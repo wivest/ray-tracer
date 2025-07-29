@@ -122,7 +122,9 @@ class Spatial:
             yield ns
 
     def export_BVH(self) -> StructField:
-        return BVH.field(shape=len(self.triangles))
+        f = BVH.field(shape=1)
+        f[1] = BVH(BoundingBox(vec3(-10), vec3(10)), 0, 0, 0, len(self.triangles["a"]))
+        return f
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
