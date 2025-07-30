@@ -24,7 +24,7 @@ class Scene:
             mesh = gltf.meshes[node.mesh]
             self.spatials.append(Spatial(mesh, node, gltf))
 
-    def export(self):
+    def export(self) -> StructField:
         n = 0
         materials = {}
         triangles = {}
