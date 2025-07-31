@@ -5,6 +5,7 @@ from imports.common import *
 
 from .spatial import Spatial
 from .triangle import Triangle
+from .bvh import BVH
 
 
 @ti.data_oriented
@@ -24,7 +25,7 @@ class Scene:
             mesh = gltf.meshes[node.mesh]
             self.spatials.append(Spatial(mesh, node, gltf))
 
-    def export(self) -> StructField:
+    def export(self) -> tuple[StructField, StructField]:
         n = 0
         materials = {}
         triangles = {}
@@ -45,7 +46,10 @@ class Scene:
         f = Triangle.field(shape=n)
         f.from_numpy(triangles)
         self._update_normals(f)
-        return f
+
+        bvh = BVH.field(shape=len(self.spatials))
+
+        return f, bvh
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
