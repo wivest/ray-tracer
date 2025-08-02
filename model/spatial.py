@@ -16,6 +16,8 @@ from .bvh import BVH
 @ti.data_oriented
 class Spatial:
 
+    BVH_DEPTH: int = 5
+
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
 
@@ -47,7 +49,6 @@ class Spatial:
     def __parse(
         self, primitive: Primitive, node: Node, gltf: GLTF2, offset: int
     ) -> int:
-        aabb = BoundingBox()
         vertices: list[vec] = list(self.__get_vertices(primitive, node, gltf))
         tris = list(self.__get_indices(primitive, gltf))
         material = (
@@ -121,10 +122,19 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export_BVH(self) -> StructField:
-        f = BVH.field(shape=1)
-        f[1] = BVH(BoundingBox(vec3(-10), vec3(10)), 0, 0, 0, len(self.triangles["a"]))
-        return f
+    def export_BVH(self) -> dict:
+        bounding_boxes = {
+            "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
+            "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
+        }
+        bvhs = {
+            "aabb": bounding_boxes,
+            "first": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
+            "second": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
+            "start": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
+            "length": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
+        }
+        return bvhs
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
