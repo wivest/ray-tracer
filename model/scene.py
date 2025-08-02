@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import ndarray
 from pygltflib import GLTF2
 
 from imports.common import *
@@ -67,6 +68,19 @@ class Scene:
         bvhs.from_numpy(bvh_concat)
 
         return f, bvhs
+
+    def __concat_dicts(self, dicts: list[dict[str, ndarray]]) -> dict[str, ndarray]:
+        unpacked: dict[str, list[ndarray]] = {}
+
+        for item in dicts:
+            for key in item.keys():
+                unpacked[key].append(item[key])
+
+        concatenated: dict[str, ndarray] = {}
+        for key in unpacked.keys():
+            concatenated[key] = np.concatenate(unpacked[key])
+
+        return concatenated
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
