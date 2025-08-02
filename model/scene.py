@@ -47,9 +47,25 @@ class Scene:
         f.from_numpy(triangles)
         self._update_normals(f)
 
-        bvh = BVH.field(shape=len(self.spatials))
+        bvh_dict = [s.export_BVH() for s in self.spatials]
+        aabb_concat = {}
+        for key in ["min_point", "max_point"]:
+            aabb_concat[key] = np.concatenate(
+                [bvh["aabb"][key] for bvh in bvh_dict],
+                dtype=np.int32,  # actually dict[str, [dict[str, ndarray]]]
+            )
 
-        return f, bvh
+        bvh_concat = {}
+        for key in ["fisrt", "second", "start", "length"]:
+            bvh_concat[key] = np.concatenate(
+                [bvh[key] for bvh in bvh_dict], dtype=np.int32
+            )
+        bvh_concat["aabb"] = aabb_concat
+
+        bvhs = BVH.field(shape=len(self.spatials))
+        bvhs.from_numpy(bvh_concat)
+
+        return f, bvhs
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore

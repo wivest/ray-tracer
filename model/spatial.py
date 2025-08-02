@@ -1,5 +1,6 @@
 import struct
 import numpy as np
+from numpy import ndarray
 from pygltflib import GLTF2, Node, Mesh, Primitive
 from scipy.spatial.transform import Rotation
 
@@ -122,7 +123,7 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export_BVH(self) -> dict:
+    def export_BVH(self) -> dict[str, ndarray]:
         bounding_boxes = {
             "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
             "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
