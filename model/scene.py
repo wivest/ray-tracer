@@ -37,28 +37,29 @@ class Scene:
             materials[key] = np.concatenate(
                 [s.materials[key] for s in self.spatials], dtype=np.float32
             )
-        triangles["material"] = materials
+
         for key in ["a", "b", "c", "normal"]:
             triangles[key] = np.concatenate(
                 [s.triangles[key] for s in self.spatials], dtype=np.float32
             )
+        triangles["material"] = materials
 
         f = Triangle.field(shape=n)
         f.from_numpy(triangles)
         self._update_normals(f)
 
-        bvh_dict = [s.export_BVH() for s in self.spatials]
+        aabb_list = [s.export_BVH()[0] for s in self.spatials]
         aabb_concat = {}
         for key in ["min_point", "max_point"]:
             aabb_concat[key] = np.concatenate(
-                [bvh["aabb"][key] for bvh in bvh_dict],
-                dtype=np.int32,  # actually dict[str, [dict[str, ndarray]]]
+                [aabb[key] for aabb in aabb_list], dtype=np.int32
             )
 
+        bvh_list = [s.export_BVH()[1] for s in self.spatials]
         bvh_concat = {}
         for key in ["fisrt", "second", "start", "length"]:
             bvh_concat[key] = np.concatenate(
-                [bvh[key] for bvh in bvh_dict], dtype=np.int32
+                [bvh[key] for bvh in bvh_list], dtype=np.int32
             )
         bvh_concat["aabb"] = aabb_concat
 

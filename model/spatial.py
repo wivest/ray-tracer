@@ -43,7 +43,7 @@ class Spatial:
             "a": np.empty(shape=(self.n, 3), dtype=np.float32),
             "b": np.empty(shape=(self.n, 3), dtype=np.float32),
             "c": np.empty(shape=(self.n, 3), dtype=np.float32),
-            "material": self.materials,
+            # "material": self.materials,
             "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
         }
 
@@ -123,19 +123,18 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export_BVH(self) -> dict[str, ndarray]:
+    def export_BVH(self) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
         bounding_boxes = {
             "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
             "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
         }
         bvhs = {
-            "aabb": bounding_boxes,
             "first": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
             "second": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
             "start": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
             "length": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
         }
-        return bvhs
+        return bounding_boxes, bvhs
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
