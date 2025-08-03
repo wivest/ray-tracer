@@ -49,20 +49,9 @@ class Scene:
         f.from_numpy(triangles)
         self._update_normals(f)
 
-        aabb_list = [s.export_BVH()[0] for s in self.spatials]
-        aabb_concat = {}
-        for key in ["min_point", "max_point"]:
-            aabb_concat[key] = np.concatenate(
-                [aabb[key] for aabb in aabb_list], dtype=np.int32
-            )
-
-        bvh_list = [s.export_BVH()[1] for s in self.spatials]
-        bvh_concat = {}
-        for key in ["fisrt", "second", "start", "length"]:
-            bvh_concat[key] = np.concatenate(
-                [bvh[key] for bvh in bvh_list], dtype=np.int32
-            )
-        bvh_concat["aabb"] = aabb_concat
+        aabb_concat = self.__concat_dicts([s.export_BVH()[0] for s in self.spatials])
+        bvh_concat = self.__concat_dicts([s.export_BVH()[1] for s in self.spatials])
+        bvh_concat["aabb"] = aabb_concat  # type: ignore
 
         bvhs = BVH.field(shape=len(self.spatials))
         bvhs.from_numpy(bvh_concat)
