@@ -28,30 +28,20 @@ class Scene:
 
     def export(self) -> tuple[StructField, StructField]:
         n = 0
-        materials = {}
-        triangles = {}
-
         for spatial in self.spatials:
             n += spatial.n
 
-        for key in ["diffuse", "specular", "emission"]:
-            materials[key] = np.concatenate(
-                [s.materials[key] for s in self.spatials], dtype=np.float32
-            )
-
-        for key in ["a", "b", "c", "normal"]:
-            triangles[key] = np.concatenate(
-                [s.triangles[key] for s in self.spatials], dtype=np.float32
-            )
-        triangles["material"] = materials
-
-        f = Triangle.field(shape=n)
-        f.from_numpy(triangles)
-        self._update_normals(f)
+        material_concat = self.__concat_dicts([s.materials for s in self.spatials])
+        triangle_concat = self.__concat_dicts([s.triangles for s in self.spatials])
+        triangle_concat["material"] = material_concat  # type: ignore
 
         aabb_concat = self.__concat_dicts([s.export_BVH()[0] for s in self.spatials])
         bvh_concat = self.__concat_dicts([s.export_BVH()[1] for s in self.spatials])
         bvh_concat["aabb"] = aabb_concat  # type: ignore
+
+        f = Triangle.field(shape=n)
+        f.from_numpy(triangle_concat)
+        self._update_normals(f)
 
         bvhs = BVH.field(shape=len(self.spatials))
         bvhs.from_numpy(bvh_concat)
