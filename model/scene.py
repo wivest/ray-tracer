@@ -43,7 +43,7 @@ class Scene:
         f.from_numpy(triangle_concat)
         self._update_normals(f)
 
-        bvhs = BVH.field(shape=len(self.spatials))
+        bvhs = BVH.field(shape=len(self.spatials * Spatial.BVH_DEPTH))
         bvhs.from_numpy(bvh_concat)
 
         return f, bvhs
@@ -53,6 +53,8 @@ class Scene:
 
         for item in dicts:
             for key in item.keys():
+                if key not in unpacked:
+                    unpacked[key] = []
                 unpacked[key].append(item[key])
 
         concatenated: dict[str, ndarray] = {}
