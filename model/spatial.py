@@ -130,6 +130,14 @@ class Spatial:
             "start": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
             "length": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
         }
+
+        points = np.concatenate(
+            [self.triangles["a"], self.triangles["b"], self.triangles["c"]]
+        )
+        min_point = np.amin(points, axis=0)
+        max_point = np.amax(points, axis=0)
+        print(min_point, max_point)
+
         return bounding_boxes, bvhs
 
     @ti.kernel
