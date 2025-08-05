@@ -8,10 +8,7 @@ from scipy.spatial.transform import Rotation
 from imports.common import *
 from imports.aliases import vec
 
-from .triangle import Triangle
 from .py_material import PyMaterial
-from .bounding_box import BoundingBox
-from .bvh import BVH
 
 
 @ti.data_oriented
@@ -43,7 +40,6 @@ class Spatial:
             "a": np.empty(shape=(self.n, 3), dtype=np.float32),
             "b": np.empty(shape=(self.n, 3), dtype=np.float32),
             "c": np.empty(shape=(self.n, 3), dtype=np.float32),
-            # "material": self.materials,
             "normal": np.empty(shape=(self.n, 3), dtype=np.float32),
         }
 
