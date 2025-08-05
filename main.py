@@ -13,7 +13,7 @@ DEFAULT_GLTF = "./scene/untitled.gltf"
 gltf_path = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_GLTF
 scene = Scene(gltf_path)
 
-export, _ = scene.export()
+triangles, bvhs = scene.export()
 
-app = App("Ray Tracing", SIZE, export, DEFAULT_GLTF)
+app = App("Ray Tracing", SIZE, triangles, bvhs, DEFAULT_GLTF)
 app.run()

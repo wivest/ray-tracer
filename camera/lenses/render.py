@@ -32,9 +32,9 @@ class Render(Lens):
         self._ready: Field = ti.field(int, ())
         self._ready[None] = 0
 
-    def render(self, pixels: StructField, objects: StructField):
+    def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
         if self._ready[None] < self.samples:
-            self.render_sample(pixels, objects)
+            self.render_sample(pixels, triangles)
 
     @ti.kernel
     def reset_samples(self):
@@ -42,7 +42,7 @@ class Render(Lens):
         self._ready[None] = 0
 
     @ti.kernel
-    def render_sample(self, pixels: ti.template(), objects: ti.template()):  # type: ignore
+    def render_sample(self, pixels: ti.template(), triangles: ti.template()):  # type: ignore
         center_x = pixels.shape[0] / 2
         center_y = pixels.shape[1] / 2
         self._ready[None] += 1
@@ -56,17 +56,17 @@ class Render(Lens):
             direction = basis @ pixel
             ray = Ray(origin, direction)
 
-            incoming_light = self.get_color(ray, objects, 6)
+            incoming_light = self.get_color(ray, triangles, 6)
             self._sampled[x, y] += aces(incoming_light)
             pixels[x, y] = self._sampled[x, y] / ready
 
     @ti.func
-    def get_color(self, ray: Ray, objects: ti.template(), hits: int) -> Vector:  # type: ignore
+    def get_color(self, ray: Ray, triangles: ti.template(), hits: int) -> Vector:  # type: ignore
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
         for i in range(hits):
-            hit_info = ray.cast(objects)
+            hit_info = ray.cast(triangles)
             if not hit_info.hit:
                 incoming_light += ray_color * self.sky.get(ray.direction)  # type: ignore
                 break
@@ -77,7 +77,7 @@ class Render(Lens):
             incoming_light += ray_color * (
                 hit_info.material.emission
                 + self.sample_direct_light(
-                    hit_info.point, objects, self.lights, hit_info.normal
+                    hit_info.point, triangles, self.lights, hit_info.normal
                 )
             )
 
@@ -103,7 +103,7 @@ class Render(Lens):
         return dir.normalized()
 
     @ti.func
-    def sample_direct_light(self, point: vec3, objects: ti.template(), lights: ti.template(), normal: vec3) -> Vector:  # type: ignore
+    def sample_direct_light(self, point: vec3, triangles: ti.template(), lights: ti.template(), normal: vec3) -> Vector:  # type: ignore
         visible = Vector((0.0, 0.0, 0.0))
 
         for i in range(lights.shape[0]):
@@ -111,7 +111,7 @@ class Render(Lens):
             ray = light.get_ray(point)
             sin = ti.math.dot(ray.direction, normal)
 
-            if not ray.cast(objects).hit:
+            if not ray.cast(triangles).hit:
                 visible += sin * light.color
 
         return visible

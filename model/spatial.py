@@ -14,7 +14,7 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 5
+    BVH_DEPTH: int = 1
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
@@ -136,7 +136,13 @@ class Spatial:
         )
         min_point = np.amin(points, axis=0)
         max_point = np.amax(points, axis=0)
-        print(min_point, max_point)
+
+        bounding_boxes["min_point"][0] = min_point
+        bounding_boxes["max_point"][0] = max_point
+        bvhs["first"][0] = 0
+        bvhs["second"][0] = 0
+        bvhs["start"][0] = 0
+        bvhs["length"][0] = self.n
 
         return bounding_boxes, bvhs
 

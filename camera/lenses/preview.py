@@ -18,8 +18,11 @@ class Preview(Lens):
         self.fov: float = size[1] / ti.tan(angle / 2)
         self.transform = transform
 
+    def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
+        self.render_sample(pixels, triangles, bvhs)
+
     @ti.kernel
-    def render(self, pixels: ti.template(), objects: ti.template()):  # type: ignore
+    def render_sample(self, pixels: ti.template(), triangles: ti.template(), bvhs: ti.template()):  # type: ignore
         center_x = pixels.shape[0] / 2
         center_y = pixels.shape[1] / 2
         basis = self.transform.basis[None]
@@ -34,10 +37,10 @@ class Preview(Lens):
             pixels[x, y] = aces(incoming_light)
 
     @ti.func
-    def _get_color(self, ray: Ray, objects: ti.template()) -> Vector:  # type: ignore
+    def _get_color(self, ray: Ray, triangles: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
-        hit_info = ray.cast(objects)
+        hit_info = ray.cast(triangles)
         if hit_info.hit:
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
             incoming_light = sin * self.hit_color
