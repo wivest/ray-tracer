@@ -33,11 +33,11 @@ class Preview(Lens):
             direction = basis @ pixel
             ray = Ray(origin, direction)
 
-            incoming_light = self._cast_AABB(ray)
+            incoming_light = self._get_color(ray, triangles, bvhs)
             pixels[x, y] = aces(incoming_light)
 
     @ti.func
-    def _get_color(self, ray: Ray, triangles: ti.template()) -> Vector:  # type: ignore
+    def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
         hit_info = ray.cast(triangles)
