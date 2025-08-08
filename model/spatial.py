@@ -121,8 +121,8 @@ class Spatial:
 
     def export_BVH(self) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
         bounding_boxes = {
-            "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
-            "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.int32),
+            "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
+            "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
         }
         bvhs = {
             "first": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
