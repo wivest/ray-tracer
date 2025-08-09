@@ -40,12 +40,13 @@ class Preview(Lens):
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
-        bvh = bvhs[0]
-        if bvh.aabb.intersects(ray):
-            hit_info = ray.cast(triangles)
-            if hit_info.hit:
-                sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
-                incoming_light = sin * self.hit_color
+        for i in range(bvhs.shape[0]):
+            bvh = bvhs[i]
+            if bvh.aabb.intersects(ray):
+                hit_info = ray.cast(triangles)
+                if hit_info.hit:
+                    sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
+                    incoming_light = sin * self.hit_color
 
         return incoming_light
 
