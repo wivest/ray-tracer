@@ -141,8 +141,8 @@ class Spatial:
 
         bounding_boxes["min_point"][0] = min_point
         bounding_boxes["max_point"][0] = max_point
-        bvhs["first"][0] = 0
-        bvhs["second"][0] = 0
+        bvhs["first"][0] = offset
+        bvhs["second"][0] = offset
         bvhs["start"][0] = 0
         bvhs["length"][0] = self.n
 
