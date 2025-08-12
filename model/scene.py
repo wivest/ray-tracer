@@ -31,12 +31,13 @@ class Scene:
         for spatial in self.spatials:
             n += spatial.n
 
-        material_concat = self.__concat_dicts([s.materials for s in self.spatials])
-        triangle_concat = self.__concat_dicts([s.triangles for s in self.spatials])
+        material_concat = self.__concat([s.materials for s in self.spatials])
+        triangle_concat = self.__concat([s.triangles for s in self.spatials])
         triangle_concat["material"] = material_concat  # type: ignore
 
-        aabb_concat = self.__concat_dicts([s.export_BVH()[0] for s in self.spatials])
-        bvh_concat = self.__concat_dicts([s.export_BVH()[1] for s in self.spatials])
+        rs = range(len(self.spatials))
+        aabb_concat = self.__concat([self.spatials[i].export_BVH(i)[0] for i in rs])
+        bvh_concat = self.__concat([self.spatials[i].export_BVH(i)[1] for i in rs])
         bvh_concat["aabb"] = aabb_concat  # type: ignore
 
         f = Triangle.field(shape=n)
@@ -48,7 +49,7 @@ class Scene:
 
         return f, bvhs
 
-    def __concat_dicts(self, dicts: list[dict[str, ndarray]]) -> dict[str, ndarray]:
+    def __concat(self, dicts: list[dict[str, ndarray]]) -> dict[str, ndarray]:
         unpacked: dict[str, list[ndarray]] = {}
 
         for item in dicts:

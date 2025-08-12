@@ -119,9 +119,7 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export_BVH(
-        self, offset: int = 0
-    ) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
+    def export_BVH(self, offset: int) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
         bounding_boxes = {
             "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
             "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
