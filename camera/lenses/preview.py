@@ -49,11 +49,3 @@ class Preview(Lens):
                     incoming_light = sin * self.hit_color
 
         return incoming_light
-
-    @ti.func
-    def _cast_AABB(self, ray: Ray) -> Vector:  # type: ignore
-        incoming_light = self.sky
-        aabb = BoundingBox(vec3(-5), vec3(5))
-        if aabb.intersects(ray):  # type: ignore
-            incoming_light = self.hit_color
-        return incoming_light
