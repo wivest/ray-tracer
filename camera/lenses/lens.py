@@ -17,7 +17,8 @@ class Lens(ABC):
         self, pixels: MatrixField, triangles: StructField, bvhs: StructField
     ): ...
 
-    def _get_color_tmp(self, ray, triangles, bvhs): ...
+    @ti.func
+    def _get_color_tmp(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()): ...  # type: ignore
 
     @ti.kernel
     def render_sample_tmp(self, pixels: ti.template(), triangles: ti.template(), bvhs: ti.template()):  # type: ignore
