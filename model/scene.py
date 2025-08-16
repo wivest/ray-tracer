@@ -27,19 +27,19 @@ class Scene:
             self.spatials.append(Spatial(mesh, node, gltf))
 
     def export(self) -> tuple[StructField, StructField]:
-        n = 0
-        for spatial in self.spatials:
-            n += spatial.n
-
         material_concat = self.__concat([s.materials for s in self.spatials])
         triangle_concat = self.__concat([s.triangles for s in self.spatials])
         triangle_concat["material"] = material_concat  # type: ignore
 
+        n = 0
         aabb_list = []
         bvh_list = []
         for i in range(len(self.spatials)):
-            aabb_list.append(self.spatials[i].export_BVH(i, 0)[0])
-            bvh_list.append(self.spatials[i].export_BVH(i, 0)[1])
+            export = self.spatials[i].export_BVH(i * Spatial.BVH_DEPTH, n)
+            aabb_list.append(export[0])
+            bvh_list.append(export[1])
+            n += self.spatials[i].n
+
         aabb_concat = self.__concat(aabb_list)
         bvh_concat = self.__concat(bvh_list)
         bvh_concat["aabb"] = aabb_concat  # type: ignore

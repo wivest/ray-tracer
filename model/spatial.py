@@ -120,7 +120,7 @@ class Spatial:
             yield ns
 
     def export_BVH(
-        self, offset: int, tri_offset: int
+        self, bvh_offset: int, tri_offset: int
     ) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
         bounding_boxes = {
             "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
@@ -141,8 +141,8 @@ class Spatial:
 
         bounding_boxes["min_point"][0] = min_point
         bounding_boxes["max_point"][0] = max_point
-        bvhs["first"][0] = offset
-        bvhs["second"][0] = offset
+        bvhs["first"][0] = bvh_offset
+        bvhs["second"][0] = bvh_offset
         bvhs["start"][0] = tri_offset
         bvhs["length"][0] = tri_offset + self.n
 
