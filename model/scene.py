@@ -35,9 +35,13 @@ class Scene:
         triangle_concat = self.__concat([s.triangles for s in self.spatials])
         triangle_concat["material"] = material_concat  # type: ignore
 
-        rs = range(len(self.spatials))
-        aabb_concat = self.__concat([self.spatials[i].export_BVH(i)[0] for i in rs])
-        bvh_concat = self.__concat([self.spatials[i].export_BVH(i)[1] for i in rs])
+        aabb_list = []
+        bvh_list = []
+        for i in range(len(self.spatials)):
+            aabb_list.append(self.spatials[i].export_BVH(i, 0)[0])
+            bvh_list.append(self.spatials[i].export_BVH(i, 0)[1])
+        aabb_concat = self.__concat(aabb_list)
+        bvh_concat = self.__concat(bvh_list)
         bvh_concat["aabb"] = aabb_concat  # type: ignore
 
         f = Triangle.field(shape=n)
