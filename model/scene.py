@@ -35,7 +35,7 @@ class Scene:
         aabb_list = []
         bvh_list = []
         for i in range(len(self.spatials)):
-            export = self.spatials[i].export_BVH(i * Spatial.BVH_DEPTH, n)
+            export = self.spatials[i].export_BVH(i * 2**Spatial.BVH_DEPTH, n)
             aabb_list.append(export[0])
             bvh_list.append(export[1])
             n += self.spatials[i].n
@@ -48,7 +48,7 @@ class Scene:
         f.from_numpy(triangle_concat)
         self._update_normals(f)
 
-        bvhs = BVH.field(shape=len(self.spatials * Spatial.BVH_DEPTH))
+        bvhs = BVH.field(shape=len(self.spatials) * 2**Spatial.BVH_DEPTH)
         bvhs.from_numpy(bvh_concat)
 
         return f, bvhs

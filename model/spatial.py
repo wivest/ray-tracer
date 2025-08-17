@@ -14,7 +14,7 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 1
+    BVH_DEPTH: int = 0
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
@@ -122,15 +122,16 @@ class Spatial:
     def export_BVH(
         self, bvh_offset: int, tri_offset: int
     ) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
+        depth = 2**self.BVH_DEPTH
         bounding_boxes = {
-            "min_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
-            "max_point": np.empty(shape=(self.BVH_DEPTH, 3), dtype=np.float32),
+            "min_point": np.empty(shape=(depth, 3), dtype=np.float32),
+            "max_point": np.empty(shape=(depth, 3), dtype=np.float32),
         }
         bvhs = {
-            "first": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
-            "second": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
-            "start": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
-            "length": np.empty(shape=self.BVH_DEPTH, dtype=np.int32),
+            "first": np.empty(shape=depth, dtype=np.int32),
+            "second": np.empty(shape=depth, dtype=np.int32),
+            "start": np.empty(shape=depth, dtype=np.int32),
+            "length": np.empty(shape=depth, dtype=np.int32),
         }
 
         points = np.concatenate(
