@@ -122,7 +122,7 @@ class Spatial:
     def export_BVH(
         self, bvh_offset: int, tri_offset: int
     ) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
-        depth = 2**self.BVH_DEPTH
+        depth: int = 2**self.BVH_DEPTH
         bounding_boxes = {
             "min_point": np.empty(shape=(depth, 3), dtype=np.float32),
             "max_point": np.empty(shape=(depth, 3), dtype=np.float32),
@@ -140,12 +140,13 @@ class Spatial:
         min_point = np.amin(points, axis=0)
         max_point = np.amax(points, axis=0)
 
-        bounding_boxes["min_point"][0] = min_point
-        bounding_boxes["max_point"][0] = max_point
-        bvhs["first"][0] = bvh_offset
-        bvhs["second"][0] = bvh_offset
-        bvhs["start"][0] = tri_offset
-        bvhs["length"][0] = tri_offset + self.n
+        for i in range(depth):
+            bounding_boxes["min_point"][i] = min_point
+            bounding_boxes["max_point"][i] = max_point
+            bvhs["first"][i] = bvh_offset
+            bvhs["second"][i] = bvh_offset
+            bvhs["start"][i] = tri_offset
+            bvhs["length"][i] = tri_offset + self.n
 
         return bounding_boxes, bvhs
 
