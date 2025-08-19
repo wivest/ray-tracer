@@ -35,9 +35,8 @@ class Scene:
         aabb_list = []
         bvh_list = []
         for i in range(len(self.spatials)):
-            export = self.spatials[i].export_BVH(i * 2**Spatial.BVH_DEPTH, n)
-            aabb_list.append(export[0])
-            bvh_list.append(export[1])
+            aabb_list.append(self.spatials[i].aabbs)
+            bvh_list.append(self.spatials[i].bvhs)
             n += self.spatials[i].n
 
         aabb_concat = self.__concat(aabb_list)

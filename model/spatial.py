@@ -14,7 +14,7 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 0
+    BVH_DEPTH: int = 1
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
@@ -22,6 +22,8 @@ class Spatial:
         offset = 0
         for primitive in mesh.primitives:
             offset += self.__parse(primitive, node, gltf, offset)
+
+        self.__calculate_BVHs()
 
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
@@ -119,20 +121,26 @@ class Spatial:
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
 
-    def export_BVH(
-        self, bvh_offset: int, tri_offset: int
-    ) -> tuple[dict[str, ndarray], dict[str, ndarray]]:
-        depth: int = 2**self.BVH_DEPTH
-        bounding_boxes = {
+    def __calculate_BVHs(self):
+        depth: int = 2**self.BVH_DEPTH - 1
+        self.aabbs = {
             "min_point": np.empty(shape=(depth, 3), dtype=np.float32),
             "max_point": np.empty(shape=(depth, 3), dtype=np.float32),
         }
-        bvhs = {
+        self.bvhs = {
             "first": np.empty(shape=depth, dtype=np.int32),
             "second": np.empty(shape=depth, dtype=np.int32),
             "start": np.empty(shape=depth, dtype=np.int32),
             "length": np.empty(shape=depth, dtype=np.int32),
         }
+
+        self.__update_BVH(0, 0)
+
+    def __update_BVH(self, idx: int, depth: int):
+        if depth == self.BVH_DEPTH:
+            self.bvhs["first"][(idx - 1) // 2] = 0
+            self.bvhs["second"][(idx - 1) // 2] = 0
+            return
 
         points = np.concatenate(
             [self.triangles["a"], self.triangles["b"], self.triangles["c"]]
@@ -140,15 +148,15 @@ class Spatial:
         min_point = np.amin(points, axis=0)
         max_point = np.amax(points, axis=0)
 
-        for i in range(depth):
-            bounding_boxes["min_point"][i] = min_point
-            bounding_boxes["max_point"][i] = max_point
-            bvhs["first"][i] = bvh_offset
-            bvhs["second"][i] = bvh_offset
-            bvhs["start"][i] = tri_offset
-            bvhs["length"][i] = tri_offset + self.n
+        self.aabbs["min_point"][idx] = min_point
+        self.aabbs["max_point"][idx] = max_point
+        self.bvhs["first"][idx] = 0
+        self.bvhs["second"][idx] = 0
+        self.bvhs["start"][idx] = 0
+        self.bvhs["length"][idx] = 0 + self.n
 
-        return bounding_boxes, bvhs
+        self.__update_BVH(2 * idx + 1, depth + 1)
+        self.__update_BVH(2 * idx + 2, depth + 1)
 
     def __swap_triangles(self, a: int, b: int):
         for arr in self.materials.values():
