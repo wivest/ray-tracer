@@ -150,6 +150,12 @@ class Spatial:
 
         return bounding_boxes, bvhs
 
+    def __swap_triangles(self, a: int, b: int):
+        for arr in self.materials.values():
+            arr[a], arr[b] = arr[b], arr[b]
+        for arr in self.triangles.values():
+            arr[a], arr[b] = arr[b], arr[b]
+
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
         for i in triangles:
