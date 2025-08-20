@@ -134,20 +134,15 @@ class Spatial:
             "length": np.empty(shape=depth, dtype=np.int32),
         }
 
-        points = np.concatenate(
-            [self.triangles["a"], self.triangles["b"], self.triangles["c"]]
-        )
+        self.__update_BVH(0, 0)
 
-        self.__update_BVH(0, 0, points)
-
-    def __update_BVH(self, idx: int, depth: int, points):
+    def __update_BVH(self, idx: int, depth: int):
         if depth == self.BVH_DEPTH:
             self.bvhs["first"][(idx - 1) // 2] = 0
             self.bvhs["second"][(idx - 1) // 2] = 0
             return
 
-        min_point = np.amin(points, axis=0)
-        max_point = np.amax(points, axis=0)
+        min_point, max_point = self.__get_AABB(0, self.n)
 
         self.aabbs["min_point"][idx] = min_point
         self.aabbs["max_point"][idx] = max_point
@@ -156,9 +151,9 @@ class Spatial:
         self.bvhs["start"][idx] = 0
         self.bvhs["length"][idx] = 0 + self.n
 
-        self.__update_BVH(2 * idx + 1, depth + 1, points)
-        self.__update_BVH(2 * idx + 2, depth + 1, points)
-        self.__sort_triangles(0, self.n, 0)
+        self.__update_BVH(2 * idx + 1, depth + 1)
+        self.__update_BVH(2 * idx + 2, depth + 1)
+        self.__sort_triangles(0, self.n, idx)
 
     def __sort_triangles(self, start: int, count: int, idx: int) -> int:
         min_point = self.aabbs["min_point"][idx]
@@ -176,7 +171,9 @@ class Spatial:
             if center[split] < aabb_center[split]:
                 self.__swap_triangles(i, second)
                 second += 1
-        print(start, count, second)
+        print("indices: ", start, count, second, "\nsplit: ", split, aabb_center, sides)
+        self.__get_AABB(start, second - start)
+        self.__get_AABB(second, start + count - second)
 
         return second
 
@@ -184,9 +181,23 @@ class Spatial:
         if a == b:
             return
         for arr in self.materials.values():
-            arr[a], arr[b] = arr[b], arr[b]
+            arr[a], arr[b] = arr[b], arr[a]
         for arr in self.triangles.values():
-            arr[a], arr[b] = arr[b], arr[b]
+            arr[[a, b]] = arr[[b, a]]
+
+    def __get_AABB(self, start: int, count: int) -> tuple[ndarray, ndarray]:
+        points = np.concatenate(
+            [
+                self.triangles["a"][start : start + count],
+                self.triangles["b"][start : start + count],
+                self.triangles["c"][start : start + count],
+            ]
+        )
+        min_point = np.amin(points, axis=0)
+        max_point = np.amax(points, axis=0)
+        print(min_point, max_point)
+
+        return min_point, max_point
 
     @ti.kernel
     def _update_normals(self, triangles: ti.template()):  # type: ignore
