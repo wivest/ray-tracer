@@ -134,26 +134,26 @@ class Spatial:
             "length": np.empty(shape=depth, dtype=np.int32),
         }
 
-        self.__update_BVH(0, 0)
+        self.__update_BVH(0, 0, 0, self.n)
 
-    def __update_BVH(self, idx: int, depth: int):
+    def __update_BVH(self, idx: int, depth: int, start: int, count: int):
         if depth == self.BVH_DEPTH:
             self.bvhs["first"][(idx - 1) // 2] = 0
             self.bvhs["second"][(idx - 1) // 2] = 0
             return
 
-        min_point, max_point = self.__get_AABB(0, self.n)
+        min_point, max_point = self.__get_AABB(start, count)
 
         self.aabbs["min_point"][idx] = min_point
         self.aabbs["max_point"][idx] = max_point
-        self.bvhs["first"][idx] = 0
-        self.bvhs["second"][idx] = 0
-        self.bvhs["start"][idx] = 0
-        self.bvhs["length"][idx] = 0 + self.n
+        self.bvhs["first"][idx] = 2 * idx + 1
+        self.bvhs["second"][idx] = 2 * idx + 2
+        self.bvhs["start"][idx] = start
+        self.bvhs["length"][idx] = count
 
-        self.__update_BVH(2 * idx + 1, depth + 1)
-        self.__update_BVH(2 * idx + 2, depth + 1)
-        self.__sort_triangles(0, self.n, idx)
+        second = self.__sort_triangles(start, count, idx)
+        self.__update_BVH(2 * idx + 1, depth + 1, start, second - start)
+        self.__update_BVH(2 * idx + 2, depth + 1, second, start + count - second)
 
     def __sort_triangles(self, start: int, count: int, idx: int) -> int:
         min_point = self.aabbs["min_point"][idx]
@@ -171,9 +171,6 @@ class Spatial:
             if center[split] < aabb_center[split]:
                 self.__swap_triangles(i, second)
                 second += 1
-        print("indices: ", start, count, second, "\nsplit: ", split, aabb_center, sides)
-        self.__get_AABB(start, second - start)
-        self.__get_AABB(second, start + count - second)
 
         return second
 
@@ -195,7 +192,6 @@ class Spatial:
         )
         min_point = np.amin(points, axis=0)
         max_point = np.amax(points, axis=0)
-        print(min_point, max_point)
 
         return min_point, max_point
 
