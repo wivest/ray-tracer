@@ -134,17 +134,18 @@ class Spatial:
             "length": np.empty(shape=depth, dtype=np.int32),
         }
 
-        self.__update_BVH(0, 0)
+        points = np.concatenate(
+            [self.triangles["a"], self.triangles["b"], self.triangles["c"]]
+        )
 
-    def __update_BVH(self, idx: int, depth: int):
+        self.__update_BVH(0, 0, points)
+
+    def __update_BVH(self, idx: int, depth: int, points):
         if depth == self.BVH_DEPTH:
             self.bvhs["first"][(idx - 1) // 2] = 0
             self.bvhs["second"][(idx - 1) // 2] = 0
             return
 
-        points = np.concatenate(
-            [self.triangles["a"], self.triangles["b"], self.triangles["c"]]
-        )
         min_point = np.amin(points, axis=0)
         max_point = np.amax(points, axis=0)
 
@@ -155,10 +156,33 @@ class Spatial:
         self.bvhs["start"][idx] = 0
         self.bvhs["length"][idx] = 0 + self.n
 
-        self.__update_BVH(2 * idx + 1, depth + 1)
-        self.__update_BVH(2 * idx + 2, depth + 1)
+        self.__update_BVH(2 * idx + 1, depth + 1, points)
+        self.__update_BVH(2 * idx + 2, depth + 1, points)
+        self.__sort_triangles(0, self.n, 0)
+
+    def __sort_triangles(self, start: int, count: int, idx: int) -> int:
+        min_point = self.aabbs["min_point"][idx]
+        max_point = self.aabbs["max_point"][idx]
+
+        sides = max_point - min_point
+        aabb_center = (max_point + min_point) / 2
+        split = np.argmax(sides)
+        second = start
+
+        for i in range(start, start + count):
+            center = (
+                self.triangles["a"][i] + self.triangles["b"][i] + self.triangles["c"][i]
+            ) / 3
+            if center[split] < aabb_center[split]:
+                self.__swap_triangles(i, second)
+                second += 1
+        print(start, count, second)
+
+        return second
 
     def __swap_triangles(self, a: int, b: int):
+        if a == b:
+            return
         for arr in self.materials.values():
             arr[a], arr[b] = arr[b], arr[b]
         for arr in self.triangles.values():
