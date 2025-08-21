@@ -4,7 +4,7 @@ from camera.ray import Ray
 
 
 @ti.dataclass
-class BoundingBox:
+class AABB:
     min_point: vec3  # type: ignore
     max_point: vec3  # type: ignore
 

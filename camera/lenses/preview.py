@@ -5,7 +5,7 @@ from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
 
-from model.bounding_box import BoundingBox
+from model.aabb import AABB
 
 
 @ti.data_oriented

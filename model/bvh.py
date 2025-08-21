@@ -1,11 +1,11 @@
 from imports.common import *
 
-from .bounding_box import BoundingBox
+from .aabb import AABB
 
 
 @ti.dataclass
 class BVH:
-    aabb: BoundingBox  # type: ignore
+    aabb: AABB  # type: ignore
     children: int
     start: int
     count: int
