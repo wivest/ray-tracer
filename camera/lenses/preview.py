@@ -4,8 +4,9 @@ from .lens import Lens
 from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
+from ..hit_info import HitInfo
 
-from model.aabb import AABB
+from model.spatial import Spatial
 
 
 @ti.data_oriented
@@ -39,9 +40,13 @@ class Preview(Lens):
     @ti.func
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
+        stack = ti.Vector.zero(ti.i32, 2**Spatial.BVH_DEPTH - 1)
+        top = 0
 
-        for i in range(bvhs.shape[0]):
-            bvh = bvhs[i]
+        while top >= 0:
+            bvh = bvhs[stack[top]]
+            top -= 1
+
             if bvh.aabb.intersects(ray):
                 hit_info = ray.cast(triangles)
                 if hit_info.hit:
