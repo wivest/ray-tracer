@@ -122,34 +122,31 @@ class Spatial:
             yield ns
 
     def __calculate_BVHs(self):
-        depth: int = 2**self.BVH_DEPTH - 1
+        tree: int = 2**self.BVH_DEPTH - 1
         self.aabbs = {
-            "min_point": np.empty(shape=(depth, 3), dtype=np.float32),
-            "max_point": np.empty(shape=(depth, 3), dtype=np.float32),
+            "min_point": np.empty(shape=(tree, 3), dtype=np.float32),
+            "max_point": np.empty(shape=(tree, 3), dtype=np.float32),
         }
         self.bvhs = {
-            "first": np.empty(shape=depth, dtype=np.int32),
-            "second": np.empty(shape=depth, dtype=np.int32),
-            "start": np.empty(shape=depth, dtype=np.int32),
-            "length": np.empty(shape=depth, dtype=np.int32),
+            "children": np.empty(shape=tree, dtype=np.int32),
+            "start": np.empty(shape=tree, dtype=np.int32),
+            "count": np.empty(shape=tree, dtype=np.int32),
         }
 
         self.__update_BVH(0, 0, 0, self.n)
 
     def __update_BVH(self, idx: int, depth: int, start: int, count: int):
         if depth == self.BVH_DEPTH:
-            self.bvhs["first"][(idx - 1) // 2] = 0
-            self.bvhs["second"][(idx - 1) // 2] = 0
+            self.bvhs["children"][(idx - 1) // 2] = 0
             return
 
         min_point, max_point = self.__get_AABB(start, count)
 
         self.aabbs["min_point"][idx] = min_point
         self.aabbs["max_point"][idx] = max_point
-        self.bvhs["first"][idx] = 2 * idx + 1
-        self.bvhs["second"][idx] = 2 * idx + 2
+        self.bvhs["children"][idx] = 2 * idx + 1
         self.bvhs["start"][idx] = start
-        self.bvhs["length"][idx] = count
+        self.bvhs["count"][idx] = count
 
         second = self.__sort_triangles(start, count, idx)
         self.__update_BVH(2 * idx + 1, depth + 1, start, second - start)
