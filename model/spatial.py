@@ -14,7 +14,7 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 6
+    BVH_DEPTH: int = 8
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
@@ -180,6 +180,8 @@ class Spatial:
             arr[[a, b]] = arr[[b, a]]
 
     def __get_AABB(self, start: int, count: int) -> tuple[ndarray, ndarray]:
+        if count <= 0:
+            return np.array([0.0, 0.0, 0.0]), np.array([0.0, 0.0, 0.0])
         points = np.concatenate(
             [
                 self.triangles["a"][start : start + count],
