@@ -31,3 +31,23 @@ class Ray:
                 normal = objects[i].normal
 
         return HitInfo(hit, point, normal, material)
+
+    @ti.func
+    def cast2(self, triangles: ti.template(), start: int, count: int) -> HitInfo:  # type: ignore
+        point = self.origin
+        normal = vec3(0)
+        material = Material()
+        hit = False
+
+        nearest = ti.math.inf
+        for i in range(start, start + count):
+            coef = triangles[i].intersects(self)
+            if coef > TRESHHOLD and coef < nearest:
+                nearest = coef
+                hit = True
+
+                material = triangles[i].material
+                point = self.origin + self.direction * coef
+                normal = triangles[i].normal
+
+        return HitInfo(hit, point, normal, material)

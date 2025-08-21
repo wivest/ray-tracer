@@ -40,6 +40,7 @@ class Preview(Lens):
     @ti.func
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
+        hit_info = HitInfo()
         stack = ti.Vector.zero(ti.i32, 2**Spatial.BVH_DEPTH - 1)
         top = 0
 
@@ -48,9 +49,18 @@ class Preview(Lens):
             top -= 1
 
             if bvh.aabb.intersects(ray):
-                hit_info = ray.cast(triangles)
-                if hit_info.hit:
-                    sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))
-                    incoming_light = sin * self.hit_color
+                # BVH is leaf
+                if bvh.children == 0:
+                    hit_info_bvh = ray.cast2(triangles, bvh.start, bvh.count)
+                    if hit_info_bvh.hit:
+                        hit_info = hit_info_bvh
+                # BVH is inner node
+                else:
+                    stack[top + 1] = bvh.children
+                    stack[top + 2] = bvh.children + 1
+                    top += 2
 
+        if hit_info.hit:  # type: ignore
+            sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
+            incoming_light = sin * self.hit_color
         return incoming_light
