@@ -32,12 +32,14 @@ class Scene:
         triangle_concat["material"] = material_concat  # type: ignore
 
         n = 0
+        bvh_count = 0
         aabb_list = []
         bvh_list = []
         for i in range(len(self.spatials)):
             aabb_list.append(self.spatials[i].aabbs)
             bvh_list.append(self.spatials[i].bvhs)
             n += self.spatials[i].n
+            bvh_count += self.spatials[i].bvh_count
 
         aabb_concat = self.__concat(aabb_list)
         bvh_concat = self.__concat(bvh_list)
@@ -47,7 +49,7 @@ class Scene:
         f.from_numpy(triangle_concat)
         self._update_normals(f)
 
-        bvhs = BVH.field(shape=len(self.spatials) * (2**Spatial.BVH_DEPTH - 1))
+        bvhs = BVH.field(shape=bvh_count)
         bvhs.from_numpy(bvh_concat)
 
         return f, bvhs

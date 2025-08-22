@@ -122,6 +122,7 @@ class Spatial:
             yield ns
 
     def __calculate_BVHs(self):
+        self.bvh_count = 0
         tree: int = 2**self.BVH_DEPTH - 1
         self.aabbs = {
             "min_point": np.empty(shape=(tree, 3), dtype=np.float32),
@@ -140,6 +141,7 @@ class Spatial:
             self.bvhs["children"][(idx - 1) // 2] = 0
             return
 
+        self.bvh_count += 1
         min_point, max_point = self.__get_AABB(start, count)
 
         self.aabbs["min_point"][idx] = min_point
