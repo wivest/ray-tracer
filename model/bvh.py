@@ -6,6 +6,7 @@ from .aabb import AABB
 @ti.dataclass
 class BVH:
     aabb: AABB  # type: ignore
-    children: int
+    left: int
+    right: int
     start: int
     count: int

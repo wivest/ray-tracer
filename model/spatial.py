@@ -129,7 +129,8 @@ class Spatial:
             "max_point": np.empty(shape=(tree, 3), dtype=np.float32),
         }
         self.bvhs = {
-            "children": np.empty(shape=tree, dtype=np.int32),
+            "left": np.empty(shape=tree, dtype=np.int32),
+            "right": np.empty(shape=tree, dtype=np.int32),
             "start": np.empty(shape=tree, dtype=np.int32),
             "count": np.empty(shape=tree, dtype=np.int32),
         }
@@ -138,7 +139,8 @@ class Spatial:
 
     def __update_BVH(self, idx: int, depth: int, start: int, count: int):
         if depth == self.BVH_DEPTH:
-            self.bvhs["children"][(idx - 1) // 2] = 0
+            self.bvhs["left"][(idx - 1) // 2] = 0
+            self.bvhs["right"][(idx - 1) // 2] = 0
             return
 
         self.bvh_count += 1
@@ -146,7 +148,8 @@ class Spatial:
 
         self.aabbs["min_point"][idx] = min_point
         self.aabbs["max_point"][idx] = max_point
-        self.bvhs["children"][idx] = 2 * idx + 1
+        self.bvhs["left"][idx] = 2 * idx + 1
+        self.bvhs["right"][idx] = 2 * idx + 2
         self.bvhs["start"][idx] = start
         self.bvhs["count"][idx] = count
 

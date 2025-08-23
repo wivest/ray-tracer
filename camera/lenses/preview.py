@@ -50,14 +50,14 @@ class Preview(Lens):
 
             if bvh.aabb.intersects(ray):
                 # BVH is leaf
-                if bvh.children == 0:
+                if bvh.left == 0:
                     hit_info_bvh = ray.cast2(triangles, bvh.start, bvh.count)
                     if hit_info_bvh.hit:
                         hit_info = hit_info_bvh
                 # BVH is inner node
                 else:
-                    stack[top + 1] = bvh.children
-                    stack[top + 2] = bvh.children + 1
+                    stack[top + 1] = bvh.left
+                    stack[top + 2] = bvh.right
                     top += 2
 
         if hit_info.hit:  # type: ignore
