@@ -135,27 +135,29 @@ class Spatial:
             "count": np.empty(shape=tree, dtype=np.int32),
         }
 
-        self.__update_BVH(0, 0, 0, self.n)
+        self.__update_BVH(depth=1, start=0, count=self.n)
 
-    def __update_BVH(self, idx: int, depth: int, start: int, count: int):
-        if depth == self.BVH_DEPTH:
-            self.bvhs["left"][(idx - 1) // 2] = 0
-            self.bvhs["right"][(idx - 1) // 2] = 0
-            return
-
+    def __update_BVH(self, depth: int, start: int, count: int) -> int:
+        idx = self.bvh_count
         self.bvh_count += 1
         min_point, max_point = self.__get_AABB(start, count)
 
         self.aabbs["min_point"][idx] = min_point
         self.aabbs["max_point"][idx] = max_point
-        self.bvhs["left"][idx] = 2 * idx + 1
-        self.bvhs["right"][idx] = 2 * idx + 2
         self.bvhs["start"][idx] = start
         self.bvhs["count"][idx] = count
 
-        second = self.__sort_triangles(start, count, idx)
-        self.__update_BVH(2 * idx + 1, depth + 1, start, second - start)
-        self.__update_BVH(2 * idx + 2, depth + 1, second, start + count - second)
+        if depth == self.BVH_DEPTH:
+            self.bvhs["left"][idx] = 0
+            self.bvhs["right"][idx] = 0
+        else:
+            second = self.__sort_triangles(start, count, idx)
+            left = self.__update_BVH(depth + 1, start, second - start)
+            right = self.__update_BVH(depth + 1, second, start + count - second)
+            self.bvhs["left"][idx] = left
+            self.bvhs["right"][idx] = right
+
+        return idx
 
     def __sort_triangles(self, start: int, count: int, idx: int) -> int:
         min_point = self.aabbs["min_point"][idx]
