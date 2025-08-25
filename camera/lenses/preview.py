@@ -40,7 +40,7 @@ class Preview(Lens):
     @ti.func
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
-        hit_info = HitInfo()
+        hit_info = HitInfo(distance=ti.math.inf)
         stack = ti.Vector.zero(ti.i32, 2**Spatial.BVH_DEPTH - 1)
         top = 0
 
@@ -52,7 +52,7 @@ class Preview(Lens):
                 # BVH is leaf
                 if bvh.left == 0:
                     hit_info_bvh = ray.cast2(triangles, bvh.start, bvh.count)
-                    if hit_info_bvh.hit:
+                    if hit_info_bvh.hit and hit_info_bvh.distance < hit_info.distance:  # type: ignore
                         hit_info = hit_info_bvh
                 # BVH is inner node
                 else:

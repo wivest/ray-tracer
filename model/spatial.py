@@ -14,7 +14,7 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 10
+    BVH_DEPTH: int = 8
     TRI_LIMIT: int = 8
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
