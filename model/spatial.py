@@ -14,7 +14,8 @@ from .py_material import PyMaterial
 @ti.data_oriented
 class Spatial:
 
-    BVH_DEPTH: int = 8
+    BVH_DEPTH: int = 10
+    TRI_LIMIT: int = 8
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
@@ -147,7 +148,7 @@ class Spatial:
         self.bvhs["start"][idx] = start
         self.bvhs["count"][idx] = count
 
-        if depth == self.BVH_DEPTH:
+        if depth == self.BVH_DEPTH or count <= self.TRI_LIMIT:
             self.bvhs["left"][idx] = 0
             self.bvhs["right"][idx] = 0
         else:

@@ -49,7 +49,7 @@ class Scene:
         f.from_numpy(triangle_concat)
         self._update_normals(f)
 
-        bvhs = BVH.field(shape=bvh_count)
+        bvhs = BVH.field(shape=2**Spatial.BVH_DEPTH - 1)
         bvhs.from_numpy(bvh_concat)
 
         return f, bvhs
