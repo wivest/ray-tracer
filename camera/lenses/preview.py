@@ -54,11 +54,27 @@ class Preview(Lens):
                     hit_info_bvh = ray.cast2(triangles, bvh.start, bvh.count)
                     if hit_info_bvh.hit and hit_info_bvh.distance < hit_info.distance:  # type: ignore
                         hit_info = hit_info_bvh
+
                 # BVH is inner node
                 else:
-                    stack[top + 1] = bvh.left
-                    stack[top + 2] = bvh.right
-                    top += 2
+                    dst_left = bvhs[bvh.left].aabb.distance(ray)
+                    dst_right = bvhs[bvh.right].aabb.distance(ray)
+                    dst_far = dst_left
+                    dst_close = dst_right
+                    farther = bvh.left
+                    closer = bvh.right
+                    if dst_left < dst_right:
+                        farther = bvh.right
+                        closer = bvh.left
+                        dst_far = dst_right
+                        dst_close = dst_left
+
+                    if hit_info.distance > dst_far:  # type: ignore
+                        stack[top + 1] = farther
+                        top += 1
+                    if hit_info.distance > dst_close:  # type: ignore
+                        stack[top + 1] = closer
+                        top += 1
 
         if hit_info.hit:  # type: ignore
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
