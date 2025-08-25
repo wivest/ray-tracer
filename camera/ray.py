@@ -30,7 +30,7 @@ class Ray:
                 point = self.origin + self.direction * coef
                 normal = objects[i].normal
 
-        return HitInfo(hit, point, normal, material)
+        return HitInfo(hit, nearest, point, normal, material)
 
     @ti.func
     def cast2(self, triangles: ti.template(), start: int, count: int) -> HitInfo:  # type: ignore
@@ -50,4 +50,4 @@ class Ray:
                 point = self.origin + self.direction * coef
                 normal = triangles[i].normal
 
-        return HitInfo(hit, point, normal, material)
+        return HitInfo(hit, nearest, point, normal, material)
