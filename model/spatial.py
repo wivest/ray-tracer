@@ -25,6 +25,10 @@ class Spatial:
             offset += self.__parse(primitive, node, gltf, offset)
 
         self.__calculate_BVHs()
+        for key in self.aabbs:
+            self.aabbs[key] = self.aabbs[key][: self.bvh_count]  # type: ignore
+        for key in self.bvhs:
+            self.bvhs[key] = self.bvhs[key][: self.bvh_count]  # type: ignore
 
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
