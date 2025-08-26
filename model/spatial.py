@@ -187,7 +187,7 @@ class Spatial:
         if a == b:
             return
         for arr in self.materials.values():
-            arr[a], arr[b] = arr[b], arr[a]
+            arr[[a, b]] = arr[[b, a]]
         for arr in self.triangles.values():
             arr[[a, b]] = arr[[b, a]]
 
