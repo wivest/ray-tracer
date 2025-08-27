@@ -26,9 +26,9 @@ class Spatial:
 
         self.__calculate_BVHs()
         for key in self.aabbs:
-            self.aabbs[key] = self.aabbs[key][: self.bvh_count]  # type: ignore
+            self.aabbs[key].resize((self.bvh_count, 3))
         for key in self.bvhs:
-            self.bvhs[key] = self.bvhs[key][: self.bvh_count]  # type: ignore
+            self.bvhs[key].resize(self.bvh_count)
 
     def __init_dict(self, mesh: Mesh, gltf: GLTF2):
         self.n = 0
