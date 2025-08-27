@@ -41,8 +41,8 @@ class Preview(Lens):
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
         hit_info = HitInfo(distance=ti.math.inf)
-        stack = ti.Vector.zero(ti.i32, 2**Spatial.BVH_DEPTH - 1)
-        distances = ti.Vector.zero(ti.f32, 2**Spatial.BVH_DEPTH - 1)
+        stack = ti.Vector.zero(ti.i32, 2 * Spatial.BVH_DEPTH)
+        distances = ti.Vector.zero(ti.f32, 2 * Spatial.BVH_DEPTH)
         top = 0
 
         while top >= 0:
