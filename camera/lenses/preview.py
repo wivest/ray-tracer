@@ -42,6 +42,7 @@ class Preview(Lens):
         incoming_light = self.sky
         hit_info = HitInfo(distance=ti.math.inf)
         stack = ti.Vector.zero(ti.i32, 2**Spatial.BVH_DEPTH - 1)
+        distances = ti.Vector.zero(ti.f32, 2**Spatial.BVH_DEPTH - 1)
         top = 0
 
         while top >= 0:
@@ -71,9 +72,11 @@ class Preview(Lens):
 
                     if hit_info.distance > dst_far:  # type: ignore
                         stack[top + 1] = farther
+                        distances[top + 1] = dst_far
                         top += 1
                     if hit_info.distance > dst_close:  # type: ignore
                         stack[top + 1] = closer
+                        distances[top + 1] = dst_close
                         top += 1
 
         if hit_info.hit:  # type: ignore
