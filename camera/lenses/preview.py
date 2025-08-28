@@ -44,12 +44,13 @@ class Preview(Lens):
         stack = ti.Vector.zero(ti.i32, 2 * Spatial.BVH_DEPTH)
         distances = ti.Vector.zero(ti.f32, 2 * Spatial.BVH_DEPTH)
         top = 0
+        distances[top] = bvhs[stack[top]].aabb.distance(ray)
 
         while top >= 0:
             bvh = bvhs[stack[top]]
             top -= 1
 
-            if bvh.aabb.intersects(ray):
+            if distances[top + 1] < hit_info.distance:  # type: ignore
                 # BVH is leaf
                 if bvh.left == 0:
                     hit_info_bvh = ray.cast2(triangles, bvh.start, bvh.count)
