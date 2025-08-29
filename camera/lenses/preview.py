@@ -76,7 +76,13 @@ class Preview(Lens):
                         stack[top + 1] = closer
                         top += 1
 
+        correct = ray.cast(triangles)
+
         if hit_info.hit:  # type: ignore
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
             incoming_light = sin * self.hit_color
+
+        if correct.distance < hit_info.distance:  # type: ignore
+            incoming_light = vec3(1.0, 0.0, 0.0)
+
         return incoming_light
