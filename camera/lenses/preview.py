@@ -69,20 +69,15 @@ class Preview(Lens):
                         dst_far = dst_right
                         dst_close = dst_left
 
-                    if hit_info.distance > dst_far:  # type: ignore
+                    if dst_far < hit_info.distance:  # type: ignore
                         stack[top + 1] = farther
                         top += 1
-                    if hit_info.distance > dst_close:  # type: ignore
+                    if dst_close < hit_info.distance:  # type: ignore
                         stack[top + 1] = closer
                         top += 1
-
-        correct = ray.cast(triangles)
 
         if hit_info.hit:  # type: ignore
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
             incoming_light = sin * self.hit_color
-
-        if correct.distance < hit_info.distance:  # type: ignore
-            incoming_light = vec3(1.0, 0.0, 0.0)
 
         return incoming_light

@@ -33,5 +33,5 @@ class AABB:
         far_fac = ti.math.min(far.x, far.y, far.z)
 
         hit = far_fac > 0 and close_fac <= far_fac
-        distance = (close_fac if close_fac >= 0 else far_fac) if hit else ti.math.inf
+        distance = close_fac if hit else ti.math.inf
         return distance
