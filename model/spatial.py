@@ -15,7 +15,7 @@ from .py_material import PyMaterial
 class Spatial:
 
     BVH_DEPTH: int = 8
-    TRI_LIMIT: int = 8
+    TRI_LIMIT: int = 4
 
     def __init__(self, mesh: Mesh, node: Node, gltf: GLTF2):
         self.__init_dict(mesh, gltf)
