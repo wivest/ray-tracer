@@ -1,7 +1,6 @@
 from imports.common import *
 
 from .lens import Lens
-from ..tonemapping import aces
 from ..transform import Transform
 from ..ray import Ray
 from ..hit_info import HitInfo
@@ -28,15 +27,14 @@ class Render(Lens):
         self.lights[1] = Sun(Vector((5, 5, 5)), Vector((1, -1, 1)))
 
         self.samples = samples
-
         self._sampled = Vector.field(3, f32, size)
-        self._sampled.fill(0.0)
         self._ready: Field = ti.field(int, ())
-        self._ready[None] = 0
+        self.reset_samples()
 
     def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
         if self._ready[None] < self.samples:
-            self.render_sample(pixels, triangles, bvhs)
+            self._render_sample(self._sampled, triangles, bvhs)
+            self._apply_sample(pixels)
 
     @ti.kernel
     def reset_samples(self):
@@ -44,23 +42,14 @@ class Render(Lens):
         self._ready[None] = 0
 
     @ti.kernel
-    def render_sample(self, pixels: ti.template(), triangles: ti.template(), bvhs: ti.template()):  # type: ignore
-        center_x = pixels.shape[0] / 2
-        center_y = pixels.shape[1] / 2
+    def _apply_sample(self, pixels: ti.template()):  # type: ignore
+        ready = self._ready[None]
+        fac = 1 / (ready + 1)
+        old = ready * fac
         self._ready[None] += 1
 
-        ready = self._ready[None]
-        basis = self.transform.basis[None]
-        origin = self.transform.origin[None]
-
         for x, y in pixels:
-            pixel = Vector((x - center_x, y - center_y, -self.fov), f32).normalized()
-            direction = basis @ pixel
-            ray = Ray(origin, direction)
-
-            incoming_light = self._get_color(ray, triangles, bvhs)
-            self._sampled[x, y] += aces(incoming_light)
-            pixels[x, y] = self._sampled[x, y] / ready
+            pixels[x, y] = pixels[x, y] * old + self._sampled[x, y] * fac
 
     @ti.func
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
