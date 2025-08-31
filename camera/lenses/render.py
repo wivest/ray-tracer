@@ -60,6 +60,8 @@ class Render(Lens):
             self._sampled[x, y] += aces(incoming_light)
             pixels[x, y] = self._sampled[x, y] / ready
 
+    def _get_color(self, ray: Ray, triangles: ti.template(), hits: int) -> Vector: ...  # type: ignore
+
     @ti.func
     def get_color(self, ray: Ray, triangles: ti.template(), hits: int) -> Vector:  # type: ignore
         incoming_light = Vector((0.0, 0.0, 0.0))
