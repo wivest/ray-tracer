@@ -22,7 +22,7 @@ class Preview(Lens):
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
-        hit_info = self._cast_ray(ray, triangles, bvhs)
+        hit_info = ray.cast(triangles, bvhs)
 
         if hit_info.hit:  # type: ignore
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
