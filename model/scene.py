@@ -26,7 +26,7 @@ class Scene:
             mesh = gltf.meshes[node.mesh]
             self.spatials.append(Spatial(mesh, node, gltf))
 
-    def export(self) -> tuple[StructField, StructField, MatrixField]:
+    def export(self) -> tuple[StructField, StructField, Field]:
         material_concat = self.__concat([s.materials for s in self.spatials])
         triangle_concat = self.__concat([s.triangles for s in self.spatials])
         triangle_concat["material"] = material_concat  # type: ignore
@@ -55,7 +55,7 @@ class Scene:
         bvhs = BVH.field(shape=bvh_count)
         bvhs.from_numpy(bvh_concat)
 
-        bvh_roots = Vector.field(len(self.spatials), dtype=ti.i32)
+        bvh_roots: Field = ti.field(dtype=ti.i32, shape=len(self.spatials))
         bvh_roots.from_numpy(bvh_roots_np)
 
         return tris, bvhs, bvh_roots

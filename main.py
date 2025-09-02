@@ -15,5 +15,5 @@ scene = Scene(gltf_path)
 
 triangles, bvhs, bvh_roots = scene.export()
 
-app = App("Ray Tracing", SIZE, triangles, bvhs, DEFAULT_GLTF)
+app = App("Ray Tracing", SIZE, triangles, bvhs, bvh_roots, DEFAULT_GLTF)
 app.run()

@@ -19,6 +19,7 @@ class App:
         size: tuple[int, int],
         triangles: StructField,
         bvhs: StructField,
+        bvh_roots: Field,
         gltf_path: str,
     ):
         self.window = ti.GUI(name, size, fast_gui=True)
@@ -31,6 +32,7 @@ class App:
 
         self.triangles = triangles
         self.bvhs = bvhs
+        self.bvh_roots = bvh_roots
         self.input = Input(self.window)
         self.mode = True
 
@@ -38,7 +40,7 @@ class App:
         while self.window.running:
             self.__handle_events()
 
-            self.camera.render(self.triangles, self.bvhs)
+            self.camera.render(self.triangles, self.bvhs, self.bvh_roots)
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
@@ -87,4 +89,3 @@ class App:
             > 0
         ):
             self.render.reset_samples()
-            pass
