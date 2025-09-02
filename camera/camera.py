@@ -17,5 +17,5 @@ class Camera:
         self.transform = Transform.get_camera_data(gltf_path)
         self.pixels = Vector.field(3, f32, size)
 
-    def render(self, triangles: StructField, bvhs: StructField, bvh_roots: Field):
-        self.lens.render(self.pixels, triangles, bvhs, bvh_roots)
+    def render(self, triangles: StructField, bvhs: StructField):
+        self.lens.render(self.pixels, triangles, bvhs)

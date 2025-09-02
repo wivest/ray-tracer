@@ -15,20 +15,14 @@ class Preview(Lens):
         self.fov: float = size[1] / ti.tan(angle / 2)
         self.transform = transform
 
-    def render(
-        self,
-        pixels: MatrixField,
-        triangles: StructField,
-        bvhs: StructField,
-        bvh_roots: Field,
-    ):
-        self._render_sample(pixels, triangles, bvhs, bvh_roots)
+    def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
+        self._render_sample(pixels, triangles, bvhs)
 
     @ti.func
-    def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template(), bvh_roots: ti.template()) -> Vector:  # type: ignore
+    def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
-        hit_info = ray.cast(triangles, bvhs, bvh_roots)
+        hit_info = ray.cast(triangles, bvhs)
 
         if hit_info.hit:  # type: ignore
             sin = ti.abs(ti.math.dot(ray.direction, hit_info.normal))  # type: ignore
