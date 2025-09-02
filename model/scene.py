@@ -6,7 +6,7 @@ from imports.common import *
 
 from .spatial import Spatial
 from .triangle import Triangle
-from .bvh import BVH
+from .bvh import BVH, BVHBuilder
 
 
 @ti.data_oriented
@@ -29,36 +29,20 @@ class Scene:
     def export(self) -> tuple[StructField, StructField, Field]:
         material_concat = self.__concat([s.materials for s in self.spatials])
         triangle_concat = self.__concat([s.triangles for s in self.spatials])
+        n = sum([s.n for s in self.spatials])
+
+        builder = BVHBuilder(triangle_concat, material_concat, n)
+        builder.build_BVHs()
         triangle_concat["material"] = material_concat  # type: ignore
-
-        n = 0
-        bvh_count = 0
-        aabb_list = []
-        bvh_list = []
-        bvh_root_list = []
-        for i in range(len(self.spatials)):
-            aabb_list.append(self.spatials[i].aabbs)
-            bvh_list.append(self.spatials[i].bvhs)
-            bvh_root_list.append(bvh_count)
-            n += self.spatials[i].n
-            bvh_count += self.spatials[i].bvh_count
-
-        aabb_concat = self.__concat(aabb_list)
-        bvh_concat = self.__concat(bvh_list)
-        bvh_concat["aabb"] = aabb_concat  # type: ignore
-        bvh_roots_np = np.array(bvh_root_list, dtype=np.int32)
 
         tris = Triangle.field(shape=n)
         tris.from_numpy(triangle_concat)
         self._update_normals(tris)
 
-        bvhs = BVH.field(shape=bvh_count)
-        bvhs.from_numpy(bvh_concat)
+        bvhs = BVH.field(shape=builder.bvh_count)
+        bvhs.from_numpy(builder.bvhs)
 
-        bvh_roots: Field = ti.field(dtype=ti.i32, shape=len(self.spatials))
-        bvh_roots.from_numpy(bvh_roots_np)
-
-        return tris, bvhs, bvh_roots
+        return tris, bvhs, ti.field(dtype=ti.i32, shape=1)
 
     def __concat(self, dicts: list[dict[str, ndarray]]) -> dict[str, ndarray]:
         unpacked: dict[str, list[ndarray]] = {}
