@@ -8,7 +8,7 @@ from camera.lenses import Preview, Render
 
 SENSIVITY = 0.1
 ROTATION = ti.math.pi
-ANGLE = ti.math.pi * 2 / 3
+ANGLE = 0.8
 
 
 class App:
