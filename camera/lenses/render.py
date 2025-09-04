@@ -14,10 +14,8 @@ class Render(Lens):
 
     HITS: int = 5
 
-    def __init__(
-        self, size: tuple[int, int], angle: float, samples: int, transform: Transform
-    ):
-        self.fov: float = size[1] / ti.tan(angle / 2)
+    def __init__(self, size: tuple[int, int], samples: int, transform: Transform):
+        self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
 
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))

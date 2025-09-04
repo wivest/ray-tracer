@@ -8,7 +8,6 @@ from camera.lenses import Preview, Render
 
 SENSIVITY = 0.1
 ROTATION = ti.math.pi
-ANGLE = 0.8
 
 
 class App:
@@ -25,8 +24,8 @@ class App:
         self.window.fps_limit = 1000
 
         self.camera = Camera(size, gltf_path)
-        self.preview = Preview(size, ANGLE, self.camera.transform)
-        self.render = Render(size, ANGLE, 1024, self.camera.transform)
+        self.preview = Preview(size, self.camera.transform)
+        self.render = Render(size, 1024, self.camera.transform)
         self.camera.lens = self.preview
 
         self.triangles = triangles

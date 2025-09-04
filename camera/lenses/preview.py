@@ -11,8 +11,8 @@ class Preview(Lens):
     sky = vec3(0.5, 0.5, 0.5)
     hit_color = vec3(1.0, 1.0, 1.0)
 
-    def __init__(self, size: tuple[int, int], angle: float, transform: Transform):
-        self.fov: float = size[1] / ti.tan(angle / 2)
+    def __init__(self, size: tuple[int, int], transform: Transform):
+        self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
 
     def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):

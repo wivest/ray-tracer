@@ -7,7 +7,7 @@ from imports.aliases import vec, basis
 
 class Transform:
 
-    def __init__(self, origin: vec, transform_basis: basis):
+    def __init__(self, origin: vec, transform_basis: basis, angle: float):
         ORIG = Vector(origin, f32)
         self.origin = Vector.field(3, f32, ())
         self.origin[None] = ORIG
@@ -15,6 +15,8 @@ class Transform:
         MAT = Matrix(transform_basis, f32)
         self.basis = Matrix.field(3, 3, f32, ())
         self.basis[None] = MAT
+
+        self.angle = angle
 
     @staticmethod
     def get_camera_data(path: str):
@@ -27,24 +29,30 @@ class Transform:
 
         t = []
         r = []
+        angle = 0.4
         for i in scene.nodes:
             node = data.nodes[i]
             if node.camera != None:
                 t = node.translation
                 r = node.rotation
+                p = data.cameras[node.camera].perspective
+                if p != None:
+                    angle = p.yfov
 
         if t == None or r == None:
             raise Exception()
 
-        return Transform.__convert_transform(t, r)
+        return Transform.__convert_transform(t, r, angle)
 
     @classmethod
-    def __convert_transform(cls, translation: list[float], rotation: list[float]):
+    def __convert_transform(
+        cls, translation: list[float], rotation: list[float], angle: float
+    ):
         origin = (translation[0], translation[1], translation[2])
         mat = Rotation.from_quat(rotation).as_matrix()
         bas = tuple(tuple(i) for i in mat.tolist())
 
-        return cls(origin, bas)  # type: ignore
+        return cls(origin, bas, angle)  # type: ignore
 
     def rotate_local_x(self, rad: float):
         sin = ti.sin(rad)
