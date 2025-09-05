@@ -30,6 +30,7 @@ class Transform:
         t = []
         r = []
         angle = 0.4
+        ratio = 16.0 / 9.0
         for i in scene.nodes:
             node = data.nodes[i]
             if node.camera != None:
@@ -38,6 +39,7 @@ class Transform:
                 p = data.cameras[node.camera].perspective
                 if p != None:
                     angle = p.yfov
+                    ratio = p.aspectRatio
 
         if t == None or r == None:
             raise Exception()
