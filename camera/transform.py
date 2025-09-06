@@ -19,8 +19,8 @@ class Transform:
         self.angle = angle
         self.ratio = ratio
 
-    @staticmethod
-    def get_camera_data(path: str):
+    @classmethod
+    def from_gltf(cls, path: str):
         data = GLTF2().load(path)
         if data == None:
             raise Exception()
@@ -46,7 +46,7 @@ class Transform:
             raise Exception()
 
         origin, bas = Transform.__convert_transform(t, r)
-        return Transform(origin, bas, angle, ratio)
+        return cls(origin, bas, angle, ratio)
 
     @staticmethod
     def __convert_transform(translation: list[float], rotation: list[float]):

@@ -20,13 +20,13 @@ class App:
         bvhs: StructField,
         gltf_path: str,
     ):
-        self.window = ti.GUI(name, size, fast_gui=True)
-        self.window.fps_limit = 1000
-
         self.camera = Camera(size, gltf_path)
         self.preview = Preview(size, self.camera.transform)
         self.render = Render(size, 1024, self.camera.transform)
         self.camera.lens = self.preview
+
+        self.window = ti.GUI(name, self.camera.pixels.shape, fast_gui=True)
+        self.window.fps_limit = 1000
 
         self.triangles = triangles
         self.bvhs = bvhs

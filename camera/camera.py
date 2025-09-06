@@ -14,7 +14,8 @@ class Camera:
         size: tuple[int, int],
         gltf_path: str,
     ):
-        self.transform = Transform.get_camera_data(gltf_path)
+        self.transform = Transform.from_gltf(gltf_path)
+        size = (int(size[1] * self.transform.ratio), size[1])
         self.pixels = Vector.field(3, f32, size)
 
     def render(self, triangles: StructField, bvhs: StructField):
