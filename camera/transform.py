@@ -7,7 +7,7 @@ from imports.aliases import vec, basis
 
 class Transform:
 
-    def __init__(self, origin: vec, transform_basis: basis, angle: float):
+    def __init__(self, origin: vec, transform_basis: basis, angle: float, ratio: float):
         ORIG = Vector(origin, f32)
         self.origin = Vector.field(3, f32, ())
         self.origin[None] = ORIG
@@ -17,6 +17,7 @@ class Transform:
         self.basis[None] = MAT
 
         self.angle = angle
+        self.ratio = ratio
 
     @staticmethod
     def get_camera_data(path: str):
@@ -39,22 +40,21 @@ class Transform:
                 p = data.cameras[node.camera].perspective
                 if p != None:
                     angle = p.yfov
-                    ratio = p.aspectRatio
+                    ratio = p.aspectRatio or ratio
 
         if t == None or r == None:
             raise Exception()
 
-        return Transform.__convert_transform(t, r, angle)
+        origin, bas = Transform.__convert_transform(t, r)
+        return Transform(origin, bas, angle, ratio)
 
-    @classmethod
-    def __convert_transform(
-        cls, translation: list[float], rotation: list[float], angle: float
-    ):
+    @staticmethod
+    def __convert_transform(translation: list[float], rotation: list[float]):
         origin = (translation[0], translation[1], translation[2])
         mat = Rotation.from_quat(rotation).as_matrix()
-        bas = tuple(tuple(i) for i in mat.tolist())
+        bas: basis = tuple(tuple(i) for i in mat.tolist())  # type: ignore
 
-        return cls(origin, bas, angle)  # type: ignore
+        return origin, bas
 
     def rotate_local_x(self, rad: float):
         sin = ti.sin(rad)
