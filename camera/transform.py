@@ -7,7 +7,9 @@ from imports.aliases import vec, basis
 
 class Transform:
 
-    def __init__(self, origin: vec, transform_basis: basis, angle: float, ratio: float):
+    def __init__(
+        self, origin: vec, transform_basis: basis, angle: float, ratio: float | None
+    ):
         ORIG = Vector(origin, f32)
         self.origin = Vector.field(3, f32, ())
         self.origin[None] = ORIG
@@ -31,7 +33,7 @@ class Transform:
         t = []
         r = []
         angle = 0.4
-        ratio = 16.0 / 9.0
+        ratio: float | None = None
         for i in scene.nodes:
             node = data.nodes[i]
             if node.camera != None:
@@ -40,7 +42,7 @@ class Transform:
                 p = data.cameras[node.camera].perspective
                 if p != None:
                     angle = p.yfov
-                    ratio = p.aspectRatio or ratio
+                    ratio = p.aspectRatio
 
         if t == None or r == None:
             raise Exception()
