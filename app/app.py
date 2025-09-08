@@ -21,13 +21,12 @@ class App:
         gltf_path: str,
     ):
         self.camera = Camera(size, gltf_path)
-        size = self.camera.pixels.shape
 
-        self.preview = Preview(size, self.camera.transform)
-        self.render = Render(size, 1024, self.camera.transform)
+        self.preview = Preview(self.camera.size, self.camera.transform)
+        self.render = Render(self.camera.size, 1024, self.camera.transform)
         self.camera.lens = self.preview
 
-        self.window = ti.GUI(name, size, fast_gui=True)
+        self.window = ti.GUI(name, self.camera.size, fast_gui=True)
         self.window.fps_limit = 1000
 
         self.triangles = triangles
