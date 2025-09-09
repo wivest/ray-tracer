@@ -42,6 +42,11 @@ class App:
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
+    def render_image(self):
+        self.camera.render(self.triangles, self.bvhs)
+        self.window.set_image(self.camera.pixels)
+        self.window.show()
+
     def __handle_events(self):
         self.input.read_events()
 
