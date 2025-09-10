@@ -43,9 +43,14 @@ class App:
             self.window.show()
 
     def render_image(self):
+        old = self.camera.lens
+        self.camera.lens = self.render
+
         self.camera.render(self.triangles, self.bvhs)
         self.window.set_image(self.camera.pixels)
         self.window.show()
+
+        self.camera.lens = old
 
     def __handle_events(self):
         self.input.read_events()
