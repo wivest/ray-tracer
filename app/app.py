@@ -42,13 +42,12 @@ class App:
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
-    def render_image(self):
+    def render_image(self, filename: str = "render.png"):
         old = self.camera.lens
         self.camera.lens = self.render
 
         self.camera.render(self.triangles, self.bvhs)
-        self.window.set_image(self.camera.pixels)
-        self.window.show()
+        ti.tools.imwrite(self.camera.pixels, filename)
 
         self.camera.lens = old
 
