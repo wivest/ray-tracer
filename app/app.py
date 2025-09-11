@@ -42,14 +42,23 @@ class App:
             self.window.set_image(self.camera.pixels)
             self.window.show()
 
-    def render_image(self, filename: str = "render.png"):
-        old = self.camera.lens
+    def run_render(self, filename: str = "render.png"):
         self.camera.lens = self.render
+        saved = False
 
-        self.camera.render(self.triangles, self.bvhs)
-        ti.tools.imwrite(self.camera.pixels, filename)
+        while self.window.running:
+            finished = self.camera.render(self.triangles, self.bvhs)
+            if not saved and finished:
+                print(f"[Render] Render saved to {filename}")
+                ti.tools.imwrite(self.camera.pixels, filename)
+                saved = True
 
-        self.camera.lens = old
+            self.window.set_image(self.camera.pixels)
+            self.window.show()
+
+        if not saved:
+            print(f"[Render] Unfinished render saved to {filename}")
+            ti.tools.imwrite(self.camera.pixels, filename)
 
     def __handle_events(self):
         self.input.read_events()

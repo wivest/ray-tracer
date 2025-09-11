@@ -19,5 +19,5 @@ class Camera:
         self.size = (int(size[1] * r), size[1]) if r else size
         self.pixels = Vector.field(3, f32, self.size)
 
-    def render(self, triangles: StructField, bvhs: StructField):
-        self.lens.render(self.pixels, triangles, bvhs)
+    def render(self, triangles: StructField, bvhs: StructField) -> bool:
+        return self.lens.render(self.pixels, triangles, bvhs)

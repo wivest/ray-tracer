@@ -29,10 +29,14 @@ class Render(Lens):
         self._ready: Field = ti.field(int, ())
         self.reset_samples()
 
-    def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
+    def render(
+        self, pixels: MatrixField, triangles: StructField, bvhs: StructField
+    ) -> bool:
         if self._ready[None] < self.samples:
             self._render_sample(self._sampled, triangles, bvhs)
             self._apply_sample(pixels)
+            return False
+        return True
 
     @ti.kernel
     def reset_samples(self):

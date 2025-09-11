@@ -15,8 +15,11 @@ class Preview(Lens):
         self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
 
-    def render(self, pixels: MatrixField, triangles: StructField, bvhs: StructField):
+    def render(
+        self, pixels: MatrixField, triangles: StructField, bvhs: StructField
+    ) -> bool:
         self._render_sample(pixels, triangles, bvhs)
+        return True
 
     @ti.func
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore

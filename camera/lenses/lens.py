@@ -18,7 +18,7 @@ class Lens(ABC):
         pixels: MatrixField,
         triangles: StructField,
         bvhs: StructField,
-    ): ...
+    ) -> bool: ...
 
     @abstractmethod
     def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector: ...  # type: ignore
