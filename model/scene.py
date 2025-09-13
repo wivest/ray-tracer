@@ -26,7 +26,9 @@ class Scene:
             mesh = gltf.meshes[node.mesh]
             self.spatials.append(Spatial(mesh, node, gltf))
 
-    def export(self) -> tuple[StructField, StructField]:
+        self.__generate_mesh()
+
+    def __generate_mesh(self):
         material_concat = self.__concat([s.materials for s in self.spatials])
         triangle_concat = self.__concat([s.triangles for s in self.spatials])
         n = sum([s.n for s in self.spatials])
@@ -35,14 +37,12 @@ class Scene:
         builder.build_BVHs()
         triangle_concat["material"] = material_concat  # type: ignore
 
-        tris = Triangle.field(shape=n)
-        tris.from_numpy(triangle_concat)
-        self._update_normals(tris)
+        self.tris = Triangle.field(shape=n)
+        self.tris.from_numpy(triangle_concat)
+        self._update_normals(self.tris)
 
-        bvhs = BVH.field(shape=builder.bvh_count)
-        bvhs.from_numpy(builder.bvhs)
-
-        return tris, bvhs
+        self.bvhs = BVH.field(shape=builder.bvh_count)
+        self.bvhs.from_numpy(builder.bvhs)
 
     def __concat(self, dicts: list[dict[str, ndarray]]) -> dict[str, ndarray]:
         unpacked: dict[str, list[ndarray]] = {}

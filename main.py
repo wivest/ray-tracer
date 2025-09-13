@@ -11,9 +11,7 @@ from model.scene import Scene
 ti.init(arch=ti.gpu)
 
 scene = Scene(args.filename)
-triangles, bvhs = scene.export()
-
-app = App("Ray Tracing", (args.width, args.height), triangles, bvhs, args.filename)
+app = App("Ray Tracing", (args.width, args.height), scene, args.filename)
 if args.render:
     app.run_render()
 else:

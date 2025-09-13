@@ -4,6 +4,7 @@ from .input import *
 
 from camera.camera import Camera
 from camera.lenses import Preview, Render
+from model.scene import Scene
 
 
 SENSIVITY = 0.1
@@ -16,8 +17,7 @@ class App:
         self,
         name: str,
         size: tuple[int, int],
-        triangles: StructField,
-        bvhs: StructField,
+        scene: Scene,
         gltf_path: str,
     ):
         self.camera = Camera(size, gltf_path)
@@ -29,8 +29,8 @@ class App:
         self.window = ti.GUI(name, self.camera.size, fast_gui=True)
         self.window.fps_limit = 1000
 
-        self.triangles = triangles
-        self.bvhs = bvhs
+        self.triangles = scene.tris
+        self.bvhs = scene.bvhs
         self.input = Input(self.window)
         self.mode = True
 
