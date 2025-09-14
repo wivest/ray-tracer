@@ -13,18 +13,11 @@ ROTATION = ti.math.pi
 
 class App:
 
-    def __init__(
-        self,
-        name: str,
-        size: tuple[int, int],
-        scene: Scene,
-        gltf_path: str,
-    ):
-        self.camera = Camera(size, gltf_path)
-
-        self.preview = Preview(self.camera.size, self.camera.transform)
-        self.render = Render(self.camera.size, 1024, self.camera.transform)
-        self.camera.lens = self.preview
+    def __init__(self, name: str, scene: Scene):
+        self.camera = scene.camera
+        self.preview_lens = Preview(self.camera.size, self.camera.transform)
+        self.render_lens = Render(self.camera.size, 1024, self.camera.transform)
+        self.camera.lens = self.preview_lens
 
         self.window = ti.GUI(name, self.camera.size, fast_gui=True)
         self.window.fps_limit = 1000
@@ -43,7 +36,7 @@ class App:
             self.window.show()
 
     def run_render(self, filename: str = "render.png"):
-        self.camera.lens = self.render
+        self.camera.lens = self.render_lens
         saved = False
 
         while self.window.running:
@@ -67,15 +60,15 @@ class App:
         if self.input.is_action_pressed(LMB):
             self.camera.transform.rotate_y(delta[0] * ROTATION * 2)
             self.camera.transform.rotate_local_x(-delta[1] * ROTATION)
-            self.render.reset_samples()
+            self.render_lens.reset_samples()
 
         if self.input.is_action_just_pressed(MODE):
             self.mode = not self.mode
             if self.mode:
-                self.camera.lens = self.preview
+                self.camera.lens = self.preview_lens
             else:
-                self.camera.lens = self.render
-            self.render.reset_samples()
+                self.camera.lens = self.render_lens
+            self.render_lens.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
         self.camera.transform.move_x(x_axis * SENSIVITY)
@@ -104,4 +97,4 @@ class App:
             + abs(z_axis_flat)
             > 0
         ):
-            self.render.reset_samples()
+            self.render_lens.reset_samples()

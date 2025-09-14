@@ -10,8 +10,8 @@ from model.scene import Scene
 
 ti.init(arch=ti.gpu)
 
-scene = Scene(args.filename)
-app = App("Ray Tracing", (args.width, args.height), scene, args.filename)
+scene = Scene(args.filename, (args.width, args.height))
+app = App("Ray Tracing", scene)
 if args.render:
     app.run_render()
 else:

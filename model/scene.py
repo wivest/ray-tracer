@@ -7,12 +7,13 @@ from imports.common import *
 from .spatial import Spatial
 from .triangle import Triangle
 from .bvh import BVH, BVHBuilder
+from camera.camera import Camera
 
 
 @ti.data_oriented
 class Scene:
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, camera_size: tuple[int, int]):
         gltf = GLTF2().load(path)
         if gltf == None:
             raise Exception()
@@ -27,6 +28,7 @@ class Scene:
             self.spatials.append(Spatial(mesh, node, gltf))
 
         self.__generate_mesh()
+        self.camera = Camera(camera_size, path)
 
     def __generate_mesh(self):
         material_concat = self.__concat([s.materials for s in self.spatials])
