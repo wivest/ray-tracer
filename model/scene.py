@@ -10,6 +10,9 @@ from .bvh import BVH, BVHBuilder
 from camera.camera import Camera
 
 
+LIGHT_EXT = "KHR_lights_punctual"
+
+
 @ti.data_oriented
 class Scene:
 
@@ -29,6 +32,7 @@ class Scene:
 
         self.__generate_mesh()
         self.camera = Camera(camera_size, path)
+        self.__extract_lights(gltf)
 
     def __generate_mesh(self):
         material_concat = self.__concat([s.materials for s in self.spatials])
@@ -65,3 +69,9 @@ class Scene:
     def _update_normals(self, triangles: ti.template()):  # type: ignore
         for i in triangles:
             triangles[i].update_normal()  # type: ignore
+
+    def __extract_lights(self, gltf: GLTF2):
+        if not (gltf.extensions and LIGHT_EXT in gltf.extensions):
+            return
+        lights = gltf.extensions[LIGHT_EXT]["lights"]
+        print(lights)
