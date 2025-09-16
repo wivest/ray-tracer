@@ -21,23 +21,23 @@ class Scene:
         if gltf == None:
             raise Exception()
 
-        self.spatials: list[Spatial] = []
+        self.__generate_mesh(gltf)
+        self.camera = Camera(camera_size, path)
+        self.__extract_lights(gltf)
+
+    def __generate_mesh(self, gltf: GLTF2):
+        spatials: list[Spatial] = []
         nodes = gltf.scenes[gltf.scene].nodes or []
         for i in nodes:
             node = gltf.nodes[i]
             if node.mesh == None:
                 continue
             mesh = gltf.meshes[node.mesh]
-            self.spatials.append(Spatial(mesh, node, gltf))
+            spatials.append(Spatial(mesh, node, gltf))
 
-        self.__generate_mesh()
-        self.camera = Camera(camera_size, path)
-        self.__extract_lights(gltf)
-
-    def __generate_mesh(self):
-        material_concat = self.__concat([s.materials for s in self.spatials])
-        triangle_concat = self.__concat([s.triangles for s in self.spatials])
-        n = sum([s.n for s in self.spatials])
+        material_concat = self.__concat([s.materials for s in spatials])
+        triangle_concat = self.__concat([s.triangles for s in spatials])
+        n = sum([s.n for s in spatials])
 
         builder = BVHBuilder(triangle_concat, material_concat, n)
         builder.build_BVHs()

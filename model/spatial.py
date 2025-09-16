@@ -4,13 +4,11 @@ from pygltflib import GLTF2, Node, Mesh, Primitive
 from scipy.spatial.transform import Rotation
 
 
-from imports.common import *
 from imports.aliases import vec
 
 from .py_material import PyMaterial
 
 
-@ti.data_oriented
 class Spatial:
 
     BVH_DEPTH: int = 8
@@ -118,8 +116,3 @@ class Spatial:
             idx = bufferView.byteOffset + i * TYPE_SIZE * 3
             ns = struct.unpack("HHH", data[idx : idx + TYPE_SIZE * 3])
             yield ns
-
-    @ti.kernel
-    def _update_normals(self, triangles: ti.template()):  # type: ignore
-        for i in triangles:
-            triangles[i].update_normal()  # type: ignore
