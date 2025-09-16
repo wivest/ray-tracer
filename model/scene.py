@@ -73,5 +73,15 @@ class Scene:
     def __extract_lights(self, gltf: GLTF2):
         if not (gltf.extensions and LIGHT_EXT in gltf.extensions):
             return
-        lights = gltf.extensions[LIGHT_EXT]["lights"]
-        print(lights)
+        light_data = gltf.extensions[LIGHT_EXT]["lights"]
+
+        self.lights = []
+        nodes = gltf.scenes[gltf.scene].nodes or []
+        for i in nodes:
+            node = gltf.nodes[i]
+            if not (node.extensions and LIGHT_EXT in node.extensions):
+                continue
+            ext = node.extensions[LIGHT_EXT]
+            self.lights.append(light_data[ext["light"]])
+
+        print(self.lights)
