@@ -16,7 +16,7 @@ class App:
         self.scene = scene
         t = self.scene.camera.transform
         self.preview_lens = Preview(self.scene.camera.size, t)
-        self.render_lens = Render(self.scene.camera.size, 1024, t)
+        self.render_lens = Render(self.scene.camera.size, t, 64, scene.lights)
         self.scene.camera.lens = self.preview_lens
 
         self.window = ti.GUI(name, self.scene.camera.size, fast_gui=True)

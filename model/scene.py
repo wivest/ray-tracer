@@ -92,9 +92,7 @@ class Scene:
             l = light_data[ext["light"]]
             light_list.append(Point(vec3(*l["color"]), vec3(*origin)))
 
-        print(light_list)
         n = len(light_list)
         self.lights = Point.field(shape=n)
         for i in range(n):
             self.lights[i] = light_list[i]
-        print(self.lights)

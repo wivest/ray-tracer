@@ -5,7 +5,6 @@ from ..transform import Transform
 from ..ray import Ray
 from ..hit_info import HitInfo
 
-from light.sun import Sun
 from sky.colored import Colored
 
 
@@ -14,15 +13,18 @@ class Render(Lens):
 
     HITS: int = 5
 
-    def __init__(self, size: tuple[int, int], samples: int, transform: Transform):
+    def __init__(
+        self,
+        size: tuple[int, int],
+        transform: Transform,
+        samples: int,
+        lights: StructField,
+    ):
         self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
 
         self.sky = Colored(Vector((1.0, 1.0, 1.0)))
-
-        self.lights = Sun.field(shape=(2))
-        self.lights[0] = Sun(Vector((5, 5, 5)), Vector((-1, -1, -1)))
-        self.lights[1] = Sun(Vector((5, 5, 5)), Vector((1, -1, 1)))
+        self.lights = lights
 
         self.samples = samples
         self._sampled = Vector.field(3, f32, size)
@@ -70,7 +72,7 @@ class Render(Lens):
             incoming_light += ray_color * (
                 hit_info.material.emission
                 + self._sample_direct_light(
-                    hit_info.point, triangles, bvhs, self.lights, hit_info.normal
+                    hit_info.point, triangles, bvhs, hit_info.normal
                 )
             )
 
@@ -96,15 +98,15 @@ class Render(Lens):
         return dir.normalized()
 
     @ti.func
-    def _sample_direct_light(self, point: vec3, triangles: ti.template(), bvhs: ti.template(), lights: ti.template(), normal: vec3) -> Vector:  # type: ignore
+    def _sample_direct_light(self, point: vec3, triangles: ti.template(), bvhs: ti.template(), normal: vec3) -> Vector:  # type: ignore
         visible = Vector((0.0, 0.0, 0.0))
 
-        for i in range(lights.shape[0]):
-            light = lights[i]
-            ray = light.get_ray(point)
+        for i in range(self.lights.shape[0]):
+            light = self.lights[i]
+            ray = light.get_ray(point)  # type: ignore
             sin = ti.math.dot(ray.direction, normal)
 
             if not ray.cast(triangles, bvhs).hit:
-                visible += sin * light.color
+                visible += sin * light.color  # type: ignore
 
         return visible
