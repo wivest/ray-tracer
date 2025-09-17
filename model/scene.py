@@ -7,7 +7,10 @@ from imports.common import *
 from .spatial import Spatial
 from .triangle import Triangle
 from .bvh import BVH, BVHBuilder
+
 from camera.camera import Camera
+from camera.transform import Transform
+from light.point import Point
 
 
 LIGHT_EXT = "KHR_lights_punctual"
@@ -75,13 +78,23 @@ class Scene:
             return
         light_data = gltf.extensions[LIGHT_EXT]["lights"]
 
-        self.lights = []
+        light_list = []
         nodes = gltf.scenes[gltf.scene].nodes or []
         for i in nodes:
             node = gltf.nodes[i]
             if not (node.extensions and LIGHT_EXT in node.extensions):
                 continue
-            ext = node.extensions[LIGHT_EXT]
-            self.lights.append(light_data[ext["light"]])
 
+            t = node.translation or [0, 0, 0]
+            r = node.rotation or [0, 0, 0, 0]
+            origin, _ = Transform.convert_transform(t, r)
+            ext = node.extensions[LIGHT_EXT]
+            l = light_data[ext["light"]]
+            light_list.append(Point(vec3(*l["color"]), vec3(*origin)))
+
+        print(light_list)
+        n = len(light_list)
+        self.lights = Point.field(shape=n)
+        for i in range(n):
+            self.lights[i] = light_list[i]
         print(self.lights)

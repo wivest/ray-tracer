@@ -47,11 +47,11 @@ class Transform:
         if t == None or r == None:
             raise Exception()
 
-        origin, bas = Transform.__convert_transform(t, r)
+        origin, bas = Transform.convert_transform(t, r)
         return cls(origin, bas, angle, ratio)
 
     @staticmethod
-    def __convert_transform(translation: list[float], rotation: list[float]):
+    def convert_transform(translation: list[float], rotation: list[float]):
         origin = (translation[0], translation[1], translation[2])
         mat = Rotation.from_quat(rotation).as_matrix()
         bas: basis = tuple(tuple(i) for i in mat.tolist())  # type: ignore
