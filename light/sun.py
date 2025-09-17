@@ -9,5 +9,5 @@ class Sun:
     direction: vec3  # type: ignore
 
     @ti.func
-    def get_ray(self, point: vec3):  # type: ignore
+    def get_ray(self, point: vec3) -> Ray:  # type: ignore
         return Ray(point, -self.direction.normalized())

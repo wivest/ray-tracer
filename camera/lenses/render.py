@@ -107,6 +107,6 @@ class Render(Lens):
             sin = ti.math.dot(ray.direction, normal)
 
             if not ray.cast(triangles, bvhs).hit:
-                visible += sin * light.color  # type: ignore
+                visible += sin * light.get_color()  # type: ignore
 
         return visible

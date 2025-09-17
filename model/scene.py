@@ -10,7 +10,9 @@ from .bvh import BVH, BVHBuilder
 
 from camera.camera import Camera
 from camera.transform import Transform
+from light.light_union import LightUnion
 from light.point import Point
+from light.sun import Sun
 
 
 LIGHT_EXT = "KHR_lights_punctual"
@@ -87,12 +89,21 @@ class Scene:
 
             t = node.translation or [0, 0, 0]
             r = node.rotation or [0, 0, 0, 0]
-            origin, _ = Transform.convert_transform(t, r)
+            origin, bas = Transform.convert_transform(t, r)
             ext = node.extensions[LIGHT_EXT]
             l = light_data[ext["light"]]
-            light_list.append(Point(vec3(*l["color"]), vec3(*origin)))
+
+            union: LightUnion = LightUnion()  # type: ignore
+            if l["type"] == "point":
+                union.select = 0
+                union.point = Point(vec3(*l["color"]), vec3(*origin))
+            elif l["type"] == "directional":
+                union.select = 1
+                d = (-x for x in bas[2])
+                union.sun = Sun(vec3(*l["color"]), vec3(*d))
+            light_list.append(union)
 
         n = len(light_list)
-        self.lights = Point.field(shape=n)
+        self.lights = LightUnion.field(shape=n)
         for i in range(n):
             self.lights[i] = light_list[i]
