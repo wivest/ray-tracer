@@ -14,15 +14,15 @@ class Camera:
     def __init__(
         self,
         size: tuple[int, int],
-        gltf_path: str,
+        transform: Transform,
     ):
-        self.transform = Transform.from_gltf(gltf_path)
+        self.transform = transform
         r = self.transform.ratio
         self.size = (int(size[1] * r), size[1]) if r else size
         self.pixels = Vector.field(3, f32, self.size)
 
     @staticmethod
-    def list_cameras(gltf: GLTF2):
+    def list_transforms(gltf: GLTF2):
         scene = gltf.scenes[gltf.scene]
         if scene.nodes == None:
             raise Exception()
@@ -40,7 +40,7 @@ class Camera:
                     ratio = p.aspectRatio
 
                 origin, bas = Transform.convert_transform(t, r)
-                print(origin, bas, angle, ratio, sep="\n", end="\n\n")
+                yield Transform(origin, bas, angle, ratio)
 
     def render(self, triangles: StructField, bvhs: StructField) -> bool:
         return self.lens.render(self.pixels, triangles, bvhs)

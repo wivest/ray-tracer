@@ -27,8 +27,8 @@ class Scene:
             raise Exception()
 
         self.__generate_mesh(gltf)
-        Camera.list_cameras(gltf)
-        self.camera = Camera(camera_size, path)
+        self.cameras = [Camera(camera_size, t) for t in Camera.list_transforms(gltf)]
+        self.camera = Camera(camera_size, [t for t in Camera.list_transforms(gltf)][0])
         self.__extract_lights(gltf)
 
     def __generate_mesh(self, gltf: GLTF2):
