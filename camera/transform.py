@@ -1,4 +1,3 @@
-from pygltflib import GLTF2
 from scipy.spatial.transform import Rotation
 
 from imports.common import *
@@ -7,9 +6,7 @@ from imports.aliases import vec, basis
 
 class Transform:
 
-    def __init__(
-        self, origin: vec, transform_basis: basis, angle: float, ratio: float | None
-    ):
+    def __init__(self, origin: vec, transform_basis: basis, angle: float):
         ORIG = Vector(origin, f32)
         self.origin = Vector.field(3, f32, ())
         self.origin[None] = ORIG
@@ -19,36 +16,6 @@ class Transform:
         self.basis[None] = MAT
 
         self.angle = angle
-        self.ratio = ratio
-
-    @classmethod
-    def from_gltf(cls, path: str):
-        data = GLTF2().load(path)
-        if data == None:
-            raise Exception()
-        scene = data.scenes[data.scene]
-        if scene.nodes == None:
-            raise Exception()
-
-        t = []
-        r = []
-        angle = 0.4
-        ratio: float | None = None
-        for i in scene.nodes:
-            node = data.nodes[i]
-            if node.camera != None:
-                t = node.translation
-                r = node.rotation
-                p = data.cameras[node.camera].perspective
-                if p != None:
-                    angle = p.yfov
-                    ratio = p.aspectRatio
-
-        if t == None or r == None:
-            raise Exception()
-
-        origin, bas = Transform.convert_transform(t, r)
-        return cls(origin, bas, angle, ratio)
 
     @staticmethod
     def convert_transform(translation: list[float], rotation: list[float]):

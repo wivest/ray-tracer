@@ -6,6 +6,11 @@ from .transform import Transform
 from .lenses import Lens
 
 
+TRANSLATION_NONE = [0.0, 0.0, 0.0]
+ROTATION_NONE = [0.0, 0.0, 0.0, 0.0]
+PERSPECTIVE_NONE = 0.4
+
+
 @ti.data_oriented
 class Camera:
 
@@ -17,8 +22,7 @@ class Camera:
         transform: Transform,
     ):
         self.transform = transform
-        r = self.transform.ratio
-        self.size = (int(size[1] * r), size[1]) if r else size
+        self.size = size
         self.pixels = Vector.field(3, f32, self.size)
 
     @staticmethod
@@ -27,20 +31,16 @@ class Camera:
         if scene.nodes == None:
             raise Exception()
 
-        angle = 0.4
-        ratio: float | None = None
         for i in scene.nodes:
             node = gltf.nodes[i]
             if node.camera != None:
-                t = node.translation or [0, 0, 0]
-                r = node.rotation or [0, 0, 0, 0]
+                t = node.translation or TRANSLATION_NONE
+                r = node.rotation or ROTATION_NONE
                 p = gltf.cameras[node.camera].perspective
-                if p != None:
-                    angle = p.yfov
-                    ratio = p.aspectRatio
+                angle = p.yfov if p else PERSPECTIVE_NONE
 
                 origin, bas = Transform.convert_transform(t, r)
-                yield Transform(origin, bas, angle, ratio)
+                yield Transform(origin, bas, angle)
 
     def render(self, triangles: StructField, bvhs: StructField) -> bool:
         return self.lens.render(self.pixels, triangles, bvhs)
