@@ -27,6 +27,7 @@ class Scene:
             raise Exception()
 
         self.__generate_mesh(gltf)
+        Camera.list_cameras(gltf)
         self.camera = Camera(camera_size, path)
         self.__extract_lights(gltf)
 
