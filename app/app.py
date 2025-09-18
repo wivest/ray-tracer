@@ -11,9 +11,9 @@ ROTATION = ti.math.pi
 
 class App:
 
-    def __init__(self, name: str, scene: Scene):
-        self.scene = scene
-        self.window = ti.GUI(name, self.scene.camera.size, fast_gui=True)
+    def __init__(self, name: str, path: str, camera_size: tuple[int, int]):
+        self.scene = Scene(path, camera_size)
+        self.window = ti.GUI(name, camera_size, fast_gui=True)
         self.window.fps_limit = 1000
         self.input = Input(self.window)
         self.mode = True

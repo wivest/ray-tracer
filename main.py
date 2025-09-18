@@ -1,17 +1,15 @@
-from cli import get_args, DEFAULT_GLTF
+from cli import get_args
 
 args = get_args()
 
 import taichi as ti
 
 from app.app import App
-from model.scene import Scene
 
 
 ti.init(arch=ti.gpu)
 
-scene = Scene(args.filename, (args.width, args.height))
-app = App("Ray Tracing", scene)
+app = App("Ray Tracing", args.filename, (args.width, args.height))
 if args.render:
     app.run_render()
 else:

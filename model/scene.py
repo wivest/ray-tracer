@@ -29,7 +29,6 @@ class Scene:
         self.__generate_mesh(gltf)
         self.__extract_lights(gltf)
 
-        self.camera_size = camera_size
         self.cameras = [
             Camera(camera_size, t, self.lights) for t in Camera.list_transforms(gltf)
         ]
