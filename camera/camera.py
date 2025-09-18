@@ -9,15 +9,13 @@ from .lenses import Lens, Preview, Render
 @ti.data_oriented
 class Camera:
 
-    def __init__(
-        self, size: tuple[int, int], transform: Transform, lights: StructField
-    ):
+    def __init__(self, size: tuple[int, int], transform: Transform):
         self.transform = transform
         self.size = size
         self.pixels = Vector.field(3, f32, self.size)
 
         self.preview_lens = Preview(size, transform)
-        self.render_lens = Render(size, transform, 64, lights)
+        self.render_lens = Render(size, transform, 64)
         self.lens: Lens = self.preview_lens
 
     @staticmethod
@@ -37,5 +35,7 @@ class Camera:
                 origin, bas = Transform.convert_transform(t, r)
                 yield Transform(origin, bas, angle)
 
-    def render(self, triangles: StructField, bvhs: StructField) -> bool:
-        return self.lens.render(self.pixels, triangles, bvhs)
+    def render(
+        self, triangles: StructField, bvhs: StructField, lights: StructField
+    ) -> bool:
+        return self.lens.render(self.pixels, triangles, bvhs, lights)

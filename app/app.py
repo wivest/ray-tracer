@@ -22,7 +22,9 @@ class App:
         while self.window.running:
             self.__handle_events()
 
-            self.scene.camera.render(self.scene.tris, self.scene.bvhs)
+            self.scene.camera.render(
+                self.scene.tris, self.scene.bvhs, self.scene.lights
+            )
             self.window.set_image(self.scene.camera.pixels)
             self.window.show()
 
@@ -31,7 +33,9 @@ class App:
         saved = False
 
         while self.window.running:
-            finished = self.scene.camera.render(self.scene.tris, self.scene.bvhs)
+            finished = self.scene.camera.render(
+                self.scene.tris, self.scene.bvhs, self.scene.lights
+            )
             if not saved and finished:
                 print(f"[Render] Render saved to {filename}")
                 ti.tools.imwrite(self.scene.camera.pixels, filename)

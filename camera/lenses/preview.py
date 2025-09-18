@@ -16,13 +16,17 @@ class Preview(Lens):
         self.transform = transform
 
     def render(
-        self, pixels: MatrixField, triangles: StructField, bvhs: StructField
+        self,
+        pixels: MatrixField,
+        triangles: StructField,
+        bvhs: StructField,
+        lights: StructField,
     ) -> bool:
-        self._render_sample(pixels, triangles, bvhs)
+        self._render_sample(pixels, triangles, bvhs, lights)
         return True
 
     @ti.func
-    def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template()) -> Vector:  # type: ignore
+    def _get_color(self, ray: Ray, triangles: ti.template(), bvhs: ti.template(), lights: ti.template()) -> Vector:  # type: ignore
         incoming_light = self.sky
 
         hit_info = ray.cast(triangles, bvhs)
