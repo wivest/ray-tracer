@@ -3,22 +3,22 @@ from imports.common import *
 from pygltflib import GLTF2
 
 from .transform import Transform, NONE_DATA
-from .lenses import Lens
+from .lenses import Lens, Preview, Render
 
 
 @ti.data_oriented
 class Camera:
 
-    lens: Lens
-
     def __init__(
-        self,
-        size: tuple[int, int],
-        transform: Transform,
+        self, size: tuple[int, int], transform: Transform, lights: StructField
     ):
         self.transform = transform
         self.size = size
         self.pixels = Vector.field(3, f32, self.size)
+
+        self.preview_lens = Preview(size, transform)
+        self.render_lens = Render(size, transform, 64, lights)
+        self.lens: Lens = self.preview_lens
 
     @staticmethod
     def list_transforms(gltf: GLTF2):

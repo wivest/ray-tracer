@@ -30,10 +30,14 @@ class Scene:
         self.__extract_lights(gltf)
 
         self.camera_size = camera_size
-        self.cameras = [Camera(camera_size, t) for t in Camera.list_transforms(gltf)]
+        self.cameras = [
+            Camera(camera_size, t, self.lights) for t in Camera.list_transforms(gltf)
+        ]
         if len(self.cameras) == 0:
             o, b = Transform.convert_transform(NONE_DATA[0], NONE_DATA[1])
-            self.cameras = [Camera(camera_size, Transform(o, b, NONE_DATA[2]))]
+            self.cameras = [
+                Camera(camera_size, Transform(o, b, NONE_DATA[2]), self.lights)
+            ]
         self.active_cam = 0
 
     @property

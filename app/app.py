@@ -2,7 +2,6 @@ from imports.common import *
 
 from .input import *
 
-from camera.lenses import Preview, Render
 from model.scene import Scene
 
 
@@ -14,11 +13,6 @@ class App:
 
     def __init__(self, name: str, scene: Scene):
         self.scene = scene
-        t = self.scene.camera.transform
-        self.preview_lens = Preview(self.scene.camera_size, t)
-        self.render_lens = Render(self.scene.camera_size, t, 64, scene.lights)
-        self.scene.camera.lens = self.preview_lens
-
         self.window = ti.GUI(name, self.scene.camera.size, fast_gui=True)
         self.window.fps_limit = 1000
         self.input = Input(self.window)
@@ -33,7 +27,7 @@ class App:
             self.window.show()
 
     def run_render(self, filename: str = "render.png"):
-        self.scene.camera.lens = self.render_lens
+        self.scene.camera.lens = self.scene.camera.render_lens
         saved = False
 
         while self.window.running:
@@ -57,15 +51,15 @@ class App:
         if self.input.is_action_pressed(LMB):
             self.scene.camera.transform.rotate_y(delta[0] * ROTATION * 2)
             self.scene.camera.transform.rotate_local_x(-delta[1] * ROTATION)
-            self.render_lens.reset_samples()
+            self.scene.camera.render_lens.reset_samples()
 
         if self.input.is_action_just_pressed(MODE):
             self.mode = not self.mode
             if self.mode:
-                self.scene.camera.lens = self.preview_lens
+                self.scene.camera.lens = self.scene.camera.preview_lens
             else:
-                self.scene.camera.lens = self.render_lens
-            self.render_lens.reset_samples()
+                self.scene.camera.lens = self.scene.camera.render_lens
+            self.scene.camera.render_lens.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
         self.scene.camera.transform.move_x(x_axis * SENSIVITY)
@@ -94,4 +88,4 @@ class App:
             + abs(z_axis_flat)
             > 0
         ):
-            self.render_lens.reset_samples()
+            self.scene.camera.render_lens.reset_samples()
