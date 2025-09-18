@@ -15,8 +15,8 @@ class App:
     def __init__(self, name: str, scene: Scene):
         self.scene = scene
         t = self.scene.camera.transform
-        self.preview_lens = Preview(self.scene.camera.size, t)
-        self.render_lens = Render(self.scene.camera.size, t, 64, scene.lights)
+        self.preview_lens = Preview(self.scene.camera_size, t)
+        self.render_lens = Render(self.scene.camera_size, t, 64, scene.lights)
         self.scene.camera.lens = self.preview_lens
 
         self.window = ti.GUI(name, self.scene.camera.size, fast_gui=True)

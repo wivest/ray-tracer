@@ -9,7 +9,7 @@ from .triangle import Triangle
 from .bvh import BVH, BVHBuilder
 
 from camera.camera import Camera
-from camera.transform import Transform
+from camera.transform import Transform, NONE_DATA
 from light.light_union import LightUnion
 from light.point import Point
 from light.sun import Sun
@@ -27,9 +27,18 @@ class Scene:
             raise Exception()
 
         self.__generate_mesh(gltf)
-        self.cameras = [Camera(camera_size, t) for t in Camera.list_transforms(gltf)]
-        self.camera = Camera(camera_size, [t for t in Camera.list_transforms(gltf)][0])
         self.__extract_lights(gltf)
+
+        self.camera_size = camera_size
+        self.cameras = [Camera(camera_size, t) for t in Camera.list_transforms(gltf)]
+        if len(self.cameras) == 0:
+            o, b = Transform.convert_transform(NONE_DATA[0], NONE_DATA[1])
+            self.cameras = [Camera(camera_size, Transform(o, b, NONE_DATA[2]))]
+        self.active_cam = 0
+
+    @property
+    def camera(self):
+        return self.cameras[self.active_cam]
 
     def __generate_mesh(self, gltf: GLTF2):
         spatials: list[Spatial] = []

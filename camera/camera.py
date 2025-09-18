@@ -2,13 +2,8 @@ from imports.common import *
 
 from pygltflib import GLTF2
 
-from .transform import Transform
+from .transform import Transform, NONE_DATA
 from .lenses import Lens
-
-
-TRANSLATION_NONE = [0.0, 0.0, 0.0]
-ROTATION_NONE = [0.0, 0.0, 0.0, 0.0]
-PERSPECTIVE_NONE = 0.4
 
 
 @ti.data_oriented
@@ -34,10 +29,10 @@ class Camera:
         for i in scene.nodes:
             node = gltf.nodes[i]
             if node.camera != None:
-                t = node.translation or TRANSLATION_NONE
-                r = node.rotation or ROTATION_NONE
+                t = node.translation or NONE_DATA[0]
+                r = node.rotation or NONE_DATA[1]
                 p = gltf.cameras[node.camera].perspective
-                angle = p.yfov if p else PERSPECTIVE_NONE
+                angle = p.yfov if p else NONE_DATA[2]
 
                 origin, bas = Transform.convert_transform(t, r)
                 yield Transform(origin, bas, angle)
