@@ -52,6 +52,11 @@ class App:
         self.input.read_events()
 
         delta = self.input.get_cursor_delta()
+
+        if self.input.is_action_just_pressed(NEXT_CAMERA):
+            self.scene.active_cam += 1
+            self.scene.active_cam %= len(self.scene.cameras)
+
         if self.input.is_action_pressed(LMB):
             self.scene.camera.transform.rotate_y(delta[0] * ROTATION * 2)
             self.scene.camera.transform.rotate_local_x(-delta[1] * ROTATION)

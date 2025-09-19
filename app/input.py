@@ -17,8 +17,8 @@ FORWARD_FLAT = "forward_flat"
 BACKWARD_FLAT = "backward_flat"
 
 LMB = "lbm"
-
 MODE = "mode"
+NEXT_CAMERA = "next_camera"
 
 ACTIONS: dict[str, Action] = {
     LEFT: Action("a"),
@@ -35,6 +35,7 @@ ACTIONS: dict[str, Action] = {
     BACKWARD_FLAT: Action("s", [GUI.SHIFT]),
     LMB: Action(GUI.LMB),
     MODE: Action("m"),
+    NEXT_CAMERA: Action(GUI.TAB),
 }
 
 
