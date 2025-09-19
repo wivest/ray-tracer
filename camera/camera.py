@@ -14,6 +14,7 @@ class Camera:
         self.size = size
         self.pixels = Vector.field(3, f32, self.size)
 
+        self.is_preview_mode = True
         self.preview_lens = Preview(size, transform)
         self.render_lens = Render(size, transform, 64)
         self.lens: Lens = self.preview_lens

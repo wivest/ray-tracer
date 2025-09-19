@@ -16,7 +16,6 @@ class App:
         self.window = ti.GUI(name, camera_size, fast_gui=True)
         self.window.fps_limit = 1000
         self.input = Input(self.window)
-        self.mode = True
 
     def run(self):
         while self.window.running:
@@ -63,12 +62,12 @@ class App:
             self.scene.camera.render_lens.reset_samples()
 
         if self.input.is_action_just_pressed(MODE):
-            self.mode = not self.mode
-            if self.mode:
+            self.scene.camera.is_preview_mode = not self.scene.camera.is_preview_mode
+            if self.scene.camera.is_preview_mode:
                 self.scene.camera.lens = self.scene.camera.preview_lens
             else:
                 self.scene.camera.lens = self.scene.camera.render_lens
-            self.scene.camera.render_lens.reset_samples()
+                self.scene.camera.render_lens.reset_samples()
 
         x_axis = self.input.get_axis(LEFT, RIGHT)
         self.scene.camera.transform.move_x(x_axis * SENSIVITY)
