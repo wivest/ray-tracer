@@ -101,15 +101,17 @@ class Scene:
             origin, bas = Transform.convert_transform(t, r)
             ext = node.extensions[LIGHT_EXT]
             l = light_data[ext["light"]]
+            intensity = l["intensity"]
+            color = vec3(*l["color"]) * intensity
 
             union: LightUnion = LightUnion()  # type: ignore
             if l["type"] == "point":
                 union.select = 0
-                union.point = Point(vec3(*l["color"]), vec3(*origin))
+                union.point = Point(color, vec3(*origin))
             elif l["type"] == "directional":
                 union.select = 1
                 d = (-x for x in bas[2])
-                union.sun = Sun(vec3(*l["color"]), vec3(*d))
+                union.sun = Sun(color, vec3(*d))
             light_list.append(union)
 
         n = len(light_list)
