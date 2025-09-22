@@ -74,7 +74,7 @@ class Render(Lens):
             incoming_light += ray_color * (
                 hit_info.material.emission
                 + self._sample_direct_light(
-                    hit_info.point, triangles, bvhs, lights, hit_info.normal
+                    hit_info.point, hit_info.normal, triangles, bvhs, lights
                 )
             )
 
@@ -100,15 +100,11 @@ class Render(Lens):
         return dir.normalized()
 
     @ti.func
-    def _sample_direct_light(self, point: vec3, triangles: ti.template(), bvhs: ti.template(), lights: ti.template(), normal: vec3) -> Vector:  # type: ignore
+    def _sample_direct_light(self, point: vec3, normal: vec3, triangles: ti.template(), bvhs: ti.template(), lights: ti.template()) -> Vector:  # type: ignore
         visible = Vector((0.0, 0.0, 0.0))
 
         for i in range(lights.shape[0]):
             light = lights[i]
-            ray = light.get_ray(point)  # type: ignore
-            sin = ti.math.dot(ray.direction, normal)
-
-            if not ray.cast(triangles, bvhs).hit:
-                visible += sin * light.get_color()  # type: ignore
+            visible += light.sample_light(point, normal, triangles, bvhs)
 
         return visible
