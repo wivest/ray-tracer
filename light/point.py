@@ -15,6 +15,7 @@ class Point:
 
         sin = ti.math.dot(ray.direction, normal)  # type: ignore
         if not ray.cast(triangles, bvhs).hit:  # type: ignore
-            visible += sin * self.color  # type: ignore
+            dst_sqr = (self.position - point).norm_sqr()
+            visible += sin * self.color / dst_sqr  # type: ignore
 
         return visible
