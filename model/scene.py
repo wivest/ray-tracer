@@ -110,7 +110,7 @@ class Scene:
                 union.point = Point(color, vec3(*origin))
             elif l["type"] == "directional":
                 union.select = 1
-                d = (-x for x in bas[2])
+                d = (-bas[i][2] for i in range(3))
                 union.sun = Sun(color, vec3(*d))
             light_list.append(union)
 
