@@ -11,7 +11,7 @@ from sky.colored import Colored
 @ti.data_oriented
 class Render(Lens):
 
-    HITS: int = 5
+    hits: int = 5
 
     def __init__(
         self,
@@ -62,7 +62,7 @@ class Render(Lens):
         incoming_light = Vector((0.0, 0.0, 0.0))
         ray_color = Vector((1.0, 1.0, 1.0))
 
-        for _ in range(self.HITS):
+        for _ in range(self.hits):
             hit_info = ray.cast(triangles, bvhs)
             if not hit_info.hit:
                 incoming_light += ray_color * self.sky.get(ray.direction)  # type: ignore

@@ -5,11 +5,13 @@ args = get_args()
 import taichi as ti
 
 from app.app import App
+from camera.lenses.render import Render
 
 
 ti.init(arch=ti.gpu)
 
 app = App("Ray Tracing", args.filename, (args.width, args.height))
+Render.hits = args.iters
 if args.render:
     app.run_render()
 else:
