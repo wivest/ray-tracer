@@ -5,13 +5,12 @@ from ..transform import Transform
 from ..ray import Ray
 from ..hit_info import HitInfo
 
-from sky.colored import Colored
-
 
 @ti.data_oriented
 class Render(Lens):
 
     hits: int = 5
+    sky: Vector = vec3(1.0)
 
     def __init__(
         self,
@@ -21,8 +20,6 @@ class Render(Lens):
     ):
         self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
-
-        self.sky = Colored(Vector((1.0, 1.0, 1.0)))
 
         self.samples = samples
         self._sampled = Vector.field(3, f32, size)
@@ -65,7 +62,7 @@ class Render(Lens):
         for _ in range(self.hits):
             hit_info = ray.cast(triangles, bvhs)
             if not hit_info.hit:
-                incoming_light += ray_color * self.sky.get(ray.direction)  # type: ignore
+                incoming_light += ray_color * self.sky
                 break
 
             ray = self._bounce_ray(ray, hit_info)
