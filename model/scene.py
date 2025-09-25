@@ -102,7 +102,7 @@ class Scene:
             ext = node.extensions[LIGHT_EXT]
             l = light_data[ext["light"]]
             intensity = l["intensity"] or 1.0
-            color = vec3(*(l["color"] or [1.0, 1.0, 1.0])) * ti.sqrt(intensity)
+            color = vec3(*(l["color"] or [1.0, 1.0, 1.0])) * intensity
 
             union: LightUnion = LightUnion()  # type: ignore
             if l["type"] == "point":
