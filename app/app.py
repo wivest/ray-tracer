@@ -3,6 +3,7 @@ from imports.common import *
 from .input import *
 
 from model.scene import Scene
+from camera.lenses import Render
 
 
 SENSIVITY = 0.1
@@ -29,14 +30,18 @@ class App:
 
     def run_render(self, filename: str):
         self.scene.camera.lens = self.scene.camera.render_lens
+        rendered = 0
         saved = False
 
         while self.window.running:
             finished = self.scene.camera.render(
                 self.scene.tris, self.scene.bvhs, self.scene.lights
             )
+            if not finished:
+                rendered += 1
+                print(f"\r[{rendered}/{Render.samples}] Samples rendered", end="")
             if not saved and finished:
-                print(f"[Render] Render saved to {filename}")
+                print(f"\n[Rendering] Render saved to {filename} (ready to quit)")
                 ti.tools.imwrite(self.scene.camera.pixels, filename)
                 saved = True
 
@@ -44,7 +49,7 @@ class App:
             self.window.show()
 
         if not saved:
-            print(f"[Render] Unfinished render saved to {filename}")
+            print(f"\n[Rendering] Unfinished render saved to {filename}")
             ti.tools.imwrite(self.scene.camera.pixels, filename)
 
     def __handle_events(self):
