@@ -17,6 +17,7 @@ parser.add_argument("-i", "--iters", default=5, type=int)
 parser.add_argument("-S", "--sky", default="#FFFFFF", type=hex)
 parser.add_argument("-x", "--width", default=SIZE[0], type=int)
 parser.add_argument("-y", "--height", default=SIZE[1], type=int)
+parser.add_argument("-c", "--camera", default=0, type=int)
 parser.add_argument("filename", nargs="?", default=DEFAULT_GLTF)
 
 
