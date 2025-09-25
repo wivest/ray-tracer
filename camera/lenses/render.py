@@ -70,6 +70,9 @@ class Render(Lens):
                 )
             )
 
+        v = ti.math.isnan(incoming_light)
+        if v.x != 0 or v.y != 0 or v.z != 0:
+            incoming_light = vec3(0)
         return incoming_light
 
     @ti.func
