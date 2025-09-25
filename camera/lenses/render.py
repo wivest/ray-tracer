@@ -10,7 +10,7 @@ from ..hit_info import HitInfo
 class Render(Lens):
 
     hits: int = 5
-    sky: Vector = vec3(1.0)
+    sky: Vector
 
     def __init__(
         self,
