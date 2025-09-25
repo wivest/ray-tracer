@@ -16,7 +16,7 @@ class Camera:
 
         self.is_preview_mode = True
         self.preview_lens = Preview(size, transform)
-        self.render_lens = Render(size, transform, 64)
+        self.render_lens = Render(size, transform)
         self.lens: Lens = self.preview_lens
 
     @staticmethod

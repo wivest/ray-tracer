@@ -9,19 +9,14 @@ from ..hit_info import HitInfo
 @ti.data_oriented
 class Render(Lens):
 
-    hits: int = 5
+    samples: int
+    hits: int
     sky: Vector
 
-    def __init__(
-        self,
-        size: tuple[int, int],
-        transform: Transform,
-        samples: int,
-    ):
+    def __init__(self, size: tuple[int, int], transform: Transform):
         self.fov: float = size[1] / ti.tan(transform.angle)
         self.transform = transform
 
-        self.samples = samples
         self._sampled = Vector.field(3, f32, size)
         self._ready: Field = ti.field(int, ())
         self.reset_samples()

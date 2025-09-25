@@ -12,8 +12,9 @@ def hex(value: str) -> list[float]:
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--render", action="store_true")
+parser.add_argument("-s", "--samples", default=64, type=int)
 parser.add_argument("-i", "--iters", default=5, type=int)
-parser.add_argument("-s", "--sky", default="#FFFFFF", type=hex)
+parser.add_argument("-S", "--sky", default="#FFFFFF", type=hex)
 parser.add_argument("-x", "--width", default=SIZE[0], type=int)
 parser.add_argument("-y", "--height", default=SIZE[1], type=int)
 parser.add_argument("filename", nargs="?", default=DEFAULT_GLTF)
