@@ -27,7 +27,7 @@ class App:
             self.window.set_image(self.scene.camera.pixels)
             self.window.show()
 
-    def run_render(self, filename: str = "render.png"):
+    def run_render(self, filename: str):
         self.scene.camera.lens = self.scene.camera.render_lens
         saved = False
 

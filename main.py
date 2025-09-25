@@ -17,6 +17,6 @@ Render.hits = args.iters
 Render.sky = vec3(*args.sky)
 
 if args.render:
-    app.run_render()
+    app.run_render(args.render)
 else:
     app.run()
