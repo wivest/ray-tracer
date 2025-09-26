@@ -116,7 +116,7 @@ class Scene:
 
         n = len(light_list)
         if n == 0:
-            light_list.append(Sun())
+            light_list.append(LightUnion())
         n = len(light_list)
         self.lights = LightUnion.field(shape=n)
         for i in range(n):
