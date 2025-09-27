@@ -2,8 +2,7 @@ import argparse
 from argparse import Namespace
 
 SIZE = (1080, 720)
-DEFAULT_GLTF = "./scene/untitled.gltf"
-DEFAULT_SAVE = "./render.png"
+DEFAULT_SAVE = "render.png"
 
 
 def hex(value: str) -> list[float]:
@@ -19,7 +18,7 @@ parser.add_argument("-r", "--render", nargs="?", const=DEFAULT_SAVE, default=Non
 parser.add_argument("-x", "--width", default=SIZE[0], type=int)
 parser.add_argument("-y", "--height", default=SIZE[1], type=int)
 parser.add_argument("-c", "--camera", default=0, type=int)
-parser.add_argument("filename", nargs="?", default=DEFAULT_GLTF)
+parser.add_argument("filename")
 
 
 def get_args() -> Namespace:
