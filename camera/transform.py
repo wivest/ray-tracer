@@ -5,7 +5,7 @@ from imports.aliases import vec, basis
 
 NONE_DATA = (
     [0.0, 0.0, 0.0],  # translation
-    [0.0, 0.0, 0.0, 0.0],  # rotation
+    [0.0, 0.0, 0.0, 1.0],  # rotation
     0.4,  # angle
 )
 

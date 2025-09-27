@@ -52,6 +52,8 @@ class Scene:
         material_concat = self.__concat([s.materials for s in spatials])
         triangle_concat = self.__concat([s.triangles for s in spatials])
         n = sum([s.n for s in spatials])
+        if n == 0:
+            raise GLTFException("No mesh objects!")
 
         builder = BVHBuilder(triangle_concat, material_concat, n)
         builder.build_BVHs()
@@ -121,3 +123,12 @@ class Scene:
         self.lights = LightUnion.field(shape=n)
         for i in range(n):
             self.lights[i] = light_list[i]
+
+
+class GLTFException(Exception):
+
+    def __init__(self, error: str):
+        self.error = error
+
+    def __str__(self) -> str:
+        return self.error
