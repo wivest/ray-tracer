@@ -7,7 +7,8 @@ DEFAULT_SAVE = "render.png"
 
 def hex(value: str) -> list[float]:
     value = value.lstrip("#")
-    return list(int(value[i : i + 2], 16) / 255 for i in (0, 2, 4))
+    n = len(value)
+    return list(int(value[i * n // 3 : (i + 1) * n // 3], 16) / 255 for i in (0, 1, 2))
 
 
 parser = argparse.ArgumentParser()
