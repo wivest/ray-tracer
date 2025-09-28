@@ -6,6 +6,8 @@ Ray tracer written in [**Taichi lang**](https://www.taichi-lang.org), **Python**
 
 ## Features
 
+The project supports following features:
+
 -   recognizing _glTF_ files (export from **Blender** possible)
 -   preview mode with movable camera
 -   renderer settings (_samples, ray bounces_ etc.)
@@ -50,3 +52,34 @@ You're now ready to run the project! To get CLI help type
 ```
 python main.py -h
 ```
+
+## Usage
+
+### Scenes
+
+First, you need scenes to display (_scenes under [`/examples`](/examples) are ready to use_). Those can be exported from **Blender** in _glTF_ format. Go to `File > Export > glTF 2.0` and choose desired location to export, it will be passed to main program later.
+
+> [!IMPORTANT]  
+> There are some necessary checkboxes in export settings! In `Include > Data` check `Cameras` and `Punctual lights`. In `Data > Lightning` choose Lightning Mode `Unitless`.
+
+### Modes and camera controls
+
+The simplest command to run is
+
+```
+python main.py examples/suzanne.glb
+```
+
+which opens scene in _Scene preview_ mode. In this mode you can move, rotate camera and switch between lenses (_gray preview_ and _render_). Camera controls at a glance:
+
+-   move: `WASD` (horizontal), `EX` (vertical) + `Shift` if using global space
+-   switch camera modes: `M`
+-   switch cameras (if there are many): `Tab`
+
+_Scene preview_ mode is, as the name says, only a preview. To render an image you need to lauch the project in _scene render_ mode
+
+```
+python main.py examples/suzanne.glb -r
+```
+
+The window appears where you can see the render process. It is safe to quit with an _unfinished_ render, it will still be saved.
