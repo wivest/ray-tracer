@@ -83,3 +83,13 @@ python main.py examples/suzanne.glb -r
 ```
 
 The window appears where you can see the render process. It is safe to quit with an _unfinished_ render, it will still be saved.
+
+### Settings
+
+Some parameters are customizable via the CLI. You can get them and their description by typing help message
+
+```
+python main.py -h
+```
+
+Most of them affect both _scene preview_ and _render_ modes. Render `savepath` is a location, where a ready image will be stored (default is `render.png` and will be ignored by `.gitignore`). Camera _index_ is useful if there are multiple cameras in the scene. So a specific one can be selected to render (default is `0`). You can however switch cameras in _scene preview_ mode with `Tab`!
