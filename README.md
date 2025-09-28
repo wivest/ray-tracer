@@ -60,7 +60,7 @@ python main.py -h
 First, you need scenes to display (_scenes under [`/examples`](/examples) are ready to use_). Those can be exported from **Blender** in _glTF_ format. Go to `File > Export > glTF 2.0` and choose desired location to export, it will be passed to main program later.
 
 > [!IMPORTANT]  
-> There are some necessary checkboxes in export settings! In `Include > Data` check `Cameras` and `Punctual lights`. In `Data > Lightning` choose Lightning Mode `Unitless`.
+> There are some necessary checkboxes in export settings! In `Include > Data` check `Cameras` and `Punctual lights`. In `Data > Lighting` choose Lighting Mode `Unitless`.
 
 ### Modes and camera controls
 
